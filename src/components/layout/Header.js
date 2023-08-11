@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import * as CF from "../../config/function";
 import { enum_api_uri } from '../../config/enum';
 import { managerProfilePop, managerProfilePopPosition, confirmPop } from '../../store/popupSlice';
-import { selectUser, newMsgData } from '../../store/commonSlice';
+import { selectUser, newMsgDataAdmin } from '../../store/commonSlice';
 import ConfirmPop from '../popup/ConfirmPop';
 import logo from "../../images/logo.svg";
 import none_profile from "../../images/img_profile.jpg";
@@ -48,24 +48,13 @@ const Header = () => {
     useEffect(()=>{
         //채팅방 연결 받기
         socket.on("join room", (result) => {
-            console.log(JSON.stringify(result, null, 2));
+            // console.log(JSON.stringify(result, null, 2));
         })
 
-        //메시지 받기
-        socket.on("chat msg", (result) => {
+        //메시지알림 받기
+        socket.on("admin msg", (result) => {
             console.log(JSON.stringify(result, null, 2));
-            dispatch(newMsgData(result));
-        })
-
-        //이미지 받기
-        socket.on("image upload", (result) => {
-            console.log(JSON.stringify(result, null, 2));
-            dispatch(newMsgData(result));
-        })
-
-        //에러메시지 받기
-        socket.on("chat error", (result) => {
-            console.log(JSON.stringify(result, null, 2));
+            dispatch(newMsgDataAdmin(result));
         })
     },[socket]);
 

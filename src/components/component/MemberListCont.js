@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { messagePopList } from "../../store/popupSlice";
-import { selectUser, pageMore, newList, pageNo } from "../../store/commonSlice";
+import { selectUser, pageMore, newList, pageNo, msgViewId } from "../../store/commonSlice";
 
 import MemberBox from "./MemberBox";
 
@@ -69,7 +69,17 @@ const MemberListCont = (props) => {
             setListOn(null);
         }
     },[common.selectUser, props.list]);
-    
+
+
+    //선택한 회원값이 변경될때마다 store msgViewId 에 회원아이디 저장
+    useEffect(()=>{
+        if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
+            dispatch(msgViewId(common.selectUser.m_id));
+        }else{
+            dispatch(msgViewId(""));
+        }
+    },[common.selectUser]);
+
 
     return(
         <div className="member_list_wrap">

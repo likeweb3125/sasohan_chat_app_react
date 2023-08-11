@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop } from "../../store/popupSlice";
-import { msgSend, selectUser } from "../../store/commonSlice";
+import { msgSend, selectUser, newMsgData } from "../../store/commonSlice";
 
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
@@ -104,7 +104,7 @@ const RightCont = (props) => {
     useEffect(()=>{
         //채팅방 연결 받기
         socket.on("join room", (result) => {
-            console.log(JSON.stringify(result, null, 2));
+            // console.log(JSON.stringify(result, null, 2));
         })
 
         //메시지 받기
@@ -128,6 +128,8 @@ const RightCont = (props) => {
             setTimeout(()=>{
                 chatRef.current.scrollTop = chatRef.current.scrollHeight;
             },10);
+
+            dispatch(newMsgData(result));
         });
 
         //이미지 받기
@@ -151,6 +153,8 @@ const RightCont = (props) => {
             setTimeout(()=>{
                 chatRef.current.scrollTop = chatRef.current.scrollHeight;
             },10);
+
+            dispatch(newMsgData(result));
         });
 
         //에러메시지 받기

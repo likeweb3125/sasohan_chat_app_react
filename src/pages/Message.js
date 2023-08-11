@@ -155,13 +155,13 @@ const Message = () => {
     
     //소켓 메시지 받으면 메시지 리스트값 변경
     useEffect(()=>{
-        console.log(common.newMsgData)
-        if(Object.keys(common.newMsgData).length > 0){  
+        console.log(common.newMsgDataAdmin)
+        if(Object.keys(common.newMsgDataAdmin).length > 0){  
             const updatedMsgList = [...msgList]; // 복사해서 수정할 새로운 배열 생성
 
             let selectedItem = null;
             for (let i = 0; i < updatedMsgList.length; i++) {
-                if (updatedMsgList[i].m_id === common.newMsgData.m_id) {
+                if (updatedMsgList[i].m_id === common.newMsgDataAdmin.m_id) {
                     selectedItem = updatedMsgList.splice(i, 1)[0]; // 선택한 아이템을 배열에서 제거하고 해당 아이템 저장
                     break;
                 }
@@ -171,23 +171,39 @@ const Message = () => {
             if (selectedItem) {
                 selectedItem = {
                     ...selectedItem,
-                    idx: common.newMsgData.idx,
-                    from_id: common.newMsgData.from_id,
-                    to_id: common.newMsgData.to_id,
-                    msg: common.newMsgData.message_type == "I" ? "사진" : common.newMsgData.msg,
-                    w_date: common.newMsgData.w_date,
-                    to_view_count: selectedItem.to_view_count + common.newMsgData.to_view_count
+                    idx: common.newMsgDataAdmin.idx,
+                    from_id: common.newMsgDataAdmin.from_id,
+                    to_id: common.newMsgDataAdmin.to_id,
+                    msg: common.newMsgDataAdmin.message_type == "I" ? "사진" : common.newMsgDataAdmin.msg,
+                    w_date: common.newMsgDataAdmin.w_date,
+                    to_view_count: selectedItem.to_view_count + common.newMsgDataAdmin.to_view_count
                 };
                 updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
             }
             //채팅방 없을때
             else{
-                updatedMsgList.unshift(common.newMsgData);
+                updatedMsgList.unshift(common.newMsgDataAdmin);
             }
             setMsgList(updatedMsgList);
         }
-    },[common.newMsgData]);
+    },[common.newMsgDataAdmin]);
 
+
+    //store msgViewId 값이 있으면 메시지리스트중 그 회원에게 온 메시지 읽음처리
+    useEffect(()=>{
+        if(common.msgViewId.length > 0){
+            const updatedMsgList = msgList.map(item => {
+                if (item.m_id === common.msgViewId) {
+                    return {
+                        ...item,
+                        to_view_count: 0,
+                    };
+                }
+                return item;
+            });
+            setMsgList(updatedMsgList);
+        }
+    },[common.msgViewId]);
 
 
     return(<>
