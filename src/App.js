@@ -30,7 +30,6 @@ function App() {
 
 
     return(
-        // <SocketProvider>
         <div id="wrap" className="flex">
             <Routes>
                 {/* 매니저로그인 */}
@@ -56,7 +55,6 @@ function App() {
             {/* confirm팝업 */}
             {confirm && <ConfirmPop />}
         </div>
-        // </SocketProvider>
     );
 }
 

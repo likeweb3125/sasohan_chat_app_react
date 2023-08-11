@@ -181,7 +181,7 @@ const Message = () => {
                 updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
             }
             //채팅방 없을때
-            else{
+            else if(!selectedItem && common.newMsgDataAdmin.m_id != user.managerInfo.m_id){
                 updatedMsgList.unshift(common.newMsgDataAdmin);
             }
             setMsgList(updatedMsgList);
@@ -192,36 +192,36 @@ const Message = () => {
     //소켓 메시지 받으면 메시지 리스트값 변경
     useEffect(()=>{
         console.log(common.newMsgData)
-        // if(Object.keys(common.newMsgData).length > 0){  
-        //     const updatedMsgList = [...msgList]; // 복사해서 수정할 새로운 배열 생성
+        if(Object.keys(common.newMsgData).length > 0){  
+            const updatedMsgList = [...msgList]; // 복사해서 수정할 새로운 배열 생성
 
-        //     let selectedItem = null;
-        //     for (let i = 0; i < updatedMsgList.length; i++) {
-        //         if (updatedMsgList[i].m_id === common.newMsgData.m_id) {
-        //             selectedItem = updatedMsgList.splice(i, 1)[0]; // 선택한 아이템을 배열에서 제거하고 해당 아이템 저장
-        //             break;
-        //         }
-        //     }
+            let selectedItem = null;
+            for (let i = 0; i < updatedMsgList.length; i++) {
+                if (updatedMsgList[i].m_id === common.selectUser.m_id) {
+                    selectedItem = updatedMsgList.splice(i, 1)[0]; // 선택한 아이템을 배열에서 제거하고 해당 아이템 저장
+                    break;
+                }
+            }
 
-        //     //채팅방 있을때
-        //     if (selectedItem) {
-        //         selectedItem = {
-        //             ...selectedItem,
-        //             idx: common.newMsgData.idx,
-        //             from_id: common.newMsgData.from_id,
-        //             to_id: common.newMsgData.to_id,
-        //             msg: common.newMsgData.message_type == "I" ? "사진" : common.newMsgData.msg,
-        //             w_date: common.newMsgData.w_date,
-        //             to_view_count: selectedItem.to_view_count + common.newMsgData.to_view_count
-        //         };
-        //         updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
-        //     }
-        //     //채팅방 없을때
-        //     else{
-        //         updatedMsgList.unshift(common.newMsgData);
-        //     }
-        //     setMsgList(updatedMsgList);
-        // }
+            //채팅방 있을때
+            if (selectedItem) {
+                selectedItem = {
+                    ...selectedItem,
+                    idx: common.newMsgData.idx,
+                    from_id: common.newMsgData.from_id,
+                    to_id: common.newMsgData.to_id,
+                    msg: common.newMsgData.message_type == "I" ? "사진" : common.newMsgData.msg,
+                    w_date: common.newMsgData.time,
+                    to_view_count: common.newMsgData.to_id === user.managerInfo.m_id ? selectedItem.to_view_count + common.newMsgData.view_cnt : selectedItem.to_view_count
+                };
+                updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
+            }
+            //채팅방 없을때
+            else{
+                updatedMsgList.unshift(common.newMsgDataAdmin);
+            }
+            setMsgList(updatedMsgList);
+        }
     },[common.newMsgData]);
 
 

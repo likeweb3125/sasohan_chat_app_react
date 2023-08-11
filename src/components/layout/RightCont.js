@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop } from "../../store/popupSlice";
-import { msgSend, selectUser, newMsgData } from "../../store/commonSlice";
+import { msgSend, selectUser, newMsgData, socketRooms } from "../../store/commonSlice";
 
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
@@ -17,14 +17,24 @@ import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
 import sampleImg from "../../images/sample/img_sample.jpg";
 
+const token = localStorage.getItem("token");
+const api_uri = enum_api_uri.api_uri;
+
+// 메시지전송-------------------------
+const socket = io(api_uri, {
+    reconnection: true, // 자동 재접속을 활성화합니다.
+    cors: { origin: "*", },
+    extraHeaders: {
+        Authorization: `Bearer ${token}`,
+    },
+});
+
 
 const RightCont = (props) => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const common = useSelector((state)=>state.common);
-    const token = localStorage.getItem("token");
-    const api_uri = enum_api_uri.api_uri;
     const assi_list = enum_api_uri.assi_list;
     const assi_add = enum_api_uri.assi_add;
     const assi_delt = enum_api_uri.assi_delt;
@@ -55,15 +65,6 @@ const RightCont = (props) => {
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     
-
-    // 메시지전송-------------------------
-    const socket = io(api_uri, {
-        reconnection: true, // 자동 재접속을 활성화합니다.
-        cors: { origin: "*", },
-        extraHeaders: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
 
 
     //window resize
@@ -97,14 +98,24 @@ const RightCont = (props) => {
     // 소켓 채팅방 연결
     const socketInit = () => {
         const data = { room_id: common.selectUser.room_id};
-        socket.emit("join room", data);
+        if(!common.socketRooms.includes(common.selectUser.room_id)){
+            socket.emit("join room", data);
+        }
     };
 
 
     useEffect(()=>{
         //채팅방 연결 받기
         socket.on("join room", (result) => {
-            // console.log(JSON.stringify(result, null, 2));
+            console.log(JSON.stringify(result, null, 2));
+
+            let rooms = [...common.socketRooms];
+            const roomId = result.room_id;
+
+            if(!rooms.includes(roomId)) {
+                rooms.push(roomId);
+                dispatch(socketRooms([...rooms]));
+            }
         })
 
         //메시지 받기
@@ -328,6 +339,7 @@ const RightCont = (props) => {
 
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
+            
             //선택한회원 대화방 소켓연결
             socketInit();
 
@@ -349,7 +361,7 @@ const RightCont = (props) => {
                         {headers:{Authorization: `Bearer ${token}`}}
                     )
                     .then((res)=>{
-                        if(res.status === 200){
+                        if(res.status === 200){ 
                             let data = res.data;
 
                             //대화내용이 있을때

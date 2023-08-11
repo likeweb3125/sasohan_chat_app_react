@@ -11,6 +11,18 @@ import logo from "../../images/logo.svg";
 import none_profile from "../../images/img_profile.jpg";
 
 
+const api_uri = enum_api_uri.api_uri;
+const token = localStorage.getItem("token");
+
+const socket = io(api_uri, {
+    reconnection: true, // 자동 재접속을 활성화합니다.
+    cors: { origin: "*", },
+    extraHeaders: {
+        Authorization: `Bearer ${token}`,
+    },
+});
+
+
 const Header = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
@@ -18,18 +30,8 @@ const Header = () => {
     const location = useLocation();
     const [confirm, setConfirm] = useState(false);
     const [menuOn, setMenuOn] = useState(1);
-    const api_uri = enum_api_uri.api_uri;
     const [pageMove, setPageMove] = useState(null);
-    const token = localStorage.getItem("token");
-
-
-    const socket = io(api_uri, {
-        reconnection: true, // 자동 재접속을 활성화합니다.
-        cors: { origin: "*", },
-        extraHeaders: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    
 
     // 소켓 연결
     const socketInit = () => {
@@ -39,7 +41,7 @@ const Header = () => {
 
     //로그인시 소켓연결하기
     useEffect(()=>{
-        if(user.isLogin){
+        if(user.isLogin && Object.keys(user.managerInfo).length > 0 && user.managerInfo.m_id.length > 0){
             socketInit();
         }
     },[user.managerInfo]);
