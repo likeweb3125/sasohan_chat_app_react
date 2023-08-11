@@ -15,6 +15,8 @@ import './css/common.css';
 import './css/main.css';
 import './css/content.css';
 
+
+
 function App() {
     const popup = useSelector((state)=>state.popup);
     const [confirm, setConfirm] = useState();
