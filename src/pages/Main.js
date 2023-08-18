@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import moment from "moment";
 import QueryString from "qs";
 import { enum_api_uri } from "../config/enum";
 import * as CF from "../config/function";
-import { confirmPop, messagePopList } from "../store/popupSlice";
+import { confirmPop, messagePopList, loadingPop } from "../store/popupSlice";
 import { filter, filterData, pageNo, pageMore, newList } from "../store/commonSlice";
 import LeftCont from "../components/layout/LeftCont";
 import RightCont from "../components/layout/RightCont";
@@ -13,6 +14,7 @@ import ConfirmPop from "../components/popup/ConfirmPop";
 const Main = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
     const u_all_count = enum_api_uri.u_all_count;
@@ -24,6 +26,7 @@ const Main = () => {
     const [searchValue, setSearchValue] = useState("");
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
+
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -70,6 +73,8 @@ const Main = () => {
 
     //회원리스트 가져오기
     const getList = (page, sort, newGet, params) => {
+        dispatch(loadingPop(true));
+
         //조검검색기값 있을때 params 추가
         let filter;
         if(params){
@@ -81,6 +86,8 @@ const Main = () => {
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 if(newGet){
                     setUserList([...data.user_list]);
@@ -88,7 +95,7 @@ const Main = () => {
                     setUserList([...userList,...data.user_list]);
                 }
 
-                setListCount(data.set_cnt);
+                setListCount(data.all_cnt);
 
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
@@ -98,6 +105,8 @@ const Main = () => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+            
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
@@ -115,15 +124,40 @@ const Main = () => {
         if(common.pageMore && common.pageNo < common.pageLastNo){
             if(listSelected == "최근 가입일자순"){
                 getList(common.pageNo+1,"sign");
-            }else if(common.filterData){
+            }else if(common.filter){
                 let sel = "";
                 if(listSelected == "최근 가입일자순"){
                     sel = "sign";
                 }
-                const params = QueryString.stringify(common.filterData);
+
+                let data = {...common.filterData};
+                if(data.j_M_log && data.j_M_log != null){
+                    data.j_M_log = moment(data.j_M_log).format("YYYY-MM-DD");
+                }else if(data.j_M_log == null){
+                    data.j_M_log = "";
+                }
+                if(data.j_last_in1 && data.j_last_in1 != null){
+                    data.j_last_in1 = moment(data.j_last_in1).format("YYYY-MM-DD");
+                }else if(data.j_last_in1 == null){
+                    data.j_last_in1 = "";
+                }
+                if(data.j_last_in2 && data.j_last_in2 != null){
+                    data.j_last_in2 = moment(data.j_last_in2).format("YYYY-MM-DD");
+                }else if(data.j_last_in2 == null){
+                    data.j_last_in2 = "";
+                }
+                if(data.j_reg_date1 && data.j_reg_date1 != null){
+                    data.j_reg_date1 = moment(data.j_reg_date1).format("YYYY-MM-DD");
+                }else if(data.j_reg_date1 == null){
+                    data.j_reg_date1 = "";
+                }
+                if(data.j_reg_date2 && data.j_reg_date2 != null){
+                    data.j_reg_date2 = moment(data.j_reg_date2).format("YYYY-MM-DD");
+                }else if(data.j_reg_date2 == null){
+                    data.j_reg_date2 = "";
+                }
+                const params = QueryString.stringify(data);
                 getList(common.pageNo+1,sel,false,params);
-            }else if(searchOn){
-                searchHandler()
             }else{
                 getList(common.pageNo+1);
             }
@@ -137,13 +171,40 @@ const Main = () => {
     useEffect(()=>{
         if(common.filter){
             dispatch(newList(true));
-            dispatch(filter(false));
+            dispatch(pageMore(false));
 
             let sel = "";
             if(listSelected == "최근 가입일자순"){
                 sel = "sign";
             }
-            const params = QueryString.stringify(common.filterData);
+
+            let data = {...common.filterData};
+            if(data.j_M_log && data.j_M_log != null){
+                data.j_M_log = moment(data.j_M_log).format("YYYY-MM-DD");
+            }else if(data.j_M_log == null){
+                data.j_M_log = "";
+            }
+            if(data.j_last_in1 && data.j_last_in1 != null){
+                data.j_last_in1 = moment(data.j_last_in1).format("YYYY-MM-DD");
+            }else if(data.j_last_in1 == null){
+                data.j_last_in1 = "";
+            }
+            if(data.j_last_in2 && data.j_last_in2 != null){
+                data.j_last_in2 = moment(data.j_last_in2).format("YYYY-MM-DD");
+            }else if(data.j_last_in2 == null){
+                data.j_last_in2 = "";
+            }
+            if(data.j_reg_date1 && data.j_reg_date1 != null){
+                data.j_reg_date1 = moment(data.j_reg_date1).format("YYYY-MM-DD");
+            }else if(data.j_reg_date1 == null){
+                data.j_reg_date1 = "";
+            }
+            if(data.j_reg_date2 && data.j_reg_date2 != null){
+                data.j_reg_date2 = moment(data.j_reg_date2).format("YYYY-MM-DD");
+            }else if(data.j_reg_date2 == null){
+                data.j_reg_date2 = "";
+            }
+            const params = QueryString.stringify(data);
             getList(1,sel,true,params);
         }
     },[common.filter]);
@@ -153,14 +214,8 @@ const Main = () => {
     const searchHandler = () => {
         if(searchValue.length > 0){
             dispatch(newList(true));
+            dispatch(pageMore(false));
             setSearchOn(true);
-
-            let sel = "";
-            if(listSelected == "최근 가입일자순"){
-                sel = "sign";
-            }
-            const params = QueryString.stringify(common.filterData);
-            getList(1,sel,true,params);
         }else{
             setSearchOn(false);
             dispatch(confirmPop({
@@ -174,9 +229,65 @@ const Main = () => {
     };
 
 
+    useEffect(()=>{
+        if(searchOn){
+            //검색할때만 store messagePopList 값 지우기 (체크리스트)
+            dispatch(messagePopList([]));
+
+            //searchOn true 일때는 회원명으로 검색하기
+            let sel = "";
+            if(listSelected == "최근 가입일자순"){
+                sel = "sign";
+            }
+
+            if(!common.filter){
+                getList(1,sel,true);
+            }else{ //조건검색값 있을시 조건검색추가
+                let data = {...common.filterData};
+                if(data.j_M_log && data.j_M_log != null){
+                    data.j_M_log = moment(data.j_M_log).format("YYYY-MM-DD");
+                }else if(data.j_M_log == null){
+                    data.j_M_log = "";
+                }
+                if(data.j_last_in1 && data.j_last_in1 != null){
+                    data.j_last_in1 = moment(data.j_last_in1).format("YYYY-MM-DD");
+                }else if(data.j_last_in1 == null){
+                    data.j_last_in1 = "";
+                }
+                if(data.j_last_in2 && data.j_last_in2 != null){
+                    data.j_last_in2 = moment(data.j_last_in2).format("YYYY-MM-DD");
+                }else if(data.j_last_in2 == null){
+                    data.j_last_in2 = "";
+                }
+                if(data.j_reg_date1 && data.j_reg_date1 != null){
+                    data.j_reg_date1 = moment(data.j_reg_date1).format("YYYY-MM-DD");
+                }else if(data.j_reg_date1 == null){
+                    data.j_reg_date1 = "";
+                }
+                if(data.j_reg_date2 && data.j_reg_date2 != null){
+                    data.j_reg_date2 = moment(data.j_reg_date2).format("YYYY-MM-DD");
+                }else if(data.j_reg_date2 == null){
+                    data.j_reg_date2 = "";
+                }
+                const params = QueryString.stringify(data);
+                getList(1,sel,true,params);
+            }
+        }
+    },[searchOn]);
+
+
+    //회원명 검색 input값 변경시 searchOn false
+    useEffect(()=>{
+        if(searchOn){
+            setSearchOn(false);
+        }
+    },[searchValue]);
+
+
     //회원리스트 정렬하기
     const listSortHandler = () => {
         dispatch(newList(true));
+        dispatch(pageMore(false));
         if(listSelected == "마지막 소개 이력순"){
             getList(1,"",true);
         }
@@ -189,16 +300,6 @@ const Main = () => {
         listSortHandler();
     },[listSelected]);
 
-    
-    //검색할때만 store messagePopList 값 지우기 (체크리스트)
-    useEffect(()=>{
-        if(searchOn){
-            dispatch(messagePopList([]));
-        }
-    },[searchOn]);
-
-
-    
 
 
     return(<>

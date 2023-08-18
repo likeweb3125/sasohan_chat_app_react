@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { enum_api_uri } from "../config/enum";
 import * as CF from "../config/function";
-import { confirmPop } from "../store/popupSlice";
+import { confirmPop, loadingPop } from "../store/popupSlice";
 import { pageNo, pageMore, newList } from "../store/commonSlice";
 
 import LeftCont from "../components/layout/LeftCont";
@@ -24,6 +24,9 @@ const Chat = () => {
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
 
+    const [isCount, setIsCount] = useState(0);
+    const [endCount, setEndCount] = useState(0);
+
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -35,18 +38,24 @@ const Chat = () => {
 
     //연결한대화방 리스트 가져오기
     const getList = (page, sort, newGet) => {
+        dispatch(loadingPop(true));
+
         axios.get(`${chat_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 if(newGet){
                     setChatList([...data.chat_list]);
                 }else{
                     setChatList([...chatList,...data.chat_list]);
                 }
-                setChatList([...data]);
+                setAllCount(data.all_cnt);
+                setIsCount(data.is_connect_cnt);
+                setEndCount(data.end_connect_cnt);
 
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
@@ -56,14 +65,16 @@ const Chat = () => {
             }
         })
         .catch((error) => {
-            // const err_msg = CF.errorMsgHandler(error);
-            // dispatch(confirmPop({
-            //     confirmPop:true,
-            //     confirmPopTit:'알림',
-            //     confirmPopTxt: err_msg,
-            //     confirmPopBtn:1,
-            // }));
-            // setConfirm(true);
+            dispatch(loadingPop(false));
+
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -73,14 +84,6 @@ const Chat = () => {
         if(common.pageMore && common.pageNo < common.pageLastNo){
             if(listSelected == "높은 일차순"){
                 getList(common.pageNo+1,"higher");
-            }else if(common.filterData){
-                let sel = "";
-                if(listSelected == "높은 일차순"){
-                    sel = "higher";
-                }
-                getList(common.pageNo+1,sel,false);
-            }else if(searchOn){
-                searchHandler()
             }else{
                 getList(common.pageNo+1);
             }
@@ -94,13 +97,8 @@ const Chat = () => {
     const searchHandler = () => {
         if(searchValue.length > 0){
             dispatch(newList(true));
+            dispatch(pageMore(false));
             setSearchOn(true);
-
-            let sel = "";
-            if(listSelected == "높은 일차순"){
-                sel = "higher";
-            }
-            getList(1,sel,true);
         }else{
             setSearchOn(false);
             dispatch(confirmPop({
@@ -113,9 +111,23 @@ const Chat = () => {
         }
     };
 
+
+    //searchOn true 일때는 회원명으로 검색하기
+    useEffect(()=>{
+        if(searchOn){
+            let sel = "";
+            if(listSelected == "높은 일차순"){
+                sel = "higher";
+            }
+            getList(1,sel,true);
+        }
+    },[searchOn]);
+
+
     //연결한대화방리스트 정렬하기
     const listSortHandler = () => {
         dispatch(newList(true));
+        dispatch(pageMore(false));
         if(listSelected == "낮은 일차순"){
             getList(1,"",true);
         }
@@ -143,6 +155,8 @@ const Chat = () => {
             listCount={chatList.length}
             list={chatList}
             listType="chat"
+            isConnect={isCount}
+            endConnect={endCount}
         />
         <RightCont 
             page="chat"

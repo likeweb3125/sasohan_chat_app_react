@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as CF from "../../config/function";
 import { messagePop, filterPop, messagePopList, confirmPop } from "../../store/popupSlice"; 
+import { filter } from "../../store/commonSlice";
 import SearchBox from "../component/SearchBox";
 import SelectBox from "../component/SelectBox";
 import MemberListCont from "../component/MemberListCont";
@@ -15,6 +16,7 @@ const LeftCont = (props) => {
     const [checkNum, setCheckNum] = useState(0);
     const [confirm, setConfirm] = useState(false);
 
+    
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){
@@ -22,25 +24,17 @@ const LeftCont = (props) => {
         }
     },[popup.confirmPop]);
 
+
     //단체메시지 보낼 선택한 회원수
     useEffect(()=>{
         const num = popup.messagePopList.length;
         setCheckNum(num);
     },[popup.messagePopList]);
 
+
     //단체메시지 전송버튼 클릭시
     const groupMsgSend = () => {
-        if(checkNum > 0){
-            dispatch(messagePop(true));
-        }else{
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: '선택된 회원이 없습니다.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }
+        dispatch(messagePop(true));
     };
 
 
@@ -58,7 +52,7 @@ const LeftCont = (props) => {
                     <div className="round_box flex_between w_100">
                         <div className="flex">
                             <h6>단체메시지</h6>
-                            <p className="txt flex">선택한 회원수 <span><strong>{CF.MakeIntComma(checkNum)}</strong> 명</span></p>
+                            <p className="txt flex">회원수 <span><strong>{checkNum ? CF.MakeIntComma(checkNum) : CF.MakeIntComma(props.listCount)}</strong> 명</span></p>
                         </div>
                         <button className="btn_send" onClick={groupMsgSend}>전송</button>
                     </div>
@@ -67,11 +61,11 @@ const LeftCont = (props) => {
                         <ul className="flex_between w_100">
                             <li className="flex_between">
                                 <p>진행중인 소개팅</p>
-                                <p><strong>62</strong> 건</p>
+                                <p><strong>{CF.MakeIntComma(props.isConnect)}</strong> 건</p>
                             </li>
                             <li className="flex_between">
                                 <p>진행종료된 소개팅</p>
-                                <p><strong>1,500</strong> 건</p>
+                                <p><strong>{CF.MakeIntComma(props.endConnect)}</strong> 건</p>
                             </li>
                         </ul>
                     </div>
@@ -97,7 +91,10 @@ const LeftCont = (props) => {
                                         selHidden={props.selHidden}
                                     />
                                     {props.page === "member" &&
-                                        <button className="btn_filter" onClick={()=>{dispatch(filterPop(true))}}>필터버튼</button>
+                                        <button className="btn_filter" onClick={()=>{
+                                            dispatch(filterPop(true));
+                                            dispatch(filter(false));
+                                        }}>필터버튼</button>
                                     }
                                 </div>
                             </div>

@@ -26,6 +26,7 @@ const FilterPop = (props) => {
 
     //팝업닫기
     const closePopHandler = () => {
+        dispatch(filter(true));
         dispatch(filterPop(false));
     };
 
@@ -86,41 +87,6 @@ const FilterPop = (props) => {
     };
 
 
-    //개인정보수정 Yup 유효성검사
-    const validationSchema = Yup.object().shape({
-        password: Yup.string()
-            .min(8, '8자 이상 입력해주세요.')
-            .max(12, '12자까지 입력해주세요.')
-            .required("비밀번호를 입력해주세요.")
-            .matches(/[0-9]/, '숫자를 포함하여 입력해주세요.')
-            .matches(/[a-z]/, '영문을 포함하여 입력해주세요.')
-            .matches(/[^\w]/, '특수문자를 포함하여 입력해주세요.'),
-        password2: Yup.string()
-            .oneOf([Yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
-            .min(8, '8자 이상 입력해주세요.')
-            .max(12, '12자까지 입력해주세요.')
-            .required("비밀번호를 입력해주세요.")
-            .matches(/[0-9]/, '숫자를 포함하여 입력해주세요.')
-            .matches(/[a-z]/, '영문을 포함하여 입력해주세요.')
-            .matches(/[^\w]/, '특수문자를 포함하여 입력해주세요.'),
-        nickName: Yup.string()
-            .required("닉네임을 입력해주세요."),
-        // email: Yup.string()
-        //     .required("이메일을 입력해주세요.")
-        //     .email("올바른 이메일 형식이 아닙니다."),
-        job: Yup.string()
-            .required("직업을 입력해주세요."),
-        height: Yup.string()
-            .required("키를 입력해주세요."),
-        mbti: Yup.string()
-            .required("MBTI를 선택해주세요."),
-        join: Yup.string()
-            .required("가입계기를 입력해주세요."),
-        route: Yup.string()
-            .required("가입경로를 선택해주세요."),
-    });
-
-
     //조건검색하기
     const searchHandler = (values) => {
         dispatch(filter(true));
@@ -132,9 +98,46 @@ const FilterPop = (props) => {
         closePopHandler();
     };
 
-    useEffect(()=>{
-        console.log(common.filterData)
-    },[common.filterData]);
+
+    //초기화하기
+    const fromReset = ({setFieldValue}) => {
+        setFieldValue("j_address","");
+        setFieldValue("j_sido","");
+        setFieldValue("j_sido2","");
+        setFieldValue("j_sido3","");
+        setFieldValue("j_sido4","");
+        setFieldValue("j_sido5","");
+        setFieldValue("j_sido6","");
+        setFieldValue("j_sido7","");
+        setFieldValue("j_sido8","");
+        setFieldValue("j_sido9","");
+        setFieldValue("j_sido10","");
+        setFieldValue("j_age1","");
+        setFieldValue("j_age2","");
+        setFieldValue("j_ages1","");
+        setFieldValue("j_ages2","");
+        setFieldValue("j_ages3","");
+        setFieldValue("j_ages4","");
+        setFieldValue("j_ages5","");
+        setFieldValue("j_ages6","");
+        setFieldValue("j_height1","");
+        setFieldValue("j_height2","");
+        setFieldValue("j_w_cnt1","");
+        setFieldValue("j_w_cnt2","");
+        setFieldValue("j_visual1","");
+        setFieldValue("j_visual2","");
+        setFieldValue("j_T_age","");
+        setFieldValue("j_T_height1","");
+        setFieldValue("j_M_log","");
+        setFieldValue("j_last_in1","");
+        setFieldValue("j_last_in2","");
+        setFieldValue("j_reg_date1","");
+        setFieldValue("j_reg_date2","");
+        setFieldValue("j_long","");
+        setFieldValue("j_drink","");
+        setFieldValue("j_smok","");
+    };
+
 
     return(<>
         <div className="pop_wrap filter_pop"> 
@@ -182,10 +185,10 @@ const FilterPop = (props) => {
                         j_drink: common.filterData.j_drink || "",
                         j_smok: common.filterData.j_smok || "",
                     }}
-                    validationSchema={validationSchema}
+                    // validationSchema={validationSchema}
                     // onSubmit={submit}
                 >
-                    {({values, handleChange, handleBlur, errors, touched, setFieldValue, handleReset}) => (
+                    {({values, handleChange, handleBlur, errors, touched, setFieldValue, handleReset, resetForm}) => (
                         <form>
                             <div className="scroll_wrap line_round_box">
                                 <div className="custom_table2">
@@ -491,7 +494,10 @@ const FilterPop = (props) => {
                                 </div>
                             </div>
                             <div className="flex_between tp16">
-                                <button type="button" className="btn_refresh" onClick={handleReset}>입력 초기화</button>
+                                <button type="button" className="btn_refresh" onClick={()=>{
+                                    handleReset();
+                                    fromReset({setFieldValue});
+                                }}>입력 초기화</button>
                                 <div className="btn_box2">
                                     <button type="button" className="btn_round2" onClick={cancelHandler}>취소</button>
                                     <button type="button" className="btn_round" onClick={()=>{searchHandler(values)}}>검색</button>

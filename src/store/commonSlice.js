@@ -12,6 +12,8 @@ const common = createSlice({
         selectUser:{},
         filter:false,
         filterData:{},
+        searchName:"",
+        sort:"",
         pageNo:1,
         pageLastNo:null,
         pageMore:false,
@@ -46,6 +48,12 @@ const common = createSlice({
         filterData: (state, action) => {
             state.filterData = action.payload;
         },
+        searchName: (state, action) => {
+            state.searchName = action.payload;
+        },
+        sort: (state, action) => {
+            state.sort = action.payload;
+        },
         pageNo: (state, action) => {
             state.pageNo = action.payload.pageNo;
             state.pageLastNo = action.payload.pageLastNo;
@@ -72,6 +80,8 @@ export const {
     selectUser, 
     filter, 
     filterData, 
+    searchName,
+    sort,
     pageNo, 
     pageMore, 
     newList,

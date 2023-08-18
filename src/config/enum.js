@@ -25,7 +25,6 @@ exports.enum_api_uri = {
     u_address2: `${api_uri}v1/select-list/address/:parent_local_code`,
     u_select_list: `${api_uri}v1/select-list`,
 
-
     //단체메시지
     g_msg_list: `${api_uri}v1/user-list/group-chat`,
     g_msg_list_add: `${api_uri}v1/user-list/group-chat-add`,
@@ -43,9 +42,9 @@ exports.enum_api_uri = {
     msg_img_send: `${api_uri}v1/message/chat-image-send`,
     msg_send: `${api_uri}v1/message/chat-send`,
     msg_img_list: `${api_uri}v1/message/pic-list/:room_id`,
+    msg_img_list_admin: `${api_uri}v1/chat-connect/chat-pic-admin/:room_id`,
     chat_introduce_list: `${api_uri}v1/message/chat-introduce-user/:m_id`,
     chat_connect: `${api_uri}v1/message/chat-introduce-connect`,
-
 
     //연결한 대화방
     chat_list: `${api_uri}v1/chat-connect/chat-list`,

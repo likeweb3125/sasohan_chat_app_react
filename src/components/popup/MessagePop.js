@@ -81,37 +81,54 @@ const MessagePop = (props) => {
     },[popup.messagePopList]);
 
 
+    useEffect(()=>{
+        let deltList = popup.messagePopDeltList;
+        let newList = list.filter(item => !deltList.includes(item.m_id));
+        setList(newList);
+    },[popup.messagePopDeltList]);
+ 
+
     //회원 추가버튼 클릭시
     const addHandler = () => {
-        dispatch(loadingPop(true));
+        if(popup.messagePopList.length > 0){
+            dispatch(loadingPop(true));
 
-        let body = {
-            to_id: popup.messagePopList
-        };
+            let body = {
+                to_id: popup.messagePopList
+            };
 
-        axios.post(`${g_msg_list_add}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
+            axios.post(`${g_msg_list_add}`,body,
+                {headers: {Authorization: `Bearer ${token}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    dispatch(loadingPop(false));
+
+                    let data = res.data;
+                    dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
+                }
+            })
+            .catch((error) => {
                 dispatch(loadingPop(false));
-
-                let data = res.data;
-                dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
-            }
-        })
-        .catch((error) => {
-            dispatch(loadingPop(false));
-            
-            const err_msg = CF.errorMsgHandler(error);
+                
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            });
+        }else{
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
+                confirmPopTxt:'추가할 회원이 없습니다.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        });
+        }
     };
 
 
@@ -189,13 +206,23 @@ const MessagePop = (props) => {
    
     //단체메시지전송 버튼 클릭시
     const msgSendHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "단체메시지를 선택한 회원에게 전송하시겠습니까?",
-            confirmPopBtn:2,
-        }));
-        setSendConfirm(true);
+        if(list.length > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: "단체메시지를 선택한 회원에게 전송하시겠습니까?",
+                confirmPopBtn:2,
+            }));
+            setSendConfirm(true);
+        }else{
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'선택된 회원이 없습니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
     };
 
     //단체메시지전송 

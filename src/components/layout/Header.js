@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { io } from "socket.io-client";
+import { useSocket } from '../etc/SocketProvider';
 import * as CF from "../../config/function";
 import { enum_api_uri } from '../../config/enum';
 import { managerProfilePop, managerProfilePopPosition, confirmPop } from '../../store/popupSlice';
@@ -9,18 +9,6 @@ import { selectUser, newMsgDataAdmin } from '../../store/commonSlice';
 import ConfirmPop from '../popup/ConfirmPop';
 import logo from "../../images/logo.svg";
 import none_profile from "../../images/img_profile.jpg";
-
-
-const api_uri = enum_api_uri.api_uri;
-const token = localStorage.getItem("token");
-
-const socket = io(api_uri, {
-    reconnection: true, // 자동 재접속을 활성화합니다.
-    cors: { origin: "*", },
-    extraHeaders: {
-        Authorization: `Bearer ${token}`,
-    },
-});
 
 
 const Header = () => {
@@ -31,33 +19,32 @@ const Header = () => {
     const [confirm, setConfirm] = useState(false);
     const [menuOn, setMenuOn] = useState(1);
     const [pageMove, setPageMove] = useState(null);
+    const socket = useSocket();
+    const api_uri = enum_api_uri.api_uri;
     
 
-    // 소켓 연결
+    // 소켓 채팅방 연결
     const socketInit = () => {
         const data = { room_id: user.managerInfo.m_id};
         socket.emit("join room", data);
     };
 
-    //로그인시 소켓연결하기
+
     useEffect(()=>{
-        if(user.isLogin && Object.keys(user.managerInfo).length > 0 && user.managerInfo.m_id.length > 0){
+        if(socket){
             socketInit();
+
+            //채팅방 연결 받기
+            socket.on("join room", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+            })
+
+            //매니저 메시지알림 받기
+            socket.on("admin msg", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+                dispatch(newMsgDataAdmin(result));
+            })
         }
-    },[user.managerInfo]);
-    
-
-    useEffect(()=>{
-        //채팅방 연결 받기
-        socket.on("join room", (result) => {
-            // console.log(JSON.stringify(result, null, 2));
-        })
-
-        //메시지알림 받기
-        socket.on("admin msg", (result) => {
-            console.log(JSON.stringify(result, null, 2));
-            dispatch(newMsgDataAdmin(result));
-        })
     },[socket]);
 
 

@@ -12,6 +12,7 @@ const ChatPop = (props) => {
     const common = useSelector((state)=>state.common);
     const dispatch = useDispatch();
     const chat_introduce_list = enum_api_uri.chat_introduce_list;
+    const chat_connect = enum_api_uri.chat_connect;
     const token = localStorage.getItem("token");
     const [confirm, setConfirm] = useState(false);
     const [connectConfirm, setConnectConfirm] = useState(false);
@@ -40,7 +41,7 @@ const ChatPop = (props) => {
 
     //대화방연결 리스트 가져오기
     const getList = (searchTxt) => {
-        axios.get(`${chat_introduce_list.replace(":m_id",common.selectUser.m_id)}${searchTxt ? "&search="+searchTxt : ""}`,
+        axios.get(`${chat_introduce_list.replace(":m_id",common.selectUser.m_id)}${searchTxt ? "?search_name="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
@@ -152,7 +153,30 @@ const ChatPop = (props) => {
     // 대화방 연결버튼 클릭시
     const connectHandler = () => {
         if(checkList.length > 0){
-
+            let body = {
+                from_id: common.selectUser.m_id,
+                to_id: checkList
+            };
+    
+            axios.post(`${chat_connect}`,body,
+                {headers: {Authorization: `Bearer ${token}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    let data = res.data;
+                    
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            });
         }else{
             dispatch(confirmPop({
                 confirmPop:true,

@@ -63,9 +63,9 @@ html,.body{height: auto;}
 /* custom_check */
 .custom_check label{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;cursor: pointer;}
 .custom_check label input{display: none;-webkit-appearance: none;-moz-appearance: none;-ms-appearance: none;-o-appearance: none;appearance: none;}
-.custom_check label>.check{width: 24px;height: 24px;font-size: 0;background: url(../images/check_box.svg) no-repeat center;}
+.custom_check label>.check{width: 24px;height: 24px;font-size: 0;background: url(../images/check_box.png) no-repeat center;}
 .custom_check label>.txt{color: #373D49;padding-left: 8px;line-height: 1.2;}
-.custom_check label input:checked + .check{background:url(../images/check_box_on.svg) no-repeat center;}
+.custom_check label input:checked + .check{background:url(../images/check_box_on.png) no-repeat center;}
 
 /* custom_radio */
 .custom_radio label{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;cursor: pointer;}

@@ -34,6 +34,7 @@ const Message = () => {
 
     //메시지리스트 가져오기
     const getList = (page, sort, newGet) => {
+        console.log(searchOn)
         axios.get(`${msg_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
@@ -73,14 +74,6 @@ const Message = () => {
         if(common.pageMore && common.pageNo < common.pageLastNo){
             if(listSelected == "최근 가입일자순"){
                 getList(common.pageNo+1,"sign");
-            }else if(common.filterData){
-                let sel = "";
-                if(listSelected == "최근 가입일자순"){
-                    sel = "sign";
-                }
-                getList(common.pageNo+1,sel,false);
-            }else if(searchOn){
-                searchHandler()
             }else{
                 getList(common.pageNo+1);
             }
@@ -94,13 +87,8 @@ const Message = () => {
     const searchHandler = () => {
         if(searchValue.length > 0){
             dispatch(newList(true));
+            dispatch(pageMore(false));
             setSearchOn(true);
-
-            let sel = "";
-            if(listSelected == "최근 가입일자순"){
-                sel = "sign";
-            }
-            getList(1,sel,true);
         }else{
             setSearchOn(false);
             dispatch(confirmPop({
@@ -113,10 +101,27 @@ const Message = () => {
         }
     };
 
+    
+    useEffect(()=>{
+        if(searchOn){
+            //검색할때만 store messagePopList 값 지우기 (체크리스트)
+            dispatch(messagePopList([]));
+
+            //searchOn true 일때는 회원명으로 검색하기
+            let sel = "";
+            if(listSelected == "최근 가입일자순"){
+                sel = "sign";
+            }
+            
+            getList(1,sel,true);
+        }
+    },[searchOn]);
+
 
     //메시지리스트 정렬하기
     const listSortHandler = () => {
         dispatch(newList(true));
+        dispatch(pageMore(false));
         if(listSelected == "마지막 소개 이력순"){
             getList(1,"",true);
         }
@@ -125,17 +130,10 @@ const Message = () => {
         }
     };
 
+
     useEffect(()=>{
         listSortHandler();
     },[listSelected]);
-
-
-    //검색할때만 store messagePopList 값 지우기 (체크리스트)
-    useEffect(()=>{
-        if(searchOn){
-            dispatch(messagePopList([]));
-        }
-    },[searchOn]);
 
 
     //메시지리스트 바뀔때마다 
@@ -145,6 +143,7 @@ const Message = () => {
     },[msgList]);
 
 
+    //단체메시지 전송완료시 리스트 다시 불러오기
     useEffect(()=>{
         if(common.groupMsg){
             getList(1,"",true);
@@ -218,7 +217,7 @@ const Message = () => {
             }
             //채팅방 없을때
             else{
-                updatedMsgList.unshift(common.newMsgDataAdmin);
+                updatedMsgList.unshift(common.newMsgData);
             }
             setMsgList(updatedMsgList);
         }
@@ -240,6 +239,7 @@ const Message = () => {
             setMsgList(updatedMsgList);
         }
     },[common.msgViewId]);
+
 
 
     return(<>

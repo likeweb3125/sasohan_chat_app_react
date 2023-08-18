@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -8,12 +9,14 @@ import sampleImg from "../../images/sample/img_sample.jpg";
 import { Navigation } from "swiper";
 
 const ImgPop = (props) => {
+    const location = useLocation();
     const popup = useSelector((state)=>state.popup);
     const api_uri = enum_api_uri.api_uri;
     const dispatch = useDispatch();
     const swiperRef = useRef(null);
     const [slideOnIdx, setSlideOnIdx] = useState(null);
     const [bigImg, setBigImg] = useState("");
+    const [admin, setAdmin] = useState(false);
 
     //팝업닫기
     const closePopHandler = () => {
@@ -61,6 +64,15 @@ const ImgPop = (props) => {
     useEffect(()=>{
         setBigImg(api_uri+popup.imgPopList[slideOnIdx]);
     },[slideOnIdx]);
+
+
+    //연결한대화방 페이지일때는 admin true
+    useEffect(()=>{
+        const path = location.pathname;
+        if(path == "/chat"){
+            setAdmin(true);
+        }
+    },[location.pathname]);
     
 
 
@@ -103,7 +115,7 @@ const ImgPop = (props) => {
                         </div>
                         <button type="button" className="btn_list" onClick={()=>{
                             closePopHandler();
-                            dispatch(imgListPop(true));
+                            dispatch(imgListPop({imgListPop:true,imgListPopAdmin:admin}));
                         }}>사진 목록 보기</button>
                     </div>
                 </div>

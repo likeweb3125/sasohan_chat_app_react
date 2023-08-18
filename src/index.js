@@ -7,16 +7,19 @@ import { persistStore } from 'redux-persist';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
+import { SocketProvider } from './components/etc/SocketProvider';
 
 export let persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
+  // <React.StrictMode>ㅌ
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
-        <App />
+        <SocketProvider>
+          <App />
+        </SocketProvider>
       </BrowserRouter>
     </PersistGate>
   </Provider>

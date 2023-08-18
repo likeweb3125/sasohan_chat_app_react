@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as CF from "../../config/function";
-import { memCheckPop, memCheckPopCheckList, confirmPop, messagePopList, loadingPop } from "../../store/popupSlice";
+import { memCheckPop, memCheckPopCheckList, confirmPop, messagePopList, loadingPop, messagePopDeltList } from "../../store/popupSlice";
 import SearchBox from "../component/SearchBox";
 import MemberListContPop from "../component/MemberListContPop";
 import ConfirmPop from "./ConfirmPop";
@@ -9,8 +9,11 @@ import ConfirmPop from "./ConfirmPop";
 const MemberCheckPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const dispatch = useDispatch();
+    const [memList, setMemList] = useState([]);
     const [confirm, setConfirm] = useState(false);
     const [changeConfirm, setChangeConfirm] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
+    const [searchOn, setSearchOn] = useState(false);
     
     //팝업닫기
     const closePopHandler = () => {
@@ -27,21 +30,65 @@ const MemberCheckPop = (props) => {
         }
     },[popup.confirmPop]);
 
+    
+    useEffect(()=>{
+        setMemList(popup.memCheckPopList);
+    },[popup.memCheckPopList]);
+
 
     // 회원삭제 or 추가 
     const changeHandler = () => {
         let list = popup.messagePopList;
         let selList = popup.memCheckPopCheckList;
         let newList;
-        if(popup.memCheckPopTit == "삭제"){
-            newList = list.filter((item) => !selList.includes(item));
-        }if(popup.memCheckPopTit == "추가"){
-            newList = list.concat(selList);
+        if(list.length > 0){ //전체회원 전송이 아닐때
+            if(popup.memCheckPopTit == "삭제"){
+                newList = list.filter((item) => !selList.includes(item));
+            }if(popup.memCheckPopTit == "추가"){
+                newList = list.concat(selList);
+            }
+            dispatch(messagePopList(newList));
+        }else{ //전체회원 전송일때 - 삭제만 가능
+            if(popup.memCheckPopTit == "삭제"){
+                dispatch(messagePopDeltList(selList));
+            }
         }
-        dispatch(messagePopList(newList));
         closePopHandler();
     };
 
+
+    //회원명 검색하기
+    const searchHandler = () => {
+        if(searchValue.length > 0){
+            setSearchOn(true);
+        }else{
+            setSearchOn(false);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: "검색할 회원명을 입력해주세요.",
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    //회원명검색시 리스트에서 찾기
+    useEffect(()=>{
+        if(searchOn){
+            let newList = memList.filter((item) => item.m_name.includes(searchValue));
+            setMemList(newList);
+        }
+    },[searchOn]);
+
+
+    //회원명 검색 input값 변경시 searchOn false
+    useEffect(()=>{
+        if(searchOn){
+            setSearchOn(false);
+        }
+    },[searchValue]);
 
 
     return(<>
@@ -52,10 +99,15 @@ const MemberCheckPop = (props) => {
                     <p className="f_20"><strong>회원 {popup.memCheckPopTit}</strong></p>
                     <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
-                <SearchBox placeholder="회원명 검색" />
+                <SearchBox 
+                    placeholder="회원명 검색" 
+                    searchValue={searchValue}
+                    onChangeHandler={(e)=>{setSearchValue(e.currentTarget.value)}}
+                    onSearchHandler={searchHandler}
+                />
                 <MemberListContPop
                     allCheck={true}
-                    list={popup.memCheckPopList}
+                    list={memList}
                     listType="check_member"
                 />
                 <div className="btn_box flex_between">

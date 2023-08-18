@@ -1,12 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { io } from "socket.io-client";
+import moment from "moment";
+import 'moment/locale/ko';
+import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop } from "../../store/popupSlice";
 import { msgSend, selectUser, newMsgData, socketRooms } from "../../store/commonSlice";
-
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -17,24 +18,16 @@ import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
 import sampleImg from "../../images/sample/img_sample.jpg";
 
-const token = localStorage.getItem("token");
-const api_uri = enum_api_uri.api_uri;
-
-// 메시지전송-------------------------
-const socket = io(api_uri, {
-    reconnection: true, // 자동 재접속을 활성화합니다.
-    cors: { origin: "*", },
-    extraHeaders: {
-        Authorization: `Bearer ${token}`,
-    },
-});
 
 
 const RightCont = (props) => {
+    const token = localStorage.getItem("token");
     const dispatch = useDispatch();
+    const socket = useSocket();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const common = useSelector((state)=>state.common);
+    const api_uri = enum_api_uri.api_uri;
     const assi_list = enum_api_uri.assi_list;
     const assi_add = enum_api_uri.assi_add;
     const assi_delt = enum_api_uri.assi_delt;
@@ -59,12 +52,12 @@ const RightCont = (props) => {
     const [myChat, setMyChat] = useState(null);
     const [msgList, setMsgList] = useState([]);
     const chatRef = useRef();
+    const innerRef = useRef();
     const [textareaValue, setTextareaValue] = useState("");
     const [photoPath, setPhotoPath] = useState("upload/chat/");
     const [floatId, setFloatId] = useState("");
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    
 
 
     //window resize
@@ -92,6 +85,9 @@ const RightCont = (props) => {
     
     useEffect(()=>{
         setMsgList(msgList);
+
+        //로컬스토리지에 선택한회원과의 채팅수 저장
+        localStorage.setItem("msgCount",msgList.length);
     },[msgList]);
 
 
@@ -105,74 +101,132 @@ const RightCont = (props) => {
 
 
     useEffect(()=>{
-        //채팅방 연결 받기
-        socket.on("join room", (result) => {
-            console.log(JSON.stringify(result, null, 2));
+        if(socket){
+            //채팅방 연결 받기
+            socket.on("join room", (result) => {
+                console.log(JSON.stringify(result, null, 2));
 
-            let rooms = [...common.socketRooms];
-            const roomId = result.room_id;
+                let rooms = [...common.socketRooms];
+                const roomId = result.room_id;
 
-            if(!rooms.includes(roomId)) {
-                rooms.push(roomId);
-                dispatch(socketRooms([...rooms]));
-            }
-        })
+                if(!rooms.includes(roomId)) {
+                    rooms.push(roomId);
+                    dispatch(socketRooms([...rooms]));
+                }
+            })
 
-        //메시지 받기
-        socket.on("chat msg", (result) => {
-            console.log(JSON.stringify(result, null, 2));
-            let msg = {
-                "idx": result.idx,
-                "from_id": result.from_id,
-                "to_id": result.to_id,
-                "msg": result.msg,
-                "time": result.time,
-                "message_type": result.message_type,
-                "view_cnt": result.view_cnt
-            };
-            setMsgList(prevList => [...prevList, msg]);
+            //메시지 받기
+            socket.on("chat msg", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+                const msgCount = localStorage.getItem("msgCount");
+                let date = new Date();
+                    date = moment(date).format("YYYY년 M월 D일 dddd");
+                let start = [
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": "매니저가 회원님께 대화를 신청했어요!",
+                        "time": result.time,
+                        "message_type": "Q",
+                        "view_cnt": result.view_cnt
+                    },
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": date,
+                        "time": result.time,
+                        "message_type": "S",
+                        "view_cnt": result.view_cnt
+                    }
+                ];
+                let msg = {
+                    "idx": result.idx,
+                    "from_id": result.from_id,
+                    "to_id": result.to_id,
+                    "msg": result.msg,
+                    "time": result.time,
+                    "message_type": result.message_type,
+                    "view_cnt": result.view_cnt
+                };
 
-            //메시지입력 textarea 값 비우기
-            setTextareaValue("");
+                if(msgCount > 0){
+                    setMsgList(prevList => [...prevList, msg]);
+                }else{
+                    setMsgList(prevList => [...prevList, ...start, msg]);
+                }
+                
 
-            //메시지내역 맨밑으로 스크롤
-            setTimeout(()=>{
-                chatRef.current.scrollTop = chatRef.current.scrollHeight;
-            },10);
+                //메시지입력 textarea 값 비우기
+                setTextareaValue("");
 
-            dispatch(newMsgData(result));
-        });
+                //메시지내역 맨밑으로 스크롤
+                setTimeout(()=>{
+                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                },10);
 
-        //이미지 받기
-        socket.on("image upload", (result) => {
-            console.log(JSON.stringify(result, null, 2));
-            let imgs = result.msg.map(item => "upload/chat/" + item);
-            let msg = {
-                "idx": result.idx,
-                "from_id": result.from_id,
-                "to_id": result.to_id,
-                "msg": imgs,
-                "time": result.time,
-                "message_type": result.message_type,
-                "view_cnt": result.view_cnt
-            };
-            setMsgList(prevList => [...prevList, msg]);
+                dispatch(newMsgData(result));
+            });
 
-            dispatch(msgSend(true));
+            //이미지 받기
+            socket.on("image upload", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+                const msgCount = localStorage.getItem("msgCount");
+                let date = new Date();
+                    date = moment(date).format("YYYY년 M월 D일 dddd");
+                let start = [
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": "매니저가 회원님께 대화를 신청했어요!",
+                        "time": result.time,
+                        "message_type": "Q",
+                        "view_cnt": result.view_cnt
+                    },
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": date,
+                        "time": result.time,
+                        "message_type": "S",
+                        "view_cnt": result.view_cnt
+                    }
+                ];
+                let imgs = result.msg.map(item => "upload/chat/" + item);
+                let msg = {
+                    "idx": result.idx,
+                    "from_id": result.from_id,
+                    "to_id": result.to_id,
+                    "msg": imgs,
+                    "time": result.time,
+                    "message_type": result.message_type,
+                    "view_cnt": result.view_cnt
+                };
 
-            //메시지내역 맨밑으로 스크롤
-            setTimeout(()=>{
-                chatRef.current.scrollTop = chatRef.current.scrollHeight;
-            },10);
+                if(msgCount > 0){
+                    setMsgList(prevList => [...prevList, msg]);
+                }else{
+                    setMsgList(prevList => [...prevList, ...start, msg]);
+                }
 
-            dispatch(newMsgData(result));
-        });
+                dispatch(msgSend(true));
 
-        //에러메시지 받기
-        socket.on("chat error", (result) => {
-            console.log(JSON.stringify(result, null, 2));
-        })
+                //메시지내역 맨밑으로 스크롤
+                setTimeout(()=>{
+                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                },10);
 
+                dispatch(newMsgData(result));
+            });
+
+            //에러메시지 받기
+            socket.on("chat error", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+            })
+        }
     },[socket]);
 
 
@@ -325,7 +379,7 @@ const RightCont = (props) => {
 
     //매니저 단체메시지설정 변경시
     useEffect(()=>{
-        if(user.managerSetting.set_num.length > 0 && user.managerSetting.set_range.length > 0){
+        if(user.managerSetting.set_num > 0 && user.managerSetting.set_range.length > 0){
             setNoSetting(false);
         }else{
             setNoSetting(true);
@@ -340,12 +394,12 @@ const RightCont = (props) => {
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
             
-            //선택한회원 대화방 소켓연결
-            socketInit();
-
             //연결한대화방 페이지 아닐때 
             if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
                 setMyChat(true);
+
+                //선택한회원 대화방 소켓연결
+                socketInit();
 
                 //선택한회원중에 내가응대중인회원 on
                 let idx = assiList.userList.findIndex(item=>item.m_id === common.selectUser.m_id);
@@ -412,8 +466,57 @@ const RightCont = (props) => {
 
             //연결한대화방 페이지 일때 
             if(common.selectUser.hasOwnProperty("manager_id") && common.selectUser.manager_id.length > 0){
-                setMyChat(true);
-    
+                setMyChat(false);
+                
+                // 선택한 연결한대화방이 있을때만 메시지내용가져오기
+                if(common.selectUser.room_id.length > 0 && common.selectUser.idx){
+                    setChatOn(true);
+
+                    //최근 메시지내용 가져오기 - 연결된 회원끼리 대화
+                    axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx)}`,
+                        {headers:{Authorization: `Bearer ${token}`}}
+                    )
+                    .then((res)=>{
+                        if(res.status === 200){ 
+                            let data = res.data;
+
+                            //대화내용이 있을때
+                            if(data.length > 0){
+                                data = data.reverse();
+                                setMsgList([...data]);
+
+                                setChatOn(true);
+
+                                let idx = data[0].idx; 
+                                setChatLastIdx(idx);
+
+                                //메시지내역 맨밑으로 스크롤
+                                setTimeout(()=>{
+                                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                                },10);
+                            }
+                            //대화내용이 없을때
+                            else{
+                                setMsgList([]);
+                                setChatOn(true);
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        const err_msg = CF.errorMsgHandler(error);
+                        if(err_msg == "대화방이 존재하지 않습니다."){
+                            setChatOn(true);
+                        }else{
+                            dispatch(confirmPop({
+                                confirmPop:true,
+                                confirmPopTit:'알림',
+                                confirmPopTxt: err_msg,
+                                confirmPopBtn:1,
+                            }));
+                            setConfirm(true);
+                        }
+                    });
+                }
             }
         }else{
             setChatOn(false);
@@ -422,9 +525,48 @@ const RightCont = (props) => {
     },[common.selectUser]);
 
 
-    //메시지내용 가져오기
+    //메시지내용 가져오기 - 매니저와 회원의 대화
     const getMessage = (idx) => {
         axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",idx)}`,
+            {headers:{Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data;
+                //대화내용이 있을때
+                if(data.length > 0){
+                    data = data.reverse();
+                    setMsgList([...data,...msgList]);
+
+                    setChatOn(true);
+                    setNoChat(false);
+
+                    let idx = data[0].idx; 
+                    setChatLastIdx(idx);
+                }
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(err_msg == "대화방이 존재하지 않습니다."){
+                setChatOn(true);
+                setNoChat(true);
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
+    //메시지내용 가져오기 - 연결된 회원끼리 대화
+    const getMessageAdmin = (idx) => {
+        axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",idx)}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
@@ -496,16 +638,24 @@ const RightCont = (props) => {
 
     //채팅창 맨위로 스크롤시 그 전 메시지내용 가져오기
     const chatScroll = () => {
+        const chatH = chatRef.current.offsetHeight;
+        const innerH = innerRef.current.offsetHeight;
         const scrollTop = chatRef.current.scrollTop;
-        if (scrollTop === 0) {
-            const prevScrollHeight = chatRef.current.scrollHeight;
-            getMessage(chatLastIdx);
+        if(innerH > chatH){
+            if (scrollTop === 0) {
+                const prevScrollHeight = chatRef.current.scrollHeight;
+                if(myChat){
+                    getMessage(chatLastIdx);
+                }else{
+                    getMessageAdmin(chatLastIdx);
+                }
 
-            setTimeout(() => {
-                const newScrollHeight = chatRef.current.scrollHeight;
-                const addedHeight = newScrollHeight - prevScrollHeight;
-                chatRef.current.scrollTop = addedHeight;
-            }, 100);
+                setTimeout(() => {
+                    const newScrollHeight = chatRef.current.scrollHeight;
+                    const addedHeight = newScrollHeight - prevScrollHeight;
+                    chatRef.current.scrollTop = addedHeight;
+                }, 100);
+            }
         }
     };
 
@@ -577,24 +727,36 @@ const RightCont = (props) => {
                     }
                     <div className="chat_wrap scroll_wrap" ref={chatRef} onScroll={chatScroll}>
                         {chatOn && msgList && msgList.length > 0 ?
-                            <div className="inner">
+                            <div className="inner" ref={innerRef}>
                                 {msgList.map((cont,i)=>{
                                     let send;
-                                    if(cont.from_id === user.managerInfo.m_id){
-                                        send = true;
+                                    if(myChat){
+                                        if(cont.from_id === user.managerInfo.m_id){
+                                            send = true;
+                                        }else{
+                                            send = false;
+                                        }
                                     }else{
-                                        send = false;
+                                        if(cont.from_id === common.selectUser.from_id){
+                                            send = true;
+                                        }else{
+                                            send = false;
+                                        }
                                     }
 
                                     return(<div key={i}>
                                         {cont.message_type == "Q" ?
                                             <div className="tit_box">{common.selectUser.m_name} 님께 대화를 신청했어요!</div>
+                                        : cont.message_type == "N" ?
+                                            <div className="tit_box">{cont.msg}</div>
                                         : cont.message_type == "S" ?
                                             <div className="date_box">
                                                 <span>{cont.msg}</span>
                                             </div>
                                         :   <div className={`chat_box ${send ? "send" : ""}`}>
                                                 {send ?
+                                                    <>
+                                                    {!myChat && <p className="name tx_r">{common.selectUser.from_user}</p>}
                                                     <ul className="txt_ul">
                                                         <li>
                                                             <div className="box flex_bottom">
@@ -619,8 +781,9 @@ const RightCont = (props) => {
                                                             </div>
                                                         </li>
                                                     </ul>
+                                                    </>
                                                     :   <>
-                                                        <p className="name">{common.selectUser.m_name}</p>
+                                                        <p className="name">{myChat ? common.selectUser.m_name : common.selectUser.to_user}</p>
                                                         <ul className="txt_ul">
                                                             <li>
                                                                 <div className="box flex_bottom">

@@ -14,6 +14,7 @@ const MemberListCont = (props) => {
     const [idList, setIdList] = useState([]);
     const listRef = useRef();
 
+    
     //맨처음 리스트 회원아이디값만 배열로
     useEffect(()=>{
         if(props.list){
@@ -71,6 +72,13 @@ const MemberListCont = (props) => {
     },[common.selectUser, props.list]);
 
 
+    useEffect(()=>{
+        if(popup.messagePop){
+            setListOn(null);
+        }
+    },[popup.messagePop]);
+
+
     //선택한 회원값이 변경될때마다 store msgViewId 에 회원아이디 저장
     useEffect(()=>{
         if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
@@ -115,8 +123,11 @@ const MemberListCont = (props) => {
                                                         selectUser(
                                                             {
                                                                 room_id:mem.room_id,
-                                                                idx:mem.idx,
-                                                                manager_id:mem.manager_id
+                                                                idx:mem.last_idx,
+                                                                manager_id:mem.manager_id,
+                                                                from_id:mem.from_id,
+                                                                from_user:mem.from_user.m_name,
+                                                                to_user:mem.to_user.m_name,
                                                             }
                                                         )
                                                     );

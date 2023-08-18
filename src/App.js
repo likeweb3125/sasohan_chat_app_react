@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { SocketProvider } from './components/etc/SocketProvider';
 import ConfirmPop from './components/popup/ConfirmPop';
 import Popup from './components/popup/Popup';
 import Layout from './components/layout/Layout';
@@ -14,7 +13,6 @@ import './css/reset.css';
 import './css/common.css';
 import './css/main.css';
 import './css/content.css';
-
 
 
 function App() {

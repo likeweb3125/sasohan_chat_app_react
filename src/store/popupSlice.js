@@ -24,6 +24,7 @@ const popup = createSlice({
 
         //사진모아보기 리스트팝업
         imgListPop: false,
+        imgListPopAdmin: false,
 
         //대화방연결 팝업
         chatPop: false,
@@ -31,6 +32,7 @@ const popup = createSlice({
         //단체메시지 팝업
         messagePop: false,
         messagePopList:[],
+        messagePopDeltList:[],
 
         //단체메시지 회원 추가,삭제 팝업
         memCheckPop: false,
@@ -73,7 +75,8 @@ const popup = createSlice({
             state.imgPopIdx = action.payload.imgPopIdx;
         },
         imgListPop: (state, action) => {
-            state.imgListPop = action.payload;
+            state.imgListPop = action.payload.imgListPop;
+            state.imgListPopAdmin = action.payload.imgListPopAdmin;
         },
         chatPop: (state, action) => {
             state.chatPop = action.payload;
@@ -83,6 +86,9 @@ const popup = createSlice({
         },
         messagePopList: (state, action) => {
             state.messagePopList = action.payload;
+        },
+        messagePopDeltList: (state, action) => {
+            state.messagePopDeltList = action.payload;
         },
         memCheckPop: (state, action) => {
             state.memCheckPop = action.payload.memCheckPop;
@@ -117,6 +123,7 @@ export const {
     chatPop,
     messagePop,
     messagePopList,
+    messagePopDeltList,
     memCheckPop,
     memCheckPopCheckList,
     filterPop,

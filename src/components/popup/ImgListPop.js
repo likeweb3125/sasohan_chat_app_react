@@ -11,6 +11,7 @@ const ImgListPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const msg_img_list = enum_api_uri.msg_img_list;
+    const msg_img_list_admin = enum_api_uri.msg_img_list_admin;
     const api_uri = enum_api_uri.api_uri;
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const ImgListPop = (props) => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(imgListPop(false));
+        dispatch(imgListPop({imgListPop:false,imgListPopAdmin:false}));
     };
 
     // Confirm팝업 닫힐때
@@ -52,8 +53,35 @@ const ImgListPop = (props) => {
         });
     };
 
+    //채팅방 모든이미지 가져오기 - 연결한대화방일때 (연결된 회원끼리 대화방)
+    const getImgListAdmin = () => {
+        axios.get(`${msg_img_list_admin.replace(":room_id", common.selectUser.room_id)}`,
+            {headers:{Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data;
+                setImgList([...data.image_list]);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
     useEffect(()=>{
-        getImgList();
+        if(popup.imgListPopAdmin){
+            getImgListAdmin();
+        }else{
+            getImgList();
+        }
     },[]);
     
 
