@@ -713,7 +713,7 @@ const RightCont = (props) => {
             </div>
             <div className={`bottom_box ${floatOn ? "small" : ""}`}>
                 <div className="over_hidden">
-                    {chatOn && props.page != "chat" &&
+                    {chatOn && myChat &&
                         <div className="mem_box flex_between">
                             <MemberBox 
                                 listType="member"

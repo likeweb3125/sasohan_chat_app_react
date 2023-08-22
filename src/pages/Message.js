@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import * as CF from "../config/function";
@@ -18,11 +18,14 @@ const Message = () => {
     const dispatch = useDispatch();
     const msg_list = enum_api_uri.msg_list;
     const [confirm, setConfirm] = useState(false);
+    const [allCount, setAllCount] = useState(0);
     const [msgList, setMsgList] = useState([]);
     const [listSelected, setListSelected] = useState("높은 일차순");
     const [searchValue, setSearchValue] = useState("");
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
+    const firstRender = useRef(true);
+
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -34,7 +37,6 @@ const Message = () => {
 
     //메시지리스트 가져오기
     const getList = (page, sort, newGet) => {
-        console.log(searchOn)
         axios.get(`${msg_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
@@ -67,6 +69,40 @@ const Message = () => {
             setConfirm(true);
         });
     };
+
+
+    //맨처음 메시지리스트 가져오기
+    useEffect(()=>{
+        axios.get(`${msg_list}?page_no=${1}`,
+            {headers:{Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data;
+                setMsgList([...data.chat_list]);
+
+                setAllCount(data.chat_count);
+
+                setListCount(data.chat_count);
+
+                //store에 페이지저장
+                dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
+
+                //store에 newList false
+                dispatch(newList(false));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    },[]);
 
 
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기
@@ -130,7 +166,13 @@ const Message = () => {
     };
 
 
+    //맨처음 렌더링될때 말고 listSelected 값이 바뀔때만 listSortHandler 함수실행
     useEffect(()=>{
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+        
         listSortHandler();
     },[listSelected]);
 
@@ -243,7 +285,7 @@ const Message = () => {
     return(<>
         <LeftCont
             page="message"
-            allCount={listCount}
+            allCount={allCount}
             searchValue={searchValue}
             onSearchChange={(e)=>{setSearchValue(e.currentTarget.value)}}
             onSearchHandler={searchHandler}

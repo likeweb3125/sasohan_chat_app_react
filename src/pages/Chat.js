@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { enum_api_uri } from "../config/enum";
@@ -25,6 +25,7 @@ const Chat = () => {
     const [listCount, setListCount] = useState(0);
     const [isCount, setIsCount] = useState(0);
     const [endCount, setEndCount] = useState(0);
+    const firstRender = useRef(true);
 
 
     // Confirm팝업 닫힐때
@@ -52,6 +53,47 @@ const Chat = () => {
                 }else{
                     setChatList([...chatList,...data.chat_list]);
                 }
+
+                setListCount(data.all_cnt);
+
+                //store에 페이지저장
+                dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
+
+                //store에 newList false
+                dispatch(newList(false));
+            }
+        })
+        .catch((error) => {
+            dispatch(loadingPop(false));
+
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //맨처음 연결한대화방 리스트 가져오기
+    useEffect(()=>{
+        dispatch(loadingPop(true));
+
+        axios.get(`${chat_list}?page_no=${1}`,
+            {headers:{Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(loadingPop(false));
+
+                let data = res.data;
+                setChatList([...data.chat_list]);
+
+                setListCount(data.all_cnt);
+
                 setAllCount(data.all_cnt);
                 setIsCount(data.is_connect_cnt);
                 setEndCount(data.end_connect_cnt);
@@ -75,7 +117,7 @@ const Chat = () => {
             }));
             setConfirm(true);
         });
-    };
+    },[]);
 
 
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기
@@ -135,7 +177,13 @@ const Chat = () => {
         }
     };
 
+    //맨처음 렌더링될때 말고 listSelected 값이 바뀔때만 listSortHandler 함수실행
     useEffect(()=>{
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+        
         listSortHandler();
     },[listSelected]);
 
@@ -151,7 +199,7 @@ const Chat = () => {
             listSelected={listSelected}
             onSelChange={(e)=>{setListSelected(e.currentTarget.value)}}
             selHidden={true}
-            listCount={chatList.length}
+            listCount={listCount}
             list={chatList}
             listType="chat"
             isConnect={isCount}
