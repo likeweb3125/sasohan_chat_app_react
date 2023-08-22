@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { chatPop, confirmPop } from "../../store/popupSlice";
+import { chatPop, confirmPop, tooltipPop } from "../../store/popupSlice";
 import SearchBox from "../component/SearchBox";
 import ConfirmPop from "./ConfirmPop";
 
@@ -22,6 +22,28 @@ const ChatPop = (props) => {
     const [list, setList] = useState([]);
     const [idList, setIdList] = useState([]);
     const [checkList, setCheckList] = useState([]);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+
+    //window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+
+    //window 사이즈변경시 툴팁팝업 닫기
+    useEffect(()=>{
+        dispatch(tooltipPop({tooltipPop:false,tooltipPopPosition:[],tooltipPopData:{}}));
+    },[windowWidth]);
+
 
     //팝업닫기
     const closePopHandler = () => {
@@ -200,6 +222,14 @@ const ChatPop = (props) => {
         setCloseConfirm(true);
     };
 
+    //서비스 클릭시 툴팁팝업 열기
+    const tooltipClickHandler = (e, data) => {
+        const element = e.currentTarget;
+        let top = element.getBoundingClientRect().top + 33;
+        let left = element.getBoundingClientRect().left;
+        dispatch(tooltipPop({tooltipPop:true,tooltipPopPosition:[top,left],tooltipPopData:data}));
+    };
+
     return(<>
         <div className="pop_wrap chat_pop"> 
             <div className="dim"></div>
@@ -225,7 +255,7 @@ const ChatPop = (props) => {
                                     <col style={{"width":"110px"}} />
                                     <col style={{"width":"auto"}} />
                                     <col style={{"width":"70px"}} />
-                                    <col style={{"width":"80px"}} />
+                                    <col style={{"width":"100px"}} />
                                     <col style={{"width":"110px"}} />
                                     <col style={{"width":"80px"}} />
                                 </colgroup>
@@ -281,7 +311,15 @@ const ChatPop = (props) => {
                                                     <td>{data.m_name}</td>
                                                     <td>{data.m_address}</td>
                                                     <td>{data.birth}</td>
-                                                    <td><div className="tag" style={{"borderColor":"#FC5862","color":"#FC5862"}}>프리미엄</div></td>
+                                                    <td>
+                                                        <div 
+                                                            className="tag tooltip_tag" 
+                                                            style={{"borderColor":"#FC5862","color":"#FC5862"}}
+                                                            onClick={(e)=>{
+                                                                tooltipClickHandler(e, data);
+                                                            }}
+                                                        ><span>프리미엄</span></div>
+                                                    </td>
                                                     <td>{data.manager}</td>
                                                     <td><div className={`tag2 ${data.connect == "연결가능" ? "on" : ""}`}>{data.connect}</div></td>
                                                 </tr>

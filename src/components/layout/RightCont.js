@@ -33,14 +33,13 @@ const RightCont = (props) => {
     const assi_delt = enum_api_uri.assi_delt;
     const msg_cont_list = enum_api_uri.msg_cont_list;
     const msg_cont_list_admin = enum_api_uri.msg_cont_list_admin;
-    const msg_img_send = enum_api_uri.msg_img_send;
-    const msg_send = enum_api_uri.msg_send;
     const [confirm, setConfirm] = useState(false);
     const [floatDeltconfirm, setFloatDeltConfirm] = useState(false);
     const [floatOn, setFloatOn] = useState(false);
     const [listOn, setListOn] = useState(null);
     const [memBtnOn, setMemBtnOn] = useState(false);
-    const [assiList, setAssiList] = useState({});
+    const [assiList, setAssiList] = useState([]);
+    const [assiCount, setAssiCount] = useState(0);
     const floatBoxRef = useRef(null);
     const floatListRef = useRef(null);
     const [btnToggle, setBtnToggle] = useState(null);
@@ -54,7 +53,6 @@ const RightCont = (props) => {
     const chatRef = useRef();
     const innerRef = useRef();
     const [textareaValue, setTextareaValue] = useState("");
-    const [photoPath, setPhotoPath] = useState("upload/chat/");
     const [floatId, setFloatId] = useState("");
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -246,7 +244,8 @@ const RightCont = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data;
-                setAssiList({...data});
+                setAssiList([...data.userList]);
+                setAssiCount(data.count);
             }
         })
         .catch((error) => {
@@ -402,7 +401,7 @@ const RightCont = (props) => {
                 socketInit();
 
                 //선택한회원중에 내가응대중인회원 on
-                let idx = assiList.userList.findIndex(item=>item.m_id === common.selectUser.m_id);
+                let idx = assiList.findIndex(item=>item.m_id === common.selectUser.m_id);
                 setListOn(idx);
 
                 // 선택한회원과 대화방이 있을때만 메시지내용가져오기
@@ -659,22 +658,23 @@ const RightCont = (props) => {
         }
     };
 
+
     
     return(<>
         <div className="right_cont">
             <div className="top_box">
                 <div className="tit flex">
                     <strong>내가 응대중인 회원</strong>
-                    <span><strong>{CF.MakeIntComma(assiList.count)}</strong> 명</span>
+                    <span><strong>{CF.MakeIntComma(assiCount)}</strong> 명</span>
                 </div>
 
-                {assiList.userList && 
+                {assiList && 
                     <div className={`floating_box flex_between flex_top ${floatOn ? "on" : ""}`} ref={floatBoxRef}>
-                        {assiList.userList.length > 0 ?
+                        {assiList.length > 0 ?
                             <>
                                 <div className={`list_box ${floatOn ? "scroll_wrap" : ""}`}>
-                                    <ul className="flex flex_wrap" ref={floatListRef}>
-                                        {assiList.userList.map((mem,i)=>{
+                                    <ul className="flex flex_wrap" ref={floatListRef} >
+                                        {assiList.map((mem,i)=>{
                                             return(
                                                 <li key={i} className={listOn === i ? "on" : ""} 
                                                     onClick={()=>{

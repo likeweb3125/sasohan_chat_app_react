@@ -19,7 +19,7 @@ const Message = () => {
     const msg_list = enum_api_uri.msg_list;
     const [confirm, setConfirm] = useState(false);
     const [msgList, setMsgList] = useState([]);
-    const [listSelected, setListSelected] = useState("마지막 소개 이력순");
+    const [listSelected, setListSelected] = useState("높은 일차순");
     const [searchValue, setSearchValue] = useState("");
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
@@ -72,8 +72,8 @@ const Message = () => {
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기
     useEffect(()=>{
         if(common.pageMore && common.pageNo < common.pageLastNo){
-            if(listSelected == "최근 가입일자순"){
-                getList(common.pageNo+1,"sign");
+            if(listSelected == "낮은 일차순"){
+                getList(common.pageNo+1,"row");
             }else{
                 getList(common.pageNo+1);
             }
@@ -109,10 +109,9 @@ const Message = () => {
 
             //searchOn true 일때는 회원명으로 검색하기
             let sel = "";
-            if(listSelected == "최근 가입일자순"){
-                sel = "sign";
+            if(listSelected == "낮은 일차순"){
+                sel = "row";
             }
-            
             getList(1,sel,true);
         }
     },[searchOn]);
@@ -122,11 +121,11 @@ const Message = () => {
     const listSortHandler = () => {
         dispatch(newList(true));
         dispatch(pageMore(false));
-        if(listSelected == "마지막 소개 이력순"){
+        if(listSelected == "높은 일차순"){
             getList(1,"",true);
         }
-        if(listSelected == "최근 가입일자순"){
-            getList(1,"sign",true);
+        if(listSelected == "낮은 일차순"){
+            getList(1,"row",true);
         }
     };
 
@@ -134,13 +133,6 @@ const Message = () => {
     useEffect(()=>{
         listSortHandler();
     },[listSelected]);
-
-
-    //메시지리스트 바뀔때마다 
-    useEffect(()=>{
-        //store messagePopList 값 지우기 (체크리스트)
-        dispatch(messagePopList([]));
-    },[msgList]);
 
 
     //단체메시지 전송완료시 리스트 다시 불러오기
@@ -184,6 +176,9 @@ const Message = () => {
                 updatedMsgList.unshift(common.newMsgDataAdmin);
             }
             setMsgList(updatedMsgList);
+
+            //store messagePopList 값 지우기 (체크리스트)
+            dispatch(messagePopList([]));
         }
     },[common.newMsgDataAdmin]);
 
@@ -220,6 +215,9 @@ const Message = () => {
                 updatedMsgList.unshift(common.newMsgData);
             }
             setMsgList(updatedMsgList);
+
+            //store messagePopList 값 지우기 (체크리스트)
+            dispatch(messagePopList([]));
         }
     },[common.newMsgData]);
 

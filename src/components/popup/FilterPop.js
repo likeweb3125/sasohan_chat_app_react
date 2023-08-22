@@ -17,10 +17,8 @@ const FilterPop = (props) => {
     const common = useSelector((state)=>state.common);
     const dispatch = useDispatch();
     const token = localStorage.getItem("token");
-    const [dStartDate, setDStartDate] = useState('');
     const [confirm, setConfirm] = useState(false);
     const [cancelConfirm, setCancelConfirm] = useState(false);
-
     const u_address = enum_api_uri.u_address;
     const [addressList, setAddressList] = useState([]);
 
@@ -38,11 +36,6 @@ const FilterPop = (props) => {
             setCancelConfirm(false);
         }
     },[popup.confirmPop]);
-
-
-    const dStartChange = (date) => {
-        setDStartDate(date);
-    };
 
 
     //주소 시,도 가져오기

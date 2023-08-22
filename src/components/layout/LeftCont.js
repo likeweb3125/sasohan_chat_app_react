@@ -12,7 +12,7 @@ const LeftCont = (props) => {
     const popup = useSelector((state)=>state.popup);
     const dispatch = useDispatch();
     const selectList = ["마지막 소개 이력순","최근 가입일자순"];
-    const selectList2 = ["낮은 일차순","높은 일차순"];
+    const selectList2 = ["높은 일차순","낮은 일차순"];
     const [checkNum, setCheckNum] = useState(0);
     const [confirm, setConfirm] = useState(false);
 
@@ -85,7 +85,7 @@ const LeftCont = (props) => {
                                 <p className="txt">{`검색된 ${props.page == "chat" ? "대화방수" : "회원수"}`} <span><strong>{CF.MakeIntComma(props.listCount)}</strong> {props.page == "chat" ? "개" : "명"}</span></p>
                                 <div className="flex">
                                     <SelectBox 
-                                        list={props.page === "chat" ? selectList2 : selectList}
+                                        list={props.page === "member" ? selectList : selectList2}
                                         selected={props.listSelected}
                                         onChangeHandler={props.onSelChange}
                                         selHidden={props.selHidden}

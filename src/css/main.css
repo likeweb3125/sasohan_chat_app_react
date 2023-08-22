@@ -256,7 +256,16 @@ html,.body{height: auto;}
 .chat_pop .cont_box{margin-top: 16px;border-top: 1px solid #ddd;}
 .chat_pop .cont_box>.tit{font-size: 18px;font-weight: 500;padding: 16px 0 12px;}
 .chat_pop .scroll_wrap{border-radius:8px ;border: 1px solid #EAEAEA;max-height: 320px;}
+.chat_pop .custom_table table tbody td .tag{background: url(../images/ic_tooltip.svg) no-repeat center right 8px;padding-right: 28px;width: auto;display: inline-block;cursor: pointer;position: relative;}
 .chat_pop .btn_box .btn_round{width: 120px;}
+
+/* 대화방연결 팝업 - 툴팁 팝업 */
+.tooltip_pop{display: block;}
+.tooltip_pop .dim{background: none;}
+.tooltip_pop .pop_cont{background:#373D49;padding: 8px 16px;width: fit-content;border-radius: 4px;max-width: 400px;}
+.tooltip_pop .pop_cont::before{position: absolute;content: "";width: 100%;height: 12px;background: url(../images/tooltip_arrow.png) no-repeat left 35px bottom;top: -10px;left: 0;}
+.tooltip_pop .pop_cont h6{color: #fff;font-weight: 500;white-space:nowrap;}
+.tooltip_pop .pop_cont ul{padding-left: 8px;color: #fff;opacity: 0.6;font-size: 12px;}
 
 /* 조건검색기 팝업 */
 .filter_pop .scroll_wrap{max-height: 70vh;}

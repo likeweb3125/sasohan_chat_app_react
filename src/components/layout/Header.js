@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSocket } from '../etc/SocketProvider';
 import * as CF from "../../config/function";
 import { enum_api_uri } from '../../config/enum';
@@ -111,10 +111,10 @@ const Header = () => {
     return(<>
         <header id="header">
             <div className='top_box'>
-                <Link className='logo' to="/" data-id={1} onClick={navClickHandler}>
+                <a href="/" className='logo' data-id={1} onClick={navClickHandler}>
                     <img src={logo} alt="로고" />
                     <span>채팅 관리자 페이지</span>
-                </Link>
+                </a>
             </div>
             <div className='menu_box scroll_wrap'>
                 <ul>
@@ -143,7 +143,7 @@ const Header = () => {
                             <p>{user.managerInfo.m_id}</p>
                         </div>
                     </div>
-                    <Link to="/setting" data-id={4} onClick={navClickHandler}>더보기버튼</Link>
+                    <a href="/setting" data-id={4} onClick={navClickHandler}>더보기버튼</a>
                 </div>
                 <ul className='txt_ul flex_between'>
                     <li className='flex_between'>

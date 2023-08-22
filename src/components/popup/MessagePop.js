@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import moment from "moment";
+import QueryString from "qs";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { messagePop, memCheckPop, confirmPop, loadingPop } from "../../store/popupSlice";
+import { messagePop, memCheckPop, confirmPop, loadingPop, messagePopList } from "../../store/popupSlice";
 import { groupMsg } from "../../store/commonSlice";
 import ConfirmPop from "./ConfirmPop";
 import MemberListCont from "../component/MemberListCont";
@@ -23,12 +25,14 @@ const MessagePop = (props) => {
     const [sendConfirm, setSendConfirm] = useState(false);
     const [sendOkConfirm, setSendOkConfirm] = useState(false);
     const [list, setList] = useState([]);
-
+    const [idList, setIdList] = useState([]);
     const [textareaValue, setTextareaValue] = useState("");
+
 
     //팝업닫기
     const closePopHandler = () => {
         dispatch(messagePop(false));
+        dispatch(messagePopList([]));
     };
 
     // Confirm팝업 닫힐때
@@ -42,6 +46,12 @@ const MessagePop = (props) => {
     },[popup.confirmPop]);
 
 
+    useEffect(()=>{
+        let newIdList = list.map(item => item.m_id).filter(Boolean);
+        setIdList(newIdList);
+    },[list]);
+
+
     //단체메시지 보낼회원정보 리스트 가져오기
     const getList = () => {
         dispatch(loadingPop(true));
@@ -50,7 +60,45 @@ const MessagePop = (props) => {
             to_id: popup.messagePopList
         };
 
-        axios.post(`${g_msg_list}`,body,
+        let search;
+        if(popup.messagePopSearch && popup.messagePopSearch.length > 0){
+            search = true;
+        }else{
+            search = false;
+        }
+
+        let params;
+        if(common.filter){
+            let data = {...common.filterData};
+            if(data.j_M_log && data.j_M_log != null){
+                data.j_M_log = moment(data.j_M_log).format("YYYY-MM-DD");
+            }else if(data.j_M_log == null){
+                data.j_M_log = "";
+            }
+            if(data.j_last_in1 && data.j_last_in1 != null){
+                data.j_last_in1 = moment(data.j_last_in1).format("YYYY-MM-DD");
+            }else if(data.j_last_in1 == null){
+                data.j_last_in1 = "";
+            }
+            if(data.j_last_in2 && data.j_last_in2 != null){
+                data.j_last_in2 = moment(data.j_last_in2).format("YYYY-MM-DD");
+            }else if(data.j_last_in2 == null){
+                data.j_last_in2 = "";
+            }
+            if(data.j_reg_date1 && data.j_reg_date1 != null){
+                data.j_reg_date1 = moment(data.j_reg_date1).format("YYYY-MM-DD");
+            }else if(data.j_reg_date1 == null){
+                data.j_reg_date1 = "";
+            }
+            if(data.j_reg_date2 && data.j_reg_date2 != null){
+                data.j_reg_date2 = moment(data.j_reg_date2).format("YYYY-MM-DD");
+            }else if(data.j_reg_date2 == null){
+                data.j_reg_date2 = "";
+            }
+            params = QueryString.stringify(data);
+        }
+
+        axios.post(`${g_msg_list}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}${params ? "&"+params : ""}`,body,
             {headers: {Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
@@ -81,20 +129,52 @@ const MessagePop = (props) => {
     },[popup.messagePopList]);
 
 
+    //회원 삭제시
     useEffect(()=>{
         let deltList = popup.messagePopDeltList;
         let newList = list.filter(item => !deltList.includes(item.m_id));
         setList(newList);
     },[popup.messagePopDeltList]);
+
+    
+    //회원 추가시
+    useEffect(()=>{
+        let addList = popup.messagePopAddList;
+        setList([...addList,...list]);
+    },[popup.messagePopAddList]);
+
+
+    //회원 삭제버튼 클릭시
+    const deltHandler = () => {
+        if(list.length > 0){
+            dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"삭제",memCheckPopList:list}));
+        }else{
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'삭제할 회원이 없습니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
  
 
     //회원 추가버튼 클릭시
     const addHandler = () => {
-        if(popup.messagePopList.length > 0){
+        if(list.length == popup.messagePopAllCount){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'추가할 회원이 없습니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
             dispatch(loadingPop(true));
 
             let body = {
-                to_id: popup.messagePopList
+                to_id: idList
             };
 
             axios.post(`${g_msg_list_add}`,body,
@@ -120,14 +200,6 @@ const MessagePop = (props) => {
                 }));
                 setConfirm(true);
             });
-        }else{
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'추가할 회원이 없습니다.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
         }
     };
 
@@ -135,7 +207,7 @@ const MessagePop = (props) => {
     //이미지 첨부하기
     const imgAttach = () => {
         let body = {
-            to_id: popup.messagePopList,
+            to_id: idList,
             image_array: common.msgImgs
         };
 
@@ -171,7 +243,7 @@ const MessagePop = (props) => {
     //메시지 보내기
     const textSend = () => {
         let body = {
-            to_id: popup.messagePopList,
+            to_id: idList,
             msg: textareaValue
         };
 
@@ -260,9 +332,7 @@ const MessagePop = (props) => {
                     <div className="top_box flex_between">
                         <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
                         <div className="flex">
-                            <button type="button" className="btn_round3 rm4" onClick={()=>{
-                                dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"삭제",memCheckPopList:list}));
-                            }}>삭제</button>
+                            <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
                             <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
                         </div>
                     </div>

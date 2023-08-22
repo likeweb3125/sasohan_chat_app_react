@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import QueryString from "qs";
 import { enum_api_uri } from "../config/enum";
 import * as CF from "../config/function";
-import { confirmPop, messagePopList, loadingPop } from "../store/popupSlice";
+import { confirmPop, messagePopList, loadingPop, messagePopAllCount, messagePopSearch, messagePopSort } from "../store/popupSlice";
 import { filter, filterData, pageNo, pageMore, newList } from "../store/commonSlice";
 import LeftCont from "../components/layout/LeftCont";
 import RightCont from "../components/layout/RightCont";
@@ -26,6 +26,7 @@ const Main = () => {
     const [searchValue, setSearchValue] = useState("");
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
+    const firstRender = useRef(true);
 
 
     // Confirm팝업 닫힐때
@@ -97,6 +98,9 @@ const Main = () => {
 
                 setListCount(data.all_cnt);
 
+                //store에 단체메시지 회원수 저장
+                // dispatch(messagePopAllCount(data.all_cnt));
+
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
 
@@ -117,6 +121,47 @@ const Main = () => {
             setConfirm(true);
         });
     };
+
+
+    //맨처음 회원리스트 가져오기
+    useEffect(()=>{
+        dispatch(loadingPop(true));
+
+        axios.get(`${u_list}?page_no=${1}`,
+            {headers:{Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(loadingPop(false));
+
+                let data = res.data;
+                setUserList([...data.user_list]);
+
+                setListCount(data.all_cnt);
+
+                //store에 단체메시지 회원수 저장
+                dispatch(messagePopAllCount(data.all_cnt));
+
+                //store에 페이지저장
+                dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
+
+                //store에 newList false
+                dispatch(newList(false));
+            }
+        })
+        .catch((error) => {
+            dispatch(loadingPop(false));
+            
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    },[]);
 
 
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기
@@ -272,6 +317,8 @@ const Main = () => {
                 const params = QueryString.stringify(data);
                 getList(1,sel,true,params);
             }
+
+            dispatch(messagePopSearch(searchValue));
         }
     },[searchOn]);
 
@@ -290,13 +337,21 @@ const Main = () => {
         dispatch(pageMore(false));
         if(listSelected == "마지막 소개 이력순"){
             getList(1,"",true);
+            dispatch(messagePopSort(""));
         }
         if(listSelected == "최근 가입일자순"){
             getList(1,"sign",true);
+            dispatch(messagePopSort("sign"));
         }
     };
 
+    //맨처음 렌더링될때 말고 listSelected 값이 바뀔때만 listSortHandler 함수실행
     useEffect(()=>{
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+        
         listSortHandler();
     },[listSelected]);
 

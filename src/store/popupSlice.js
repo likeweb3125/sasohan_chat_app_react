@@ -29,10 +29,19 @@ const popup = createSlice({
         //대화방연결 팝업
         chatPop: false,
 
+        //대화방연결 팝업 - 툴팁 팝업
+        tooltipPop: false,
+        tooltipPopPosition:[],
+        tooltipPopData:{},
+
         //단체메시지 팝업
         messagePop: false,
+        messagePopAllCount:0,
         messagePopList:[],
         messagePopDeltList:[],
+        messagePopAddList:[],
+        messagePopSearch:"",
+        messagePopSort:"",
 
         //단체메시지 회원 추가,삭제 팝업
         memCheckPop: false,
@@ -81,14 +90,31 @@ const popup = createSlice({
         chatPop: (state, action) => {
             state.chatPop = action.payload;
         },
+        tooltipPop: (state, action) => {
+            state.tooltipPop = action.payload.tooltipPop;
+            state.tooltipPopPosition = action.payload.tooltipPopPosition;
+            state.tooltipPopData = action.payload.tooltipPopData;
+        },
         messagePop: (state, action) => {
             state.messagePop = action.payload;
+        },
+        messagePopAllCount: (state, action) => {
+            state.messagePopAllCount = action.payload;
         },
         messagePopList: (state, action) => {
             state.messagePopList = action.payload;
         },
         messagePopDeltList: (state, action) => {
             state.messagePopDeltList = action.payload;
+        },
+        messagePopAddList: (state, action) => {
+            state.messagePopAddList = action.payload;
+        },
+        messagePopSearch: (state, action) => {
+            state.messagePopSearch = action.payload;
+        },
+        messagePopSort: (state, action) => {
+            state.messagePopSort = action.payload;
         },
         memCheckPop: (state, action) => {
             state.memCheckPop = action.payload.memCheckPop;
@@ -121,9 +147,14 @@ export const {
     imgPop,
     imgListPop,
     chatPop,
+    tooltipPop,
     messagePop,
+    messagePopAllCount,
     messagePopList,
     messagePopDeltList,
+    messagePopAddList,
+    messagePopSearch,
+    messagePopSort,
     memCheckPop,
     memCheckPopCheckList,
     filterPop,

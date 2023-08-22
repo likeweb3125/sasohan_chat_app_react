@@ -19,11 +19,10 @@ const Chat = () => {
     const [confirm, setConfirm] = useState(false);
     const [allCount, setAllCount] = useState(0);
     const [chatList, setChatList] = useState([]);
-    const [listSelected, setListSelected] = useState("낮은 일차순");
+    const [listSelected, setListSelected] = useState("높은 일차순");
     const [searchValue, setSearchValue] = useState("");
     const [searchOn, setSearchOn] = useState(false);
     const [listCount, setListCount] = useState(0);
-
     const [isCount, setIsCount] = useState(0);
     const [endCount, setEndCount] = useState(0);
 
@@ -82,8 +81,8 @@ const Chat = () => {
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기
     useEffect(()=>{
         if(common.pageMore && common.pageNo < common.pageLastNo){
-            if(listSelected == "높은 일차순"){
-                getList(common.pageNo+1,"higher");
+            if(listSelected == "낮은 일차순"){
+                getList(common.pageNo+1,"row");
             }else{
                 getList(common.pageNo+1);
             }
@@ -116,8 +115,8 @@ const Chat = () => {
     useEffect(()=>{
         if(searchOn){
             let sel = "";
-            if(listSelected == "높은 일차순"){
-                sel = "higher";
+            if(listSelected == "낮은 일차순"){
+                sel = "row";
             }
             getList(1,sel,true);
         }
@@ -128,11 +127,11 @@ const Chat = () => {
     const listSortHandler = () => {
         dispatch(newList(true));
         dispatch(pageMore(false));
-        if(listSelected == "낮은 일차순"){
+        if(listSelected == "높은 일차순"){
             getList(1,"",true);
         }
-        if(listSelected == "높은 일차순"){
-            getList(1,"higher",true);
+        if(listSelected == "낮은 일차순"){
+            getList(1,"row",true);
         }
     };
 

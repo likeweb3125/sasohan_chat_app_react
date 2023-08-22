@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as CF from "../../config/function";
-import { memCheckPop, memCheckPopCheckList, confirmPop, messagePopList, loadingPop, messagePopDeltList } from "../../store/popupSlice";
+import { memCheckPop, memCheckPopCheckList, confirmPop, messagePopList, loadingPop, messagePopDeltList, messagePopAddList } from "../../store/popupSlice";
 import SearchBox from "../component/SearchBox";
 import MemberListContPop from "../component/MemberListContPop";
 import ConfirmPop from "./ConfirmPop";
@@ -35,24 +35,34 @@ const MemberCheckPop = (props) => {
         setMemList(popup.memCheckPopList);
     },[popup.memCheckPopList]);
 
+    useEffect(()=>{
+        console.log(popup.messagePopList);
+        console.log(popup.memCheckPopList);
+    },[]);
+
 
     // 회원삭제 or 추가 
     const changeHandler = () => {
+        let mem_list = memList;
         let list = popup.messagePopList;
         let selList = popup.memCheckPopCheckList;
         let newList;
-        if(list.length > 0){ //전체회원 전송이 아닐때
+
+        // if(list.length > 0){ //전체회원 전송이 아닐때
             if(popup.memCheckPopTit == "삭제"){
-                newList = list.filter((item) => !selList.includes(item));
-            }if(popup.memCheckPopTit == "추가"){
-                newList = list.concat(selList);
-            }
-            dispatch(messagePopList(newList));
-        }else{ //전체회원 전송일때 - 삭제만 가능
-            if(popup.memCheckPopTit == "삭제"){
+                // newList = list.filter((item) => !selList.includes(item));
+                // dispatch(messagePopDeltList(newList));
                 dispatch(messagePopDeltList(selList));
+
+            }if(popup.memCheckPopTit == "추가"){
+                newList = mem_list.filter(item => selList.includes(item.m_id));
+                dispatch(messagePopAddList(newList));
             }
-        }
+        // }else{ //전체회원 전송일때 - 삭제만 가능
+        //     if(popup.memCheckPopTit == "삭제"){
+        //         dispatch(messagePopDeltList(selList));
+        //     }
+        // }
         closePopHandler();
     };
 

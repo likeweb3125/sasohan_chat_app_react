@@ -6,6 +6,7 @@ import MemberInfoPop from "./MemberInfoPop";
 import ImgPop from "./ImgPop";
 import ImgListPop from "./ImgListPop";
 import ChatPop from "./ChatPop";
+import TooltipPop from "./TooltipPop";
 import MessagePop from "./MessagePop";
 import MemberCheckPop from "./MemberCheckPop";
 import FilterPop from "./FilterPop";
@@ -25,6 +26,9 @@ const Popup = () => {
 
             {/* 대화방연결 팝업 */}
             {popup.chatPop && <ChatPop />}
+
+            {/* 대화방연결 팝업 - 툴팁 팝업 */}
+            {popup.tooltipPop && <TooltipPop />}
 
             {/* 단체메시지 팝업 */}
             {popup.messagePop && <MessagePop />}
