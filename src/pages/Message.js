@@ -281,6 +281,7 @@ const Message = () => {
 
     //store msgViewId 값이 있으면 메시지리스트중 그 회원에게 온 메시지 읽음처리
     useEffect(()=>{
+        console.log(common.msgViewId)
         if(common.msgViewId.length > 0){
             const updatedMsgList = msgList.map(item => {
                 if (item.m_id === common.msgViewId) {
@@ -293,7 +294,7 @@ const Message = () => {
             });
             setMsgList(updatedMsgList);
         }
-    },[common.msgViewId]);
+    },[common.newMsgDataAdmin, common.newMsgData]);
 
 
 

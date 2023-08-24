@@ -7,7 +7,7 @@ import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop } from "../../store/popupSlice";
-import { msgSend, selectUser, newMsgData, socketRooms } from "../../store/commonSlice";
+import { msgSend, selectUser, newMsgData, socketRooms, assiListOn } from "../../store/commonSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -17,7 +17,6 @@ import noneSelectImg from "../../images/ic_none_select.svg";
 import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
 import sampleImg from "../../images/sample/img_sample.jpg";
-
 import {
     DndContext,
     closestCenter,
@@ -33,7 +32,6 @@ import {
     sortableKeyboardCoordinates,
     rectSortingStrategy,
 } from '@dnd-kit/sortable';
-
 
 
 const RightCont = (props) => {
@@ -52,7 +50,7 @@ const RightCont = (props) => {
     const [confirm, setConfirm] = useState(false);
     const [floatDeltconfirm, setFloatDeltConfirm] = useState(false);
     const [floatOn, setFloatOn] = useState(false);
-    const [listOn, setListOn] = useState(null);
+    const [listOn, setListOn] = useState("");
     const [memBtnOn, setMemBtnOn] = useState(false);
     const [assiList, setAssiList] = useState([]);
     const [assiCount, setAssiCount] = useState(0);
@@ -210,7 +208,6 @@ const RightCont = (props) => {
                         "view_cnt": result.view_cnt
                     }
                 ];
-                // let imgs = result.files.map(item => "upload/chat/" + item);
                 let msg = {
                     "idx": result.idx,
                     "from_id": result.from_id,
@@ -380,7 +377,8 @@ const RightCont = (props) => {
 
                 setFloatId();
 
-                setListOn(null);
+                setListOn("");
+                dispatch(assiListOn(""));
 
                 dispatch(selectUser({}));
             }
@@ -423,8 +421,9 @@ const RightCont = (props) => {
                 socketInit();
 
                 //선택한회원중에 내가응대중인회원 on
-                let idx = assiList.findIndex(item=>item.m_id === common.selectUser.m_id);
-                setListOn(idx);
+                // let idx = assiList.findIndex(item=>item.m_id === common.selectUser.m_id);
+                setListOn(common.selectUser.m_id);
+                dispatch(assiListOn(common.selectUser.m_id));
 
                 // 선택한회원과 대화방이 있을때만 메시지내용가져오기
                 if(common.selectUser.room_id.length > 0 && common.selectUser.idx){
@@ -706,15 +705,22 @@ const RightCont = (props) => {
 
     const handleDragEnd = (event) => {
         const {active, over} = event;
+        
         if (active.id !== over.id) {
             setAssiList((items) => {
                 const oldIndex = items.findIndex((item) => item.m_id === active.id);
                 const newIndex = items.findIndex((item) => item.m_id === over.id);
+
                 return arrayMove(items, oldIndex, newIndex);
             });
         }
         setAssiDnd(true);
     }
+
+
+    useEffect(()=>{
+        setListOn(common.assiListOn);
+    },[common.assiListOn]);
 
     
     
@@ -739,31 +745,12 @@ const RightCont = (props) => {
                                             onDragEnd={handleDragEnd}
                                         >
                                             <SortableContext
-                                                // items={assiList.map(item => item.m_id)}
                                                 items={assiList.map(({m_id}) => m_id)}
                                                 strategy={rectSortingStrategy}
                                             >
                                                     {assiList.map((mem,i)=>(
                                                         <FloatingMember 
-                                                            key={i} 
-                                                            idx={i}
-                                                            className={listOn === i ? "on" : ""} 
-                                                            onClickHandler={()=>{
-                                                                setListOn(i);
-                                                                dispatch(
-                                                                    selectUser(
-                                                                        {
-                                                                            room_id:mem.room_id,
-                                                                            idx:mem.last_idx || mem.idx,
-                                                                            m_id:mem.m_id, 
-                                                                            m_name:mem.m_name,
-                                                                            m_gender:mem.m_gender,
-                                                                            birth:mem.birth || mem.m_born,
-                                                                            m_address:mem.m_address,
-                                                                        }
-                                                                    )
-                                                                );
-                                                            }}
+                                                            key={i}
                                                             data={mem} 
                                                             onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
                                                             id={mem.m_id}

@@ -9,8 +9,6 @@ import ConfirmPop from "./ConfirmPop";
 
 const ManagerProfilePop = (props) => {
     const popup = useSelector((state)=>state.popup);
-    const user = useSelector((state)=>state.user);
-    const api_uri = enum_api_uri.api_uri;
     const m_profile = enum_api_uri.m_profile;
     const m_img_add = enum_api_uri.m_img_add;
     const m_pro_modify = enum_api_uri.m_pro_modify;
@@ -40,6 +38,7 @@ const ManagerProfilePop = (props) => {
         }
     },[popup.confirmPop]);
 
+
     // 맨처음 매니저프로필정보 가져오기
     useEffect(()=>{
         axios.get(`${m_profile}`,
@@ -53,13 +52,10 @@ const ManagerProfilePop = (props) => {
                 setPhotoPath(path);
 
                 const photoList = data.photo;
-                const srcList = photoList.map(value => {
-                    return value ? api_uri + value : value;
-                });
                 const nameList = photoList.map(value => {
                     return value ? value.replace(path,"") : value;
                 });
-                setImgSrcList([...srcList]);
+                setImgSrcList([...photoList]);
                 setImgNameList([...nameList]);
             }
         })
@@ -125,7 +121,7 @@ const ManagerProfilePop = (props) => {
     };
 
     //이미지 삭제
-    const imgDeltHandler = (img,idx) => {
+    const imgDeltHandler = (idx) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
@@ -257,8 +253,8 @@ const ManagerProfilePop = (props) => {
                         {imgList.map((img,i)=>{
                             return(
                                 <li key={`imgUp${i}`}>
-                                    <div className={`img ${imgNameList[i] ? "on" : ""}`}>
-                                        {imgNameList[i] && <img src={api_uri + photoPath + imgNameList[i]} alt="프로필이미지"/>}
+                                    <div className={`img ${imgSrcList[i] ? "on" : ""}`}>
+                                        {imgSrcList[i] && <img src={imgSrcList[i]} alt="프로필이미지"/>}
                                     </div>
                                     <div className="img_up">
                                         <input type="file" className="blind" id={`pic${i}`} accept="image/*" onChange={(e) => {
@@ -267,7 +263,7 @@ const ManagerProfilePop = (props) => {
                                         }}/>
                                         <label htmlFor={`pic${i}`}>이미지등록</label>
                                     </div>
-                                    <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(imgNameList[i],i)}}>삭제버튼</button>
+                                    <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i)}}>삭제버튼</button>
                                 </li>
                             );
                         })}

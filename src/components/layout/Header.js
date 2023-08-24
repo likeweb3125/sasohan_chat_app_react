@@ -20,7 +20,6 @@ const Header = () => {
     const [menuOn, setMenuOn] = useState(1);
     const [pageMove, setPageMove] = useState(null);
     const socket = useSocket();
-    const api_uri = enum_api_uri.api_uri;
     
 
     // 소켓 채팅방 연결
@@ -136,7 +135,7 @@ const Header = () => {
                 <div className='profile flex'>
                     <div className='box flex' onClick={profileClickHandler}>
                         <div className='img'>
-                            <img src={user.managerInfo.m_f_photo ? api_uri+user.managerInfo.m_f_photo : none_profile} alt="프로필이미지" />
+                            <img src={user.managerInfo.m_f_photo ? user.managerInfo.m_f_photo : none_profile} alt="프로필이미지" />
                         </div>
                         <div className='txt'>
                             <h6>매칭매니저</h6>

@@ -19,6 +19,7 @@ const common = createSlice({
         pageMore:false,
         newList:false,
         groupMsg:false,
+        assiListOn:"",
     },
     reducers:{
         msgImgs: (state, action) => {
@@ -67,6 +68,9 @@ const common = createSlice({
         groupMsg: (state, action) => {
             state.groupMsg = action.payload;
         },
+        assiListOn: (state, action) => {
+            state.assiListOn = action.payload;
+        },
     }
 });
 
@@ -85,6 +89,7 @@ export const {
     pageNo, 
     pageMore, 
     newList,
-    groupMsg
+    groupMsg,
+    assiListOn
 } = common.actions;
 export default common;
