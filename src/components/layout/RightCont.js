@@ -18,6 +18,22 @@ import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
 import sampleImg from "../../images/sample/img_sample.jpg";
 
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    MouseSensor,
+    useSensor,
+    useSensors,
+  } from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+} from '@dnd-kit/sortable';
+
 
 
 const RightCont = (props) => {
@@ -56,6 +72,7 @@ const RightCont = (props) => {
     const [floatId, setFloatId] = useState("");
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [assiDnd, setAssiDnd] = useState(false);
 
 
     //window resize
@@ -193,12 +210,13 @@ const RightCont = (props) => {
                         "view_cnt": result.view_cnt
                     }
                 ];
-                let imgs = result.msg.map(item => "upload/chat/" + item);
+                // let imgs = result.files.map(item => "upload/chat/" + item);
                 let msg = {
                     "idx": result.idx,
                     "from_id": result.from_id,
                     "to_id": result.to_id,
-                    "msg": imgs,
+                    "msg": "",
+                    "files": result.files,
                     "time": result.time,
                     "message_type": result.message_type,
                     "view_cnt": result.view_cnt
@@ -269,17 +287,21 @@ const RightCont = (props) => {
 
     //응대중인 회원이 많을때만 토글버튼 보이기
     useEffect(()=>{
-        //windowWidth 바뀌면 floatOn = false;
-        setFloatOn(false);
+        if(assiDnd){
+            setAssiDnd(false);
+        }else{
+            //windowWidth 바뀌면 floatOn = false;
+            setFloatOn(false);
+            
+            if (floatBoxRef.current !== null && floatListRef.current !== null) {
+                let boxH = floatBoxRef.current.offsetHeight;
+                let listH = floatListRef.current.offsetHeight;
 
-        if (floatBoxRef.current !== null && floatListRef.current !== null) {
-            let boxH = floatBoxRef.current.offsetHeight;
-            let listH = floatListRef.current.offsetHeight;
-
-            if(listH <= boxH){
-                setBtnToggle(false);
-            }else{
-                setBtnToggle(true);
+                if(listH <= boxH){
+                    setBtnToggle(false);
+                }else{
+                    setBtnToggle(true);
+                }
             }
         }
     },[assiList, windowWidth]);
@@ -607,7 +629,8 @@ const RightCont = (props) => {
         let data = {
             room_id: common.selectUser.room_id,
             to_id: common.selectUser.m_id,
-            msg: common.msgImgs
+            msg: "",
+            files: common.msgImgs,
         }
         socket.emit("file upload", data);
     };
@@ -659,6 +682,41 @@ const RightCont = (props) => {
     };
 
 
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+              distance: 5,
+            },
+        }),
+        useSensor(MouseSensor, {
+            activationConstraint: {
+              distance: 5,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
+
+    const handleDragStart = () => {
+        setFloatOn(true);
+    };
+
+
+    const handleDragEnd = (event) => {
+        const {active, over} = event;
+        if (active.id !== over.id) {
+            setAssiList((items) => {
+                const oldIndex = items.findIndex((item) => item.m_id === active.id);
+                const newIndex = items.findIndex((item) => item.m_id === over.id);
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+        setAssiDnd(true);
+    }
+
+    
     
     return(<>
         <div className="right_cont">
@@ -674,33 +732,45 @@ const RightCont = (props) => {
                             <>
                                 <div className={`list_box ${floatOn ? "scroll_wrap" : ""}`}>
                                     <ul className="flex flex_wrap" ref={floatListRef} >
-                                        {assiList.map((mem,i)=>{
-                                            return(
-                                                <li key={i} className={listOn === i ? "on" : ""} 
-                                                    onClick={()=>{
-                                                        setListOn(i);
-                                                        dispatch(
-                                                            selectUser(
-                                                                {
-                                                                    room_id:mem.room_id,
-                                                                    idx:mem.last_idx || mem.idx,
-                                                                    m_id:mem.m_id, 
-                                                                    m_name:mem.m_name,
-                                                                    m_gender:mem.m_gender,
-                                                                    birth:mem.birth || mem.m_born,
-                                                                    m_address:mem.m_address,
-                                                                }
-                                                            )
-                                                        );
-                                                    }}
-                                                >
-                                                    <FloatingMember 
-                                                        data={mem} 
-                                                        onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
-                                                    />
-                                                </li>
-                                            );
-                                        })}
+                                        <DndContext
+                                            sensors={sensors}
+                                            collisionDetection={closestCenter}
+                                            onDragStart={handleDragStart}
+                                            onDragEnd={handleDragEnd}
+                                        >
+                                            <SortableContext
+                                                // items={assiList.map(item => item.m_id)}
+                                                items={assiList.map(({m_id}) => m_id)}
+                                                strategy={rectSortingStrategy}
+                                            >
+                                                    {assiList.map((mem,i)=>(
+                                                        <FloatingMember 
+                                                            key={i} 
+                                                            idx={i}
+                                                            className={listOn === i ? "on" : ""} 
+                                                            onClickHandler={()=>{
+                                                                setListOn(i);
+                                                                dispatch(
+                                                                    selectUser(
+                                                                        {
+                                                                            room_id:mem.room_id,
+                                                                            idx:mem.last_idx || mem.idx,
+                                                                            m_id:mem.m_id, 
+                                                                            m_name:mem.m_name,
+                                                                            m_gender:mem.m_gender,
+                                                                            birth:mem.birth || mem.m_born,
+                                                                            m_address:mem.m_address,
+                                                                        }
+                                                                    )
+                                                                );
+                                                            }}
+                                                            data={mem} 
+                                                            onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
+                                                            id={mem.m_id}
+                                                        />
+                                                    ))}
+                                            </SortableContext>
+                                        </DndContext>
                                     </ul>
                                 </div>
                                 {btnToggle && <button type="button" className="btn_toggle" onClick={()=>{setFloatOn(!floatOn)}}>토글버튼</button>}
@@ -764,12 +834,11 @@ const RightCont = (props) => {
                                                                 {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                     :   cont.message_type == "I" && 
                                                                         <ul className="img_ul flex_wrap">
-                                                                            {cont.msg.map((imgSrc,i)=>{
-                                                                                let img = api_uri+imgSrc;
+                                                                            {cont.files.map((img,i)=>{
                                                                                 return(
                                                                                     <li key={i} 
                                                                                         onClick={()=>{
-                                                                                            dispatch(imgPop({imgPop:true,imgPopList:[...cont.msg],imgPopIdx:i}));
+                                                                                            dispatch(imgPop({imgPop:true,imgPopList:[...cont.files],imgPopIdx:i}));
                                                                                         }}
                                                                                     >
                                                                                         <img src={img} alt="이미지" />
@@ -790,12 +859,11 @@ const RightCont = (props) => {
                                                                     {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                         :   cont.message_type == "I" && 
                                                                             <ul className="img_ul flex_wrap">
-                                                                                {cont.msg.map((imgSrc,i)=>{
-                                                                                    let img = api_uri+imgSrc;
+                                                                                {cont.files.map((img,i)=>{
                                                                                     return(
                                                                                         <li key={i} 
                                                                                             onClick={()=>{
-                                                                                                dispatch(imgPop({imgPop:true,imgPopList:[...cont.msg],imgPopIdx:i}));
+                                                                                                dispatch(imgPop({imgPop:true,imgPopList:[...cont.files],imgPopIdx:i}));
                                                                                             }}
                                                                                         >
                                                                                             <img src={img} alt="이미지" />

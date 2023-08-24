@@ -97,7 +97,6 @@ const ImgListPop = (props) => {
                     <div className="scroll_wrap">
                         <ul className="flex_wrap">
                             {imgList && imgList.map((img,i)=>{
-                                let src = api_uri + img;
                                 return(
                                     <li key={i}
                                         onClick={()=>{
@@ -105,7 +104,7 @@ const ImgListPop = (props) => {
                                             dispatch(imgPop({imgPop:true,imgPopList:[...imgList],imgPopIdx:i}));
                                         }}
                                     >
-                                        <img src={src} alt="이미지" />
+                                        <img src={img} alt="이미지" />
                                     </li>
                                 );
                             })}

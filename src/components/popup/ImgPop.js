@@ -11,7 +11,6 @@ import { Navigation } from "swiper";
 const ImgPop = (props) => {
     const location = useLocation();
     const popup = useSelector((state)=>state.popup);
-    const api_uri = enum_api_uri.api_uri;
     const dispatch = useDispatch();
     const swiperRef = useRef(null);
     const [slideOnIdx, setSlideOnIdx] = useState(null);
@@ -55,14 +54,14 @@ const ImgPop = (props) => {
 
     //맨처음 큰이미지, 썸네일 슬라이드on 
     useEffect(()=>{
-        setBigImg(api_uri+popup.imgPopList[popup.imgPopIdx]);
+        setBigImg(popup.imgPopList[popup.imgPopIdx]);
         setSlideOnIdx(popup.imgPopIdx);
         swiperRef.current.swiper.slideTo(popup.imgPopIdx,1);
     },[]);
 
     //썸네일 슬라이드on 변경될때마다 큰이미지 src 변경
     useEffect(()=>{
-        setBigImg(api_uri+popup.imgPopList[slideOnIdx]);
+        setBigImg(popup.imgPopList[slideOnIdx]);
     },[slideOnIdx]);
 
 
@@ -92,16 +91,16 @@ const ImgPop = (props) => {
                             </div>
                             <Swiper ref={swiperRef} className={`thumb_slider ${popup.imgPopList.length < 4 ? "center_slider" : ""}`} {...swiperOptions} >
                                 {popup.imgPopList.map((img,i)=>{
-                                    let src = api_uri+img;
+                                    // let src = api_uri+img;
                                     return(
                                         <SwiperSlide key={i} 
                                             onClick={()=>{
                                                 goToSlide(i);
-                                                setBigImg(src);
+                                                setBigImg(img);
                                             }} 
                                             className={slideOnIdx === i ? "on" : ""}
                                         >
-                                            <img src={src} alt="이미지" />
+                                            <img src={img} alt="이미지" />
                                         </SwiperSlide>
                                     );
                                 })}

@@ -165,6 +165,14 @@ const Chat = () => {
     },[searchOn]);
 
 
+    //회원명 검색 input값 변경시 searchOn false
+    useEffect(()=>{
+        if(searchOn){
+            setSearchOn(false);
+        }
+    },[searchValue]);
+
+
     //연결한대화방리스트 정렬하기
     const listSortHandler = () => {
         dispatch(newList(true));

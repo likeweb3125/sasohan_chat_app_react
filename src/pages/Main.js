@@ -14,7 +14,6 @@ import ConfirmPop from "../components/popup/ConfirmPop";
 const Main = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
-    const user = useSelector((state)=>state.user);
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
     const u_all_count = enum_api_uri.u_all_count;
@@ -97,9 +96,6 @@ const Main = () => {
                 }
 
                 setListCount(data.all_cnt);
-
-                //store에 단체메시지 회원수 저장
-                // dispatch(messagePopAllCount(data.all_cnt));
 
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));

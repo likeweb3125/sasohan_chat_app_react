@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import * as CF from "../config/function";
 import { enum_api_uri } from "../config/enum";
-import { confirmPop, messagePopList } from "../store/popupSlice";
+import { confirmPop, messagePopList, messagePopAllCount, messagePopSearch, messagePopSort } from "../store/popupSlice";
 import { newMsgData, groupMsg, pageNo, pageMore, newList } from "../store/commonSlice";
 import LeftCont from "../components/layout/LeftCont";
 import RightCont from "../components/layout/RightCont";
@@ -49,7 +49,7 @@ const Message = () => {
                     setMsgList([...msgList,...data.chat_list]);
                 }
 
-                setListCount(data.chat_count);
+                setListCount(data.all_cnt);
 
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
@@ -81,9 +81,12 @@ const Message = () => {
                 let data = res.data;
                 setMsgList([...data.chat_list]);
 
-                setAllCount(data.chat_count);
+                setAllCount(data.all_cnt);
 
-                setListCount(data.chat_count);
+                setListCount(data.all_cnt);
+
+                //store에 단체메시지 회원수 저장
+                dispatch(messagePopAllCount(data.all_cnt));
 
                 //store에 페이지저장
                 dispatch(pageNo({pageNo:data.current_page,pageLastNo:data.last_page}));
@@ -149,8 +152,18 @@ const Message = () => {
                 sel = "row";
             }
             getList(1,sel,true);
+
+            dispatch(messagePopSearch(searchValue));
         }
     },[searchOn]);
+
+
+    //회원명 검색 input값 변경시 searchOn false
+    useEffect(()=>{
+        if(searchOn){
+            setSearchOn(false);
+        }
+    },[searchValue]);
 
 
     //메시지리스트 정렬하기
@@ -159,9 +172,11 @@ const Message = () => {
         dispatch(pageMore(false));
         if(listSelected == "높은 일차순"){
             getList(1,"",true);
+            dispatch(messagePopSort(""));
         }
         if(listSelected == "낮은 일차순"){
             getList(1,"row",true);
+            dispatch(messagePopSort("row"));
         }
     };
 

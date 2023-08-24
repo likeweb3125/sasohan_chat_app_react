@@ -28,6 +28,8 @@ exports.enum_api_uri = {
     //단체메시지
     g_msg_list: `${api_uri}v1/user-list/group-chat`,
     g_msg_list_add: `${api_uri}v1/user-list/group-chat-add`,
+    g_msg_list2: `${api_uri}v1/message/massage-group-chat`,
+    g_msg_list_add2: `${api_uri}v1/message/massage-group-chat-add`,
     g_msg_send: `${api_uri}v1/group-message/chat-send`,
     g_msg_img_add: `${api_uri}v1/group-message/chat-image-save`,
     g_msg_img_send: `${api_uri}v1/group-message/chat-image-send`,

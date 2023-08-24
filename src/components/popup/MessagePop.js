@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import QueryString from "qs";
@@ -11,6 +12,7 @@ import ConfirmPop from "./ConfirmPop";
 import MemberListCont from "../component/MemberListCont";
 import MessageInputWrap from "../component/MessageInputWrap";
 
+
 const MessagePop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
@@ -18,6 +20,8 @@ const MessagePop = (props) => {
     const token = localStorage.getItem("token");
     const g_msg_list = enum_api_uri.g_msg_list;
     const g_msg_list_add = enum_api_uri.g_msg_list_add;
+    const g_msg_list2 = enum_api_uri.g_msg_list2;
+    const g_msg_list_add2 = enum_api_uri.g_msg_list_add2;
     const g_msg_send = enum_api_uri.g_msg_send;
     const g_msg_img_send = enum_api_uri.g_msg_img_send;
     const [confirm, setConfirm] = useState(false);
@@ -27,6 +31,7 @@ const MessagePop = (props) => {
     const [list, setList] = useState([]);
     const [idList, setIdList] = useState([]);
     const [textareaValue, setTextareaValue] = useState("");
+    const location = useLocation();
 
 
     //팝업닫기
@@ -46,13 +51,14 @@ const MessagePop = (props) => {
     },[popup.confirmPop]);
 
 
+    //회원리스트 값 변경될때마다 회원아이디값만 배열로
     useEffect(()=>{
         let newIdList = list.map(item => item.m_id).filter(Boolean);
         setIdList(newIdList);
     },[list]);
 
 
-    //단체메시지 보낼회원정보 리스트 가져오기
+    //단체메시지 보낼회원정보 리스트 가져오기 - 회원검색 페이지
     const getList = () => {
         dispatch(loadingPop(true));
 
@@ -124,8 +130,54 @@ const MessagePop = (props) => {
     };
 
 
+    //단체메시지 보낼회원정보 리스트 가져오기 - 메시지 페이지
+    const getList2 = () => {
+        dispatch(loadingPop(true));
+
+        let body = {
+            to_id: popup.messagePopList
+        };
+
+        let search;
+        if(popup.messagePopSearch && popup.messagePopSearch.length > 0){
+            search = true;
+        }else{
+            search = false;
+        }
+
+        axios.post(`${g_msg_list2}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}`,body,
+            {headers: {Authorization: `Bearer ${token}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(loadingPop(false));
+
+                let data = res.data;
+                setList([...data]);
+            }
+        })
+        .catch((error) => {
+            dispatch(loadingPop(false));
+            
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
     useEffect(()=>{
-        getList();
+        const path = location.pathname;
+        if(path == "/message"){
+            getList2();
+        }else{
+            getList();
+        }
     },[popup.messagePopList]);
 
 
@@ -162,6 +214,8 @@ const MessagePop = (props) => {
 
     //회원 추가버튼 클릭시
     const addHandler = () => {
+        const path = location.pathname;
+
         if(list.length == popup.messagePopAllCount){
             dispatch(confirmPop({
                 confirmPop:true,
@@ -171,35 +225,68 @@ const MessagePop = (props) => {
             }));
             setConfirm(true);
         }else{
-            dispatch(loadingPop(true));
+            if(path == "/message"){
+                dispatch(loadingPop(true));
 
-            let body = {
-                to_id: idList
-            };
+                let body = {
+                    to_id: idList
+                };
 
-            axios.post(`${g_msg_list_add}`,body,
-                {headers: {Authorization: `Bearer ${token}`}}
-            )
-            .then((res)=>{
-                if(res.status === 200){
+                axios.post(`${g_msg_list_add2}`,body,
+                    {headers: {Authorization: `Bearer ${token}`}}
+                )
+                .then((res)=>{
+                    if(res.status === 200){
+                        dispatch(loadingPop(false));
+
+                        let data = res.data;
+                        dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
+                    }
+                })
+                .catch((error) => {
                     dispatch(loadingPop(false));
+                    
+                    const err_msg = CF.errorMsgHandler(error);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                });
 
-                    let data = res.data;
-                    dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
-                }
-            })
-            .catch((error) => {
-                dispatch(loadingPop(false));
-                
-                const err_msg = CF.errorMsgHandler(error);
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            });
+            }else{
+                dispatch(loadingPop(true));
+
+                let body = {
+                    to_id: idList
+                };
+
+                axios.post(`${g_msg_list_add}`,body,
+                    {headers: {Authorization: `Bearer ${token}`}}
+                )
+                .then((res)=>{
+                    if(res.status === 200){
+                        dispatch(loadingPop(false));
+
+                        let data = res.data;
+                        dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
+                    }
+                })
+                .catch((error) => {
+                    dispatch(loadingPop(false));
+                    
+                    const err_msg = CF.errorMsgHandler(error);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                });
+            }
         }
     };
 
@@ -217,8 +304,8 @@ const MessagePop = (props) => {
         .then((res) => {
             if (res.status === 200) {
                 dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
+                    confirmPop:true,
+                    confirmPopTit:'알림',
                     confirmPopTxt: "단체메시지를 선택된 회원들에게 전송했습니다!",
                     confirmPopBtn:1,
                 }));

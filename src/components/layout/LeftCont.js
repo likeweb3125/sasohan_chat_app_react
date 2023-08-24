@@ -34,7 +34,24 @@ const LeftCont = (props) => {
 
     //단체메시지 전송버튼 클릭시
     const groupMsgSend = () => {
-        dispatch(messagePop(true));
+        let num;
+        if(checkNum){
+            num = checkNum;
+        }else{
+            num = props.listCount;
+        }
+        
+        if(num > 0){
+            dispatch(messagePop(true));
+        }else{
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: "선택된 회원이 없습니다.",
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
     };
 
 

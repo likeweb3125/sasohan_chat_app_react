@@ -18,21 +18,6 @@ import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
 import sampleImg from "../../images/sample/img_sample.jpg";
 
-import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-  } from '@dnd-kit/core';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    rectSortingStrategy,
-} from '@dnd-kit/sortable';
-
 
 
 const RightCont = (props) => {
@@ -674,31 +659,6 @@ const RightCont = (props) => {
     };
 
 
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
-    );
-
-    const handleDragStart = () => {
-        console.log('start!')
-    };
-
-    const handleDragEnd = (event) => {
-        console.log("ddd")
-        // const {active, over} = event;
-    
-        // if (active.id !== over.id) {
-        //   setAssiList((items) => {
-        //     const oldIndex = items.findIndex(({id}) => id === active.id);
-        //     const newIndex = items.findIndex(({id}) => id === over.id);
-    
-        //     return arrayMove(items, oldIndex, newIndex);
-        //   });
-        // }
-      }
-
     
     return(<>
         <div className="right_cont">
@@ -714,43 +674,33 @@ const RightCont = (props) => {
                             <>
                                 <div className={`list_box ${floatOn ? "scroll_wrap" : ""}`}>
                                     <ul className="flex flex_wrap" ref={floatListRef} >
-                                        <DndContext
-                                            sensors={sensors}
-                                            collisionDetection={closestCenter}
-                                            onDragStart={handleDragStart}
-                                            onDragEnd={handleDragEnd}
-                                        >
-                                            <SortableContext
-                                                items={assiList}
-                                                strategy={rectSortingStrategy}
-                                            >
-                                                    {assiList.map((mem,i)=>(
-                                                        <li key={i} className={listOn === i ? "on" : ""} 
-                                                            onClick={()=>{
-                                                                setListOn(i);
-                                                                dispatch(
-                                                                    selectUser(
-                                                                        {
-                                                                            room_id:mem.room_id,
-                                                                            idx:mem.last_idx || mem.idx,
-                                                                            m_id:mem.m_id, 
-                                                                            m_name:mem.m_name,
-                                                                            m_gender:mem.m_gender,
-                                                                            birth:mem.birth || mem.m_born,
-                                                                            m_address:mem.m_address,
-                                                                        }
-                                                                    )
-                                                                );
-                                                            }}
-                                                        >
-                                                            <FloatingMember 
-                                                                data={mem} 
-                                                                onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
-                                                            />
-                                                        </li>
-                                                    ))}
-                                            </SortableContext>
-                                        </DndContext>
+                                        {assiList.map((mem,i)=>{
+                                            return(
+                                                <li key={i} className={listOn === i ? "on" : ""} 
+                                                    onClick={()=>{
+                                                        setListOn(i);
+                                                        dispatch(
+                                                            selectUser(
+                                                                {
+                                                                    room_id:mem.room_id,
+                                                                    idx:mem.last_idx || mem.idx,
+                                                                    m_id:mem.m_id, 
+                                                                    m_name:mem.m_name,
+                                                                    m_gender:mem.m_gender,
+                                                                    birth:mem.birth || mem.m_born,
+                                                                    m_address:mem.m_address,
+                                                                }
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    <FloatingMember 
+                                                        data={mem} 
+                                                        onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
+                                                    />
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 </div>
                                 {btnToggle && <button type="button" className="btn_toggle" onClick={()=>{setFloatOn(!floatOn)}}>토글버튼</button>}
