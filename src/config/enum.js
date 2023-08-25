@@ -39,6 +39,7 @@ exports.enum_api_uri = {
     assi_list: `${api_uri}v1/message/assisted-list`,
     assi_add: `${api_uri}v1/message/assisted-add`,
     assi_delt: `${api_uri}v1/message/assisted-remove`,
+    assi_order: `${api_uri}v1/message/assisted-order`,
     msg_cont_list: `${api_uri}v1/message/chat-content/:to_id/:last_idx`,
     msg_img_add: `${api_uri}v1/message/chat-image-save`,
     msg_img_send: `${api_uri}v1/message/chat-image-send`,

@@ -278,3 +278,10 @@ html,.body{height: auto;}
 .manager_pro_pop .dim{background: none;}
 .manager_pro_pop .pop_cont{width: 384px;padding: 20px;top: auto;bottom: 20px;box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);position: absolute;}
 .manager_pro_pop .profile_img_ul li:nth-child(4n){margin-right: 0;}
+
+/* 로딩 팝업 */
+/* .loading_pop .box{animation: aniShow 0.5s 0.5s forwards;opacity: 0;} */
+@keyframes aniShow {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

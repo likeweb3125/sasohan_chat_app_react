@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { chatPop, confirmPop, tooltipPop } from "../../store/popupSlice";
+import { chatPop, confirmPop, tooltipPop, loadingPop } from "../../store/popupSlice";
 import SearchBox from "../component/SearchBox";
 import ConfirmPop from "./ConfirmPop";
 
@@ -63,11 +63,15 @@ const ChatPop = (props) => {
 
     //대화방연결 리스트 가져오기
     const getList = (searchTxt) => {
+        dispatch(loadingPop(true));
+
         axios.get(`${chat_introduce_list.replace(":m_id",common.selectUser.m_id)}${searchTxt ? "?search_name="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 // let data = [
                 //     {
@@ -105,6 +109,8 @@ const ChatPop = (props) => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
@@ -175,6 +181,8 @@ const ChatPop = (props) => {
     // 대화방 연결버튼 클릭시
     const connectHandler = () => {
         if(checkList.length > 0){
+            dispatch(loadingPop(true));
+
             let body = {
                 from_id: common.selectUser.m_id,
                 to_id: checkList
@@ -185,11 +193,15 @@ const ChatPop = (props) => {
             )
             .then((res)=>{
                 if(res.status === 200){
+                    dispatch(loadingPop(false));
+
                     let data = res.data;
                     
                 }
             })
             .catch((error) => {
+                dispatch(loadingPop(false));
+                
                 const err_msg = CF.errorMsgHandler(error);
                 dispatch(confirmPop({
                     confirmPop:true,

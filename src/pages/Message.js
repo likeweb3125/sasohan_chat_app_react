@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import * as CF from "../config/function";
 import { enum_api_uri } from "../config/enum";
-import { confirmPop, messagePopList, messagePopAllCount, messagePopSearch, messagePopSort } from "../store/popupSlice";
-import { newMsgData, groupMsg, pageNo, pageMore, newList } from "../store/commonSlice";
+import { confirmPop, messagePopList, messagePopAllCount, messagePopSearch, messagePopSort, loadingPop } from "../store/popupSlice";
+import { groupMsg, pageNo, pageMore, newList } from "../store/commonSlice";
 import LeftCont from "../components/layout/LeftCont";
 import RightCont from "../components/layout/RightCont";
 import ConfirmPop from "../components/popup/ConfirmPop";
@@ -37,11 +37,15 @@ const Message = () => {
 
     //메시지리스트 가져오기
     const getList = (page, sort, newGet) => {
+        dispatch(loadingPop(true));
+
         axios.get(`${msg_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 if(newGet){
                     setMsgList([...data.chat_list]);
@@ -59,6 +63,8 @@ const Message = () => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
@@ -73,11 +79,15 @@ const Message = () => {
 
     //맨처음 메시지리스트 가져오기
     useEffect(()=>{
+        dispatch(loadingPop(true));
+
         axios.get(`${msg_list}?page_no=${1}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 setMsgList([...data.chat_list]);
 
@@ -96,6 +106,8 @@ const Message = () => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+            
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,

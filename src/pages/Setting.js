@@ -4,7 +4,7 @@ import axios from "axios";
 import * as CF from "../config/function";
 import { enum_api_uri } from "../config/enum";
 import { managerSetting } from "../store/userSlice";
-import { confirmPop } from "../store/popupSlice";
+import { confirmPop, loadingPop } from "../store/popupSlice";
 import LeftCont from "../components/layout/LeftCont";
 import RightCont from "../components/layout/RightCont";
 import ConfirmPop from "../components/popup/ConfirmPop";
@@ -33,16 +33,22 @@ const Setting = () => {
 
     //매니저 설정정보 가져오기
     useEffect(()=>{
+        dispatch(loadingPop(true));
+
         axios.get(`${m_setting}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 setSettingNum(res.data.set_num);
                 setSettingRange(res.data.set_range);
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
@@ -93,6 +99,8 @@ const Setting = () => {
 
     //설정 저장하기
     const saveHandler = () => {
+        dispatch(loadingPop(true));
+
         let body = {
             set_num: settingNum,
             set_range: settingRange
@@ -103,6 +111,8 @@ const Setting = () => {
         )
         .then((res) => {
             if (res.status === 200) {
+                dispatch(loadingPop(false));
+
                 setSaveOkConfirm(true);
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -119,6 +129,8 @@ const Setting = () => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+            
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                     confirmPop:true,

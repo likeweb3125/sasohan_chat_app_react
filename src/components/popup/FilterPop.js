@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { filterPop, confirmPop } from "../../store/popupSlice";
+import { filterPop, confirmPop, loadingPop } from "../../store/popupSlice";
 import { filter, filterData, pageNo } from "../../store/commonSlice";
 import SelectBox from "../component/SelectBox";
 import InputDatepicker from "../component/InputDatePicker";
@@ -40,17 +40,23 @@ const FilterPop = (props) => {
 
     //주소 시,도 가져오기
     const getAddress = () => {
+        dispatch(loadingPop(true));
+
         axios.get(`${u_address}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 let addressArray = data.map((item) => item.sido_gugun).filter(Boolean);
                 setAddressList([...addressArray]);
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,

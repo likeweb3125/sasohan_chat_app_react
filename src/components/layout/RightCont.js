@@ -6,8 +6,8 @@ import 'moment/locale/ko';
 import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { chatPop, imgPop, confirmPop } from "../../store/popupSlice";
-import { msgSend, selectUser, newMsgData, socketRooms, assiListOn } from "../../store/commonSlice";
+import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
+import { msgSend, selectUser, socketRooms, assiListOn } from "../../store/commonSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -41,10 +41,10 @@ const RightCont = (props) => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const common = useSelector((state)=>state.common);
-    const api_uri = enum_api_uri.api_uri;
     const assi_list = enum_api_uri.assi_list;
     const assi_add = enum_api_uri.assi_add;
     const assi_delt = enum_api_uri.assi_delt;
+    const assi_order = enum_api_uri.assi_order;
     const msg_cont_list = enum_api_uri.msg_cont_list;
     const msg_cont_list_admin = enum_api_uri.msg_cont_list_admin;
     const [confirm, setConfirm] = useState(false);
@@ -265,17 +265,23 @@ const RightCont = (props) => {
 
     //응대중인회원 가져오기
     const getAssiList = () => {
+        dispatch(loadingPop(true));
+
         axios.get(`${assi_list}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 setAssiList([...data.userList]);
                 setAssiCount(data.count);
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
@@ -482,7 +488,6 @@ const RightCont = (props) => {
                 socketInit();
 
                 //선택한회원중에 내가응대중인회원 on
-                // let idx = assiList.findIndex(item=>item.m_id === common.selectUser.m_id);
                 setListOn(common.selectUser.m_id);
                 dispatch(assiListOn(common.selectUser.m_id));
 
@@ -492,11 +497,14 @@ const RightCont = (props) => {
                     setNoSelect(false);
 
                     //최근 메시지내용 가져오기
-                    axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",common.selectUser.idx)}`,
+                    dispatch(loadingPop(true));
+                    axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",common.selectUser.idx+1)}`,
                         {headers:{Authorization: `Bearer ${token}`}}
                     )
                     .then((res)=>{
                         if(res.status === 200){ 
+                            dispatch(loadingPop(false));
+                            
                             let data = res.data;
 
                             //대화내용이 있을때
@@ -524,6 +532,8 @@ const RightCont = (props) => {
                         }
                     })
                     .catch((error) => {
+                        dispatch(loadingPop(false));
+
                         const err_msg = CF.errorMsgHandler(error);
                         if(err_msg == "대화방이 존재하지 않습니다."){
                             setChatOn(true);
@@ -554,11 +564,14 @@ const RightCont = (props) => {
                     setChatOn(true);
 
                     //최근 메시지내용 가져오기 - 연결된 회원끼리 대화
-                    axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx)}`,
+                    dispatch(loadingPop(true));
+                    axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx+1)}`,
                         {headers:{Authorization: `Bearer ${token}`}}
                     )
                     .then((res)=>{
                         if(res.status === 200){ 
+                            dispatch(loadingPop(false));
+
                             let data = res.data;
 
                             //대화내용이 있을때
@@ -584,6 +597,8 @@ const RightCont = (props) => {
                         }
                     })
                     .catch((error) => {
+                        dispatch(loadingPop(false));
+
                         const err_msg = CF.errorMsgHandler(error);
                         if(err_msg == "대화방이 존재하지 않습니다."){
                             setChatOn(true);
@@ -608,11 +623,15 @@ const RightCont = (props) => {
 
     //메시지내용 가져오기 - 매니저와 회원의 대화
     const getMessage = (idx) => {
+        dispatch(loadingPop(true));
+
         axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",idx)}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 //대화내용이 있을때
                 if(data.length > 0){
@@ -628,6 +647,8 @@ const RightCont = (props) => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             if(err_msg == "대화방이 존재하지 않습니다."){
                 setChatOn(true);
@@ -647,11 +668,15 @@ const RightCont = (props) => {
 
     //메시지내용 가져오기 - 연결된 회원끼리 대화
     const getMessageAdmin = (idx) => {
+        dispatch(loadingPop(true));
+
         axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",idx)}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(loadingPop(false));
+
                 let data = res.data;
                 //대화내용이 있을때
                 if(data.length > 0){
@@ -667,6 +692,8 @@ const RightCont = (props) => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             if(err_msg == "대화방이 존재하지 않습니다."){
                 setChatOn(true);
