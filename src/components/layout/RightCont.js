@@ -104,135 +104,147 @@ const RightCont = (props) => {
     },[msgList]);
 
 
+
     // 소켓 채팅방 연결
     const socketInit = () => {
         const data = { room_id: common.selectUser.room_id};
         if(!common.socketRooms.includes(common.selectUser.room_id)){
             socket.emit("join room", data);
+            
+            //연결된 채팅방 store 에 저장
+            let rooms = [...common.socketRooms];
+            const roomId = common.selectUser.room_id;
+            if(!rooms.includes(roomId)) {
+                rooms.push(roomId);
+                dispatch(socketRooms([...rooms]));
+            }
         }
     };
 
 
     useEffect(()=>{
         if(socket){
+
             //채팅방 연결 받기
             socket.on("join room", (result) => {
                 console.log(JSON.stringify(result, null, 2));
-
-                let rooms = [...common.socketRooms];
-                const roomId = result.room_id;
-
-                if(!rooms.includes(roomId)) {
-                    rooms.push(roomId);
-                    dispatch(socketRooms([...rooms]));
-                }
             })
 
             //메시지 받기
             socket.on("chat msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
-                const msgCount = localStorage.getItem("msgCount");
-                let date = new Date();
-                    date = moment(date).format("YYYY년 M월 D일 dddd");
-                let start = [
-                    {
+
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const userRoomId = selectUser.room_id;
+
+                //현재보고있는 채팅방일때만 메시지값 추가
+                if(userRoomId === result.room_id){
+                    const msgCount = localStorage.getItem("msgCount");
+                    let date = new Date();
+                        date = moment(date).format("YYYY년 M월 D일 dddd");
+                    let start = [
+                        {
+                            "idx": result.idx,
+                            "from_id": result.from_id,
+                            "to_id": result.to_id,
+                            "msg": "매니저가 회원님께 대화를 신청했어요!",
+                            "time": result.time,
+                            "message_type": "Q",
+                            "view_cnt": result.view_cnt
+                        },
+                        {
+                            "idx": result.idx,
+                            "from_id": result.from_id,
+                            "to_id": result.to_id,
+                            "msg": date,
+                            "time": result.time,
+                            "message_type": "S",
+                            "view_cnt": result.view_cnt
+                        }
+                    ];
+                    let msg = {
                         "idx": result.idx,
                         "from_id": result.from_id,
                         "to_id": result.to_id,
-                        "msg": "매니저가 회원님께 대화를 신청했어요!",
+                        "msg": result.msg,
                         "time": result.time,
-                        "message_type": "Q",
+                        "message_type": result.message_type,
                         "view_cnt": result.view_cnt
-                    },
-                    {
-                        "idx": result.idx,
-                        "from_id": result.from_id,
-                        "to_id": result.to_id,
-                        "msg": date,
-                        "time": result.time,
-                        "message_type": "S",
-                        "view_cnt": result.view_cnt
+                    };
+
+                    if(msgCount > 0){
+                        setMsgList(prevList => [...prevList, msg]);
+                    }else{
+                        setMsgList(prevList => [...prevList, ...start, msg]);
                     }
-                ];
-                let msg = {
-                    "idx": result.idx,
-                    "from_id": result.from_id,
-                    "to_id": result.to_id,
-                    "msg": result.msg,
-                    "time": result.time,
-                    "message_type": result.message_type,
-                    "view_cnt": result.view_cnt
-                };
+                    
 
-                if(msgCount > 0){
-                    setMsgList(prevList => [...prevList, msg]);
-                }else{
-                    setMsgList(prevList => [...prevList, ...start, msg]);
+                    //메시지입력 textarea 값 비우기
+                    setTextareaValue("");
+
+                    //메시지내역 맨밑으로 스크롤
+                    setTimeout(()=>{
+                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                    },10);
                 }
-                
-
-                //메시지입력 textarea 값 비우기
-                setTextareaValue("");
-
-                //메시지내역 맨밑으로 스크롤
-                setTimeout(()=>{
-                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                },10);
-
-                dispatch(newMsgData(result));
             });
 
             //이미지 받기
             socket.on("image upload", (result) => {
                 console.log(JSON.stringify(result, null, 2));
-                const msgCount = localStorage.getItem("msgCount");
-                let date = new Date();
-                    date = moment(date).format("YYYY년 M월 D일 dddd");
-                let start = [
-                    {
+
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const userRoomId = selectUser.room_id;
+                
+                //현재보고있는 채팅방일때만 이미지값 추가
+                if(userRoomId === result.room_id){
+                    const msgCount = localStorage.getItem("msgCount");
+                    let date = new Date();
+                        date = moment(date).format("YYYY년 M월 D일 dddd");
+                    let start = [
+                        {
+                            "idx": result.idx,
+                            "from_id": result.from_id,
+                            "to_id": result.to_id,
+                            "msg": "매니저가 회원님께 대화를 신청했어요!",
+                            "time": result.time,
+                            "message_type": "Q",
+                            "view_cnt": result.view_cnt
+                        },
+                        {
+                            "idx": result.idx,
+                            "from_id": result.from_id,
+                            "to_id": result.to_id,
+                            "msg": date,
+                            "time": result.time,
+                            "message_type": "S",
+                            "view_cnt": result.view_cnt
+                        }
+                    ];
+                    let msg = {
                         "idx": result.idx,
                         "from_id": result.from_id,
                         "to_id": result.to_id,
-                        "msg": "매니저가 회원님께 대화를 신청했어요!",
+                        "msg": "",
+                        "files": result.files,
                         "time": result.time,
-                        "message_type": "Q",
+                        "message_type": result.message_type,
                         "view_cnt": result.view_cnt
-                    },
-                    {
-                        "idx": result.idx,
-                        "from_id": result.from_id,
-                        "to_id": result.to_id,
-                        "msg": date,
-                        "time": result.time,
-                        "message_type": "S",
-                        "view_cnt": result.view_cnt
+                    };
+
+                    if(msgCount > 0){
+                        setMsgList(prevList => [...prevList, msg]);
+                    }else{
+                        setMsgList(prevList => [...prevList, ...start, msg]);
                     }
-                ];
-                let msg = {
-                    "idx": result.idx,
-                    "from_id": result.from_id,
-                    "to_id": result.to_id,
-                    "msg": "",
-                    "files": result.files,
-                    "time": result.time,
-                    "message_type": result.message_type,
-                    "view_cnt": result.view_cnt
-                };
 
-                if(msgCount > 0){
-                    setMsgList(prevList => [...prevList, msg]);
-                }else{
-                    setMsgList(prevList => [...prevList, ...start, msg]);
+                    dispatch(msgSend(true));
+
+                    //메시지내역 맨밑으로 스크롤
+                    setTimeout(()=>{
+                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                    },10);
                 }
-
-                dispatch(msgSend(true));
-
-                //메시지내역 맨밑으로 스크롤
-                setTimeout(()=>{
-                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                },10);
-
-                dispatch(newMsgData(result));
             });
 
             //에러메시지 받기
@@ -293,6 +305,8 @@ const RightCont = (props) => {
             if (floatBoxRef.current !== null && floatListRef.current !== null) {
                 let boxH = floatBoxRef.current.offsetHeight;
                 let listH = floatListRef.current.offsetHeight;
+                console.log(boxH);
+                console.log(listH);
 
                 if(listH <= boxH){
                     setBtnToggle(false);
@@ -394,6 +408,50 @@ const RightCont = (props) => {
             setConfirm(true);
         });
     };
+
+
+    //플로팅 회원 드래그앤드롭---------------------
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+              distance: 5,
+            },
+        }),
+        useSensor(MouseSensor, {
+            activationConstraint: {
+              distance: 5,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
+
+    const handleDragStart = () => {
+        if(btnToggle){
+            setFloatOn(true);
+        }
+    };
+
+
+    const handleDragEnd = (event) => {
+        const {active, over} = event;
+        
+        if (active.id !== over.id) {
+            setAssiList((items) => {
+                const oldIndex = items.findIndex((item) => item.m_id === active.id);
+                const newIndex = items.findIndex((item) => item.m_id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+        setAssiDnd(true);
+    }
+
+    useEffect(()=>{
+        setListOn(common.assiListOn);
+    },[common.assiListOn]);
     
 
     //매니저 단체메시지설정 변경시
@@ -408,7 +466,10 @@ const RightCont = (props) => {
 
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        console.log(common.selectUser)
+        console.log(common.selectUser);
+
+        //localStorage 에 selectUser값 저장
+        localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
 
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
@@ -679,48 +740,6 @@ const RightCont = (props) => {
             }
         }
     };
-
-
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-              distance: 5,
-            },
-        }),
-        useSensor(MouseSensor, {
-            activationConstraint: {
-              distance: 5,
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-    );
-
-
-    const handleDragStart = () => {
-        setFloatOn(true);
-    };
-
-
-    const handleDragEnd = (event) => {
-        const {active, over} = event;
-        
-        if (active.id !== over.id) {
-            setAssiList((items) => {
-                const oldIndex = items.findIndex((item) => item.m_id === active.id);
-                const newIndex = items.findIndex((item) => item.m_id === over.id);
-
-                return arrayMove(items, oldIndex, newIndex);
-            });
-        }
-        setAssiDnd(true);
-    }
-
-
-    useEffect(()=>{
-        setListOn(common.assiListOn);
-    },[common.assiListOn]);
 
     
     

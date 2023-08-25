@@ -201,54 +201,14 @@ const Message = () => {
     },[common.groupMsg]);
 
     
-    //소켓 메시지 받으면 메시지 리스트값 변경 - 관리자전용 알림
-    useEffect(()=>{
-        console.log(common.newMsgDataAdmin)
-        if(Object.keys(common.newMsgDataAdmin).length > 0){  
-            const updatedMsgList = [...msgList]; // 복사해서 수정할 새로운 배열 생성
-
-            let selectedItem = null;
-            for (let i = 0; i < updatedMsgList.length; i++) {
-                if (updatedMsgList[i].m_id === common.newMsgDataAdmin.m_id) {
-                    selectedItem = updatedMsgList.splice(i, 1)[0]; // 선택한 아이템을 배열에서 제거하고 해당 아이템 저장
-                    break;
-                }
-            }
-
-            //채팅방 있을때
-            if (selectedItem) {
-                selectedItem = {
-                    ...selectedItem,
-                    idx: common.newMsgDataAdmin.idx,
-                    from_id: common.newMsgDataAdmin.from_id,
-                    to_id: common.newMsgDataAdmin.to_id,
-                    msg: common.newMsgDataAdmin.message_type == "I" ? "사진" : common.newMsgDataAdmin.msg,
-                    w_date: common.newMsgDataAdmin.w_date,
-                    to_view_count: selectedItem.to_view_count + common.newMsgDataAdmin.to_view_count
-                };
-                updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
-            }
-            //채팅방 없을때
-            else if(!selectedItem && common.newMsgDataAdmin.m_id != user.managerInfo.m_id){
-                updatedMsgList.unshift(common.newMsgDataAdmin);
-            }
-            setMsgList(updatedMsgList);
-
-            //store messagePopList 값 지우기 (체크리스트)
-            dispatch(messagePopList([]));
-        }
-    },[common.newMsgDataAdmin]);
-
-
     //소켓 메시지 받으면 메시지 리스트값 변경
     useEffect(()=>{
-        console.log(common.newMsgData)
         if(Object.keys(common.newMsgData).length > 0){  
             const updatedMsgList = [...msgList]; // 복사해서 수정할 새로운 배열 생성
 
             let selectedItem = null;
             for (let i = 0; i < updatedMsgList.length; i++) {
-                if (updatedMsgList[i].m_id === common.selectUser.m_id) {
+                if (updatedMsgList[i].m_id === common.newMsgData.m_id) {
                     selectedItem = updatedMsgList.splice(i, 1)[0]; // 선택한 아이템을 배열에서 제거하고 해당 아이템 저장
                     break;
                 }
@@ -256,19 +216,25 @@ const Message = () => {
 
             //채팅방 있을때
             if (selectedItem) {
+                let view;
+                if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0 && common.selectUser.m_id === common.newMsgData.m_id){
+                    view = 0;
+                }else{
+                    view = selectedItem.to_view_count + common.newMsgData.to_view_count;
+                }
                 selectedItem = {
                     ...selectedItem,
                     idx: common.newMsgData.idx,
                     from_id: common.newMsgData.from_id,
                     to_id: common.newMsgData.to_id,
                     msg: common.newMsgData.message_type == "I" ? "사진" : common.newMsgData.msg,
-                    w_date: common.newMsgData.time,
-                    to_view_count: common.newMsgData.to_id === user.managerInfo.m_id ? selectedItem.to_view_count + common.newMsgData.view_cnt : selectedItem.to_view_count
+                    w_date: common.newMsgData.w_date,
+                    to_view_count: view
                 };
                 updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
             }
             //채팅방 없을때
-            else{
+            else if(!selectedItem && common.newMsgData.m_id != user.managerInfo.m_id){
                 updatedMsgList.unshift(common.newMsgData);
             }
             setMsgList(updatedMsgList);
@@ -279,12 +245,11 @@ const Message = () => {
     },[common.newMsgData]);
 
 
-    //store msgViewId 값이 있으면 메시지리스트중 그 회원에게 온 메시지 읽음처리
+    // 메시지 읽음처리
     useEffect(()=>{
-        console.log(common.msgViewId)
-        if(common.msgViewId.length > 0){
+        if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
             const updatedMsgList = msgList.map(item => {
-                if (item.m_id === common.msgViewId) {
+                if (item.m_id === common.selectUser.m_id) {
                     return {
                         ...item,
                         to_view_count: 0,
@@ -294,7 +259,7 @@ const Message = () => {
             });
             setMsgList(updatedMsgList);
         }
-    },[common.newMsgDataAdmin, common.newMsgData]);
+    },[common.selectUser]);
 
 
 

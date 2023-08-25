@@ -175,7 +175,7 @@ html,.body{height: auto;}
 .pop_wrap{position: fixed;width: 100%;height: 100%;top: 0;left: 0;z-index: 900;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center;-webkit-justify-content: center; justify-content: center;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
 .pop_wrap .dim{position: absolute;width: 100%;height:100%;top: 0;left: 0;background: rgba(0,0,0,0.6);}
 .pop_wrap>.pop_cont{position: relative;width: 440px;border-radius: 16px;background: #fff;padding: 24px 20px;}
-.pop_wrap>.pop_cont.pop_cont2{width: 564px;padding: 32px;}
+.pop_wrap>.pop_cont.pop_cont2{width: 570px;padding: 32px;}
 .pop_wrap>.pop_cont.pop_cont3{width: 720px;padding: 32px;}
 .pop_wrap>.pop_cont.pop_cont4{width: 850px;padding: 32px;}
 .pop_wrap>.pop_cont.pop_gray{background: #F8F8F8;}
@@ -229,7 +229,7 @@ html,.body{height: auto;}
 .img_pop .img_cont .btn_list{padding: 9px 44px 9px 20px;background: #373D49 url(../images/ic_list.svg) no-repeat center right 20px;font-size: 14px;color: #fff;font-weight: 500;border-radius: 20px;margin: 16px auto 0;display: block;}
 
 /* 사진모아보기 리스트 팝업 */
-.img_list_pop .pop_cont{padding-right: 14px;}
+.img_list_pop .pop_cont{min-height: 400px;}
 .img_list_pop .scroll_wrap{max-height: 70vh;}
 .img_list_pop .scroll_wrap ul li{width: 80px;height: 80px;margin: 0 4px 4px 0;cursor: pointer;border: 1px solid #ddd;border-radius: 8px;overflow: hidden;}
 .img_list_pop .scroll_wrap ul li:nth-child(6n){margin-right: 0;}

@@ -5,7 +5,7 @@ import { useSocket } from '../etc/SocketProvider';
 import * as CF from "../../config/function";
 import { enum_api_uri } from '../../config/enum';
 import { managerProfilePop, managerProfilePopPosition, confirmPop } from '../../store/popupSlice';
-import { selectUser, newMsgDataAdmin } from '../../store/commonSlice';
+import { selectUser, newMsgData } from '../../store/commonSlice';
 import ConfirmPop from '../popup/ConfirmPop';
 import logo from "../../images/logo.svg";
 import none_profile from "../../images/img_profile.jpg";
@@ -41,7 +41,7 @@ const Header = () => {
             //매니저 메시지알림 받기
             socket.on("admin msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
-                dispatch(newMsgDataAdmin(result));
+                dispatch(newMsgData(result));
             })
         }
     },[socket]);

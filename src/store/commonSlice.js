@@ -6,8 +6,6 @@ const common = createSlice({
         msgImgs:[],
         msgSend:false,
         newMsgData:{},
-        newMsgDataAdmin:{},
-        msgViewId:"",
         socketRooms:[],
         selectUser:{},
         filter:false,
@@ -30,12 +28,6 @@ const common = createSlice({
         },
         newMsgData: (state, action) => {
             state.newMsgData = action.payload;
-        },
-        newMsgDataAdmin: (state, action) => {
-            state.newMsgDataAdmin = action.payload;
-        },
-        msgViewId: (state, action) => {
-            state.msgViewId = action.payload;
         },
         socketRooms: (state, action) => {
             state.socketRooms = action.payload;
@@ -78,8 +70,6 @@ export const {
     msgImgs, 
     msgSend, 
     newMsgData,
-    newMsgDataAdmin,
-    msgViewId,
     socketRooms,
     selectUser, 
     filter, 
