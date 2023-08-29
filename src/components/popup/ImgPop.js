@@ -39,6 +39,7 @@ const ImgPop = (props) => {
     //다음버튼 클릭시
     const nextHandler = () => {
         if (swiperRef.current && swiperRef.current.swiper) {
+            console.log(slideOnIdx)
             setSlideOnIdx(slideOnIdx + 1);
             swiperRef.current.swiper.slideTo(slideOnIdx + 1);
         }
@@ -72,7 +73,29 @@ const ImgPop = (props) => {
             setAdmin(true);
         }
     },[location.pathname]);
+
+
+    //키보드 화살표 좌우 클릭시 슬라이드변경
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
     
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [slideOnIdx]);
+
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'ArrowRight') {
+            if(slideOnIdx + 1 < popup.imgPopList.length){
+                nextHandler();
+            }
+        } else if (event.key === 'ArrowLeft') {
+            if (slideOnIdx > 0) {
+                prevHandler();
+            }
+        }
+    };
 
 
     return(
@@ -91,7 +114,6 @@ const ImgPop = (props) => {
                             </div>
                             <Swiper ref={swiperRef} className={`thumb_slider ${popup.imgPopList.length < 4 ? "center_slider" : ""}`} {...swiperOptions} >
                                 {popup.imgPopList.map((img,i)=>{
-                                    // let src = api_uri+img;
                                     return(
                                         <SwiperSlide key={i} 
                                             onClick={()=>{

@@ -11,6 +11,7 @@ exports.enum_api_uri = {
     m_pro_modify: `${api_uri}v1/manager/manager-modify`,
     m_setting: `${api_uri}v1/message-setting/setting`,
     m_limit: `${api_uri}v1/message-setting/limit`,
+    chat_count: `${api_uri}v1/message/chat-unread-count`,
 
     //회원
     u_all_count: `${api_uri}v1/user-list/all-count`,

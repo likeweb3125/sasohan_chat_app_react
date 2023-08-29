@@ -14,6 +14,7 @@ const MessageInputWrap = (props) => {
     const common = useSelector((state)=>state.common);
     const dispatch = useDispatch();
     const token = localStorage.getItem("token");
+    const api_uri = enum_api_uri.api_uri;
     const msg_img_add = enum_api_uri.msg_img_add;
     const g_msg_img_add = enum_api_uri.g_msg_img_add;
     const [uploadOn, setUploadOn] = useState(false);
@@ -87,7 +88,8 @@ const MessageInputWrap = (props) => {
                         }))
                     ]);
 
-                    let imgName = res.data.mediaUrls.replace(photoPath, "");
+                    let imgName = res.data.mediaUrls.replace(api_uri, "");
+                        imgName = imgName.replace(photoPath, "");
                     let newList = [...imgNameList,imgName];
                     setImgNameList(newList);
                 }

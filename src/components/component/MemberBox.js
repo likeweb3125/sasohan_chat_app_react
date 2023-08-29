@@ -62,7 +62,7 @@ const MemberBox = (props) => {
                 <div className="box flex_between">
                     <div className="flex">
                         <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
-                        <p className="age">{props.data.m_address}<span> · {props.data.birth}</span></p>
+                        <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
                     </div>
                     <button type="button" className={`btn_mem ${btnOn ? "on" : ""}`} 
                         onClick={(e)=>{
@@ -77,7 +77,7 @@ const MemberBox = (props) => {
                 <div className="box flex_between">
                     <div className="flex">
                         <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
-                        <p className="age">{props.data.m_address}<span> · {props.data.birth}</span></p>
+                        <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
                     </div>
                     <button type="button" className={`btn_mem ${btnOn ? "on" : ""}`} 
                         onClick={(e)=>{
@@ -107,13 +107,13 @@ const MemberBox = (props) => {
                     <div className="txt_box">
                         <div className="flex">
                             <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
-                            <p className="age">{props.data.m_address}<span> · {props.data.m_born}</span></p>
+                            <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.m_born}</span></p>
                         </div>
                         <p className="ellipsis">{props.data.msg}</p>
                     </div>
                     <div className="tx_r">
                         <p className="time">{props.data.w_date}</p>
-                        {!props.liOn && props.data.to_view_count > 0 && <span className="num">{CF.MakeIntComma(props.data.to_view_count)}</span>}
+                        {!props.liOn && props.data.to_view_count > 0 && <span className="num">{props.data.to_view_count >= 999 ? 999 : props.data.to_view_count}</span>}
                     </div>
                 </div>
             </div>
@@ -129,11 +129,11 @@ const MemberBox = (props) => {
                         <ul>
                             <li className="flex">
                                 <p className="name">{props.data.from_user && props.data.from_user.m_name}</p>
-                                <p className="age">{props.data.from_user && props.data.from_user.m_address}<span> · {props.data.from_user && props.data.from_user.birth}</span></p>
+                                <p className="age">{props.data.from_user && props.data.from_user.m_address}<span>&nbsp;·&nbsp;{props.data.from_user && props.data.from_user.birth}</span></p>
                             </li>
                             <li className="flex">
                                 <p className="name">{props.data.to_user && props.data.to_user.m_name}</p>
-                                <p className="age">{props.data.to_user && props.data.to_user.m_address}<span> · {props.data.to_user && props.data.to_user.birth}</span></p>
+                                <p className="age">{props.data.to_user && props.data.to_user.m_address}<span>&nbsp;·&nbsp;{props.data.to_user && props.data.to_user.birth}</span></p>
                             </li>
                         </ul>
                     </div>

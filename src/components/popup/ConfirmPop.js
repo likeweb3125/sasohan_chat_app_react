@@ -28,24 +28,6 @@ const ConfirmPop = (props) => {
     };
 
 
-    //확인버튼만있는 confirm 팝업일경우에 엔터키입력시 팝업닫기
-    // const handleKeyDown = (event) => {
-    //     if(event.key === 'Enter') {
-    //         if(popup.confirmPopBtn === 1){
-    //             closePopHandler();
-    //         }
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     window.addEventListener('keydown', handleKeyDown);
-
-    //     return () => {
-    //         window.removeEventListener('keydown', handleKeyDown);
-    //     };
-    // }, []);
-
-
     return createPortal(
         <>
             {popup.confirmPop &&

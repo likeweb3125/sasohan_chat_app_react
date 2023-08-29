@@ -7,7 +7,7 @@ import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
-import { msgSend, selectUser, socketRooms, assiListOn } from "../../store/commonSlice";
+import { msgSend, selectUser, socketRooms, assiListOn, groupMsg } from "../../store/commonSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -53,6 +53,7 @@ const RightCont = (props) => {
     const [listOn, setListOn] = useState("");
     const [memBtnOn, setMemBtnOn] = useState(false);
     const [assiList, setAssiList] = useState([]);
+    const [assiIdList, setAssiIdList] = useState([]);
     const [assiCount, setAssiCount] = useState(0);
     const floatBoxRef = useRef(null);
     const floatListRef = useRef(null);
@@ -71,6 +72,7 @@ const RightCont = (props) => {
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [assiDnd, setAssiDnd] = useState(false);
+    const [assiDndEnd, setAssiDndEnd] = useState(false);
 
 
     //window resize
@@ -302,8 +304,10 @@ const RightCont = (props) => {
 
     //응대중인 회원이 많을때만 토글버튼 보이기
     useEffect(()=>{
-        if(assiDnd){
+        if(assiDnd){ //회원순서변경시 id값만 리스트로
             setAssiDnd(false);
+            let idList = assiList.map((item)=>item.m_id).filter(Boolean);
+            setAssiIdList(idList);
         }else{
             //windowWidth 바뀌면 floatOn = false;
             setFloatOn(false);
@@ -311,8 +315,6 @@ const RightCont = (props) => {
             if (floatBoxRef.current !== null && floatListRef.current !== null) {
                 let boxH = floatBoxRef.current.offsetHeight;
                 let listH = floatListRef.current.offsetHeight;
-                console.log(boxH);
-                console.log(listH);
 
                 if(listH <= boxH){
                     setBtnToggle(false);
@@ -453,11 +455,49 @@ const RightCont = (props) => {
             });
         }
         setAssiDnd(true);
+        setAssiDndEnd(true);
     }
 
     useEffect(()=>{
         setListOn(common.assiListOn);
     },[common.assiListOn]);
+
+
+    //응대중인회원 순서변경
+    useEffect(()=>{
+        if(assiDndEnd){
+            setAssiDndEnd(false);
+            let body = {
+                m_id: assiIdList
+            };
+
+            axios.put(`${assi_order}`,body,
+                {headers: {Authorization: `Bearer ${token}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    let data = res.data;
+                    // dispatch(confirmPop({
+                    //     confirmPop:true,
+                    //     confirmPopTit:'알림',
+                    //     confirmPopTxt: data.msg,
+                    //     confirmPopBtn:1,
+                    // }));
+                    // setConfirm(true);
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            });
+        }
+    },[assiIdList]);
     
 
     //매니저 단체메시지설정 변경시
@@ -747,26 +787,36 @@ const RightCont = (props) => {
 
     //채팅창 맨위로 스크롤시 그 전 메시지내용 가져오기
     const chatScroll = () => {
-        const chatH = chatRef.current.offsetHeight;
-        const innerH = innerRef.current.offsetHeight;
-        const scrollTop = chatRef.current.scrollTop;
-        if(innerH > chatH){
-            if (scrollTop === 0) {
-                const prevScrollHeight = chatRef.current.scrollHeight;
-                if(myChat){
-                    getMessage(chatLastIdx);
-                }else{
-                    getMessageAdmin(chatLastIdx);
-                }
+        if (chatRef.current !== null && innerRef.current !== null) {
+            const chatH = chatRef.current.offsetHeight;
+            const innerH = innerRef.current.offsetHeight;
+            const scrollTop = chatRef.current.scrollTop;
+            if(innerH > chatH){
+                if (scrollTop === 0) {
+                    const prevScrollHeight = chatRef.current.scrollHeight;
+                    if(myChat){
+                        getMessage(chatLastIdx);
+                    }else{
+                        getMessageAdmin(chatLastIdx);
+                    }
 
-                setTimeout(() => {
-                    const newScrollHeight = chatRef.current.scrollHeight;
-                    const addedHeight = newScrollHeight - prevScrollHeight;
-                    chatRef.current.scrollTop = addedHeight;
-                }, 100);
+                    setTimeout(() => {
+                        const newScrollHeight = chatRef.current.scrollHeight;
+                        const addedHeight = newScrollHeight - prevScrollHeight;
+                        chatRef.current.scrollTop = addedHeight;
+                    }, 100);
+                }
             }
         }
     };
+
+    //단체메시지 전송완료시 selectUser값 비우기
+    useEffect(()=>{
+        if(common.groupMsg){
+            dispatch(selectUser({}));
+            dispatch(groupMsg(false));
+        }
+    },[common.groupMsg]);
 
     
     

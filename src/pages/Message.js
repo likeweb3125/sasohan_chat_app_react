@@ -229,10 +229,17 @@ const Message = () => {
             //채팅방 있을때
             if (selectedItem) {
                 let view;
-                if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0 && common.selectUser.m_id === common.newMsgData.m_id){
-                    view = 0;
-                }else{
-                    view = selectedItem.to_view_count + common.newMsgData.to_view_count;
+                //회원이 매니저에게 보냈을때
+                if(common.newMsgData.from_id !== user.managerInfo.m_id){
+                    if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0 && common.selectUser.m_id === common.newMsgData.m_id){
+                        view = 0;
+                    }else{
+                        view = selectedItem.to_view_count + common.newMsgData.to_view_count;
+                    }
+                }
+                //매니저가 회원에게 보냈을때
+                else{
+                    view = selectedItem.to_view_count;
                 }
                 selectedItem = {
                     ...selectedItem,
@@ -244,12 +251,12 @@ const Message = () => {
                     to_view_count: view
                 };
                 updatedMsgList.unshift(selectedItem); // 선택한 아이템을 배열의 맨 앞에 추가
+                setMsgList(updatedMsgList);
             }
             //채팅방 없을때
             else if(!selectedItem && common.newMsgData.m_id != user.managerInfo.m_id){
-                updatedMsgList.unshift(common.newMsgData);
+                getList(1,"",true);
             }
-            setMsgList(updatedMsgList);
 
             //store messagePopList 값 지우기 (체크리스트)
             dispatch(messagePopList([]));

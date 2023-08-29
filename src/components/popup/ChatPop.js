@@ -225,13 +225,17 @@ const ChatPop = (props) => {
 
     //닫기, 취소버튼 클릭시
     const cancelHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
-            confirmPopBtn:2,
-        }));
-        setCloseConfirm(true);
+        if(checkList.length > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
+                confirmPopBtn:2,
+            }));
+            setCloseConfirm(true);
+        }else{
+            closePopHandler();
+        }
     };
 
     //서비스 클릭시 툴팁팝업 열기

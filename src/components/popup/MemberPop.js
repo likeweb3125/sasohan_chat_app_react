@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import { memPop, memInfoPop, confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "./ConfirmPop";
 
-const MemberPop = (props) => {
+const MemberPop = () => {
     const popup = useSelector((state)=>state.popup);
     const dispatch = useDispatch();
     const token = localStorage.getItem("token");
@@ -56,16 +56,17 @@ const MemberPop = (props) => {
 
     //회원정보보기 버튼클릭시
     const detailInfo = () => {
-        dispatch(memInfoPop(true));
-
         // 앱가입 회원이면 회원프로필팝업
-        // if(info.m_app == "Y"){
-        //     dispatch(memInfoPop(true));
-        // }
-        // // 기존회원이면 iframe
-        // else{
-        //     console.log("기존회원입니다.");
-        // }
+        if(info.m_app == "Y"){
+            dispatch(memInfoPop(true));
+        }
+        // 기존회원이면 기존사소한관리자 회원정보페이지 새창띄우기
+        else{
+            const mnum = info.mnum;
+            const m_id = info.m_id;
+            const url = `http://jja-gg.com/admin/member/member0.asp?mnum=${mnum}&id=${m_id}`;
+            window.open(url, "_blank");
+        }
     };
 
 
@@ -78,7 +79,7 @@ const MemberPop = (props) => {
                     <div className="box">
                         <div className="flex">
                             <p className={`name ${info.m_gender == "2" ? "mem_w" : ""}`}>{info.m_name}</p>
-                            <p className="age">{info.m_address}<span> · {info.birth}</span></p>
+                            <p className="age">{info.m_address}<span>&nbsp;·&nbsp;{info.birth}</span></p>
                         </div>
                     </div>
                 </div>

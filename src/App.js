@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import ConfirmPop from './components/popup/ConfirmPop';
 import Popup from './components/popup/Popup';
 import Layout from './components/layout/Layout';
 import Login from './pages/Login';
@@ -16,16 +13,6 @@ import './css/content.css';
 
 
 function App() {
-    const popup = useSelector((state)=>state.popup);
-    const [confirm, setConfirm] = useState();
-
-    // Confirm팝업 닫힐때
-    useEffect(()=>{
-        if(popup.confirmPop === false){
-            setConfirm(false);
-        }
-    },[popup.confirmPop]);
-
 
     return(
         <div id="wrap" className="flex">
@@ -49,9 +36,6 @@ function App() {
 
             {/* 팝업 */}
             <Popup />
-
-            {/* confirm팝업 */}
-            {confirm && <ConfirmPop />}
         </div>
     );
 }
