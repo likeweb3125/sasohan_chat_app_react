@@ -225,17 +225,13 @@ const ChatPop = (props) => {
 
     //닫기, 취소버튼 클릭시
     const cancelHandler = () => {
-        if(checkList.length > 0){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
-                confirmPopBtn:2,
-            }));
-            setCloseConfirm(true);
-        }else{
-            closePopHandler();
-        }
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
+            confirmPopBtn:2,
+        }));
+        setCloseConfirm(true);
     };
 
     //서비스 클릭시 툴팁팝업 열기
@@ -337,7 +333,7 @@ const ChatPop = (props) => {
                                                         ><span>프리미엄</span></div>
                                                     </td>
                                                     <td>{data.manager}</td>
-                                                    <td><div className={`tag2 ${data.connect == "연결가능" ? "on" : ""}`}>{data.connect}</div></td>
+                                                    <td><div className={`tag2${data.connect == "연결가능" ? " on" : ""}`}>{data.connect}</div></td>
                                                 </tr>
                                             );
                                         })

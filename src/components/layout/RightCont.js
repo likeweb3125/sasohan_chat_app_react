@@ -913,7 +913,8 @@ const RightCont = (props) => {
                                                     <ul className="txt_ul">
                                                         <li>
                                                             <div className="box flex_bottom">
-                                                                <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.time}</p>
+                                                                {/* <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.time}</p> */}
+                                                                <p className="time">{cont.view_cnt} {cont.time}</p>
                                                                 {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                     :   cont.message_type == "I" && 
                                                                         <ul className="img_ul flex_wrap">

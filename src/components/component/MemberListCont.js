@@ -73,10 +73,20 @@ const MemberListCont = (props) => {
 
 
     useEffect(()=>{
+        console.log(popup.messagePop);
+        console.log(listOn);
         if(popup.messagePop){
             setListOn(null);
         }
     },[popup.messagePop]);
+
+
+    useEffect(()=>{
+        setListOn(listOn);
+    },[listOn]);
+
+
+    
 
 
 

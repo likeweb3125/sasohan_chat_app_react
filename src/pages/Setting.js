@@ -62,39 +62,31 @@ const Setting = () => {
 
     //설정 저장버튼 클릭시
     const saveBtnHandler = () => {
-        setSaveConfirm(true);
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt:'설정을 저장하시겠습니까?',
-            confirmPopBtn:2,
-        }));
-
-        // if(!settingNum){
-        //     setConfirm(true);
-        //     dispatch(confirmPop({
-        //         confirmPop:true,
-        //         confirmPopTit:'알림',
-        //         confirmPopTxt:'최대 전체선택 인원수를 선택해주세요.',
-        //         confirmPopBtn:1,
-        //     }));
-        // }else if(!settingRange){
-        //     setConfirm(true);
-        //     dispatch(confirmPop({
-        //         confirmPop:true,
-        //         confirmPopTit:'알림',
-        //         confirmPopTxt:'할당된 회원 번호를 선택해주세요.',
-        //         confirmPopBtn:1,
-        //     }));
-        // }else{
-        //     setSaveConfirm(true);
-        //     dispatch(confirmPop({
-        //         confirmPop:true,
-        //         confirmPopTit:'알림',
-        //         confirmPopTxt:'설정을 저장하시겠습니까?',
-        //         confirmPopBtn:2,
-        //     }));
-        // }
+        if(!settingNum){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'최대 전체선택 인원수를 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+        }else if(!settingRange){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'할당된 회원 번호를 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+        }else{
+            setSaveConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'설정을 저장하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+        }
     };
 
     //설정 저장하기
@@ -117,7 +109,7 @@ const Setting = () => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'저장되었습니다.',
+                    confirmPopTxt:'설정을 저장했습니다!',
                     confirmPopBtn:1,
                 }));
 
@@ -133,8 +125,8 @@ const Setting = () => {
             
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
+                confirmPop:true,
+                confirmPopTit:'알림',
                 confirmPopTxt: err_msg,
                 confirmPopBtn:1,
             }));

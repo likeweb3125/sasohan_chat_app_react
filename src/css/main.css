@@ -90,6 +90,7 @@ html,.body{height: auto;}
 .custom_table table tbody td .tag2{font-size: 12px;padding:5px 9px;border: 1px solid #DDDDDD;border-radius: 20px;line-height: 1;background: #878B92;color: #C2C2C2;font-weight: 700;min-width: 60px;margin: 0 auto;display: inline-block;}
 .custom_table table tbody td .tag2.on{color: #00D3AB;background: #373D49;border-color: #373D49;}
 .custom_table table tbody tr.none{opacity: 0.6;}
+.custom_table table tbody tr.none .custom_check label{cursor: default;}
 .custom_table table tbody tr.checked td{background: #FAF8FF;}
 .custom_table2 table tbody th{font-size: 15px;font-weight: 400;color: #1B171E;text-align: left;padding: 5px 0;}
 .custom_table2 table tbody tr th:nth-of-type(2){padding-left: 20px;}
