@@ -124,7 +124,7 @@ const Chat = () => {
     useEffect(()=>{
         if(common.pageMore && common.pageNo < common.pageLastNo){
             if(listSelected == "낮은 일차순"){
-                getList(common.pageNo+1,"row");
+                getList(common.pageNo+1,"low");
             }else{
                 getList(common.pageNo+1);
             }
@@ -158,7 +158,7 @@ const Chat = () => {
         if(searchOn){
             let sel = "";
             if(listSelected == "낮은 일차순"){
-                sel = "row";
+                sel = "low";
             }
             getList(1,sel,true);
         }
@@ -181,7 +181,7 @@ const Chat = () => {
             getList(1,"",true);
         }
         if(listSelected == "낮은 일차순"){
-            getList(1,"row",true);
+            getList(1,"low",true);
         }
     };
 

@@ -336,19 +336,27 @@ const RightCont = (props) => {
             let idList = assiList.map((item)=>item.m_id).filter(Boolean);
             setAssiIdList(idList);
         }else{
-            //windowWidth 바뀌면 floatOn = false;
-            setFloatOn(false);
-            
-            if (floatBoxRef.current !== null && floatListRef.current !== null) {
-                let boxH = floatBoxRef.current.offsetHeight;
-                let listH = floatListRef.current.offsetHeight;
-
-                if(listH <= boxH){
-                    setBtnToggle(false);
-                }else{
-                    setBtnToggle(true);
+            setTimeout(()=>{
+                if (floatBoxRef.current !== null && floatListRef.current !== null) {
+                    let boxH = floatBoxRef.current.offsetHeight;
+                    let listH = floatListRef.current.offsetHeight;
+                    console.log(`boxH : ${boxH} ,listH : ${listH}`);
+                    if(floatOn){
+                        if(listH <= 43){
+                            setBtnToggle(false);
+                            setFloatOn(false);
+                        }else{
+                            setBtnToggle(true);
+                        }
+                    }else{
+                        if(listH <= boxH){
+                            setBtnToggle(false);
+                        }else{
+                            setBtnToggle(true);
+                        }
+                    }
                 }
-            }
+            },100);
         }
     },[assiList, windowWidth]);
 

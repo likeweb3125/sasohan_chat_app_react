@@ -124,7 +124,7 @@ const Message = () => {
     useEffect(()=>{
         if(common.pageMore && common.pageNo < common.pageLastNo){
             if(listSelected == "낮은 일차순"){
-                getList(common.pageNo+1,"row");
+                getList(common.pageNo+1,"low");
             }else{
                 getList(common.pageNo+1);
             }
@@ -161,7 +161,7 @@ const Message = () => {
             //searchOn true 일때는 회원명으로 검색하기
             let sel = "";
             if(listSelected == "낮은 일차순"){
-                sel = "row";
+                sel = "low";
             }
             getList(1,sel,true);
 
@@ -187,8 +187,8 @@ const Message = () => {
             dispatch(messagePopSort(""));
         }
         if(listSelected == "낮은 일차순"){
-            getList(1,"row",true);
-            dispatch(messagePopSort("row"));
+            getList(1,"low",true);
+            dispatch(messagePopSort("low"));
         }
     };
 
