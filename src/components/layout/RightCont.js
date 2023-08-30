@@ -7,7 +7,7 @@ import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
-import { msgSend, selectUser, socketRooms, assiListOn, groupMsg } from "../../store/commonSlice";
+import { msgSend, selectUser, assiListOn, groupMsg } from "../../store/commonSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -16,7 +16,6 @@ import noneChatImg from "../../images/ic_none_chat.svg";
 import noneSelectImg from "../../images/ic_none_select.svg";
 import noneReadingImg from "../../images/ic_none_reading.svg";
 import noneSetImg from "../../images/ic_none_set.svg";
-import sampleImg from "../../images/sample/img_sample.jpg";
 import {
     DndContext,
     closestCenter,
@@ -113,19 +112,8 @@ const RightCont = (props) => {
         const data = { room_id: common.selectUser.room_id};
         const data2 = { from_id: user.managerInfo.m_id,to_id: common.selectUser.m_id};
 
+        socket.emit("join room", data);
         socket.emit("active room", data2);
-
-        if(!common.socketRooms.includes(common.selectUser.room_id)){
-            socket.emit("join room", data);
-            
-            //연결된 채팅방 store 에 저장
-            let rooms = [...common.socketRooms];
-            const roomId = common.selectUser.room_id;
-            if(!rooms.includes(roomId)) {
-                rooms.push(roomId);
-                dispatch(socketRooms([...rooms]));
-            }
-        }
     };
 
 
