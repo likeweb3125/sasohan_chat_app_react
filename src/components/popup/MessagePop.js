@@ -170,8 +170,13 @@ const MessagePop = (props) => {
         });
     };
 
+    useEffect(()=>{
+        console.log(popup.memCheckPopCheckList);
+    },[popup.memCheckPopCheckList]);
+
 
     useEffect(()=>{
+        console.log(popup.messagePopList);
         const path = location.pathname;
         if(path == "/message"){
             getList2();
@@ -225,7 +230,7 @@ const MessagePop = (props) => {
             }));
             setConfirm(true);
         }else{
-            if(path == "/message"){
+            if(path == "/message"){ //메시지 페이지일때 단체회원가져오기
                 dispatch(loadingPop(true));
 
                 let body = {

@@ -73,6 +73,7 @@ const RightCont = (props) => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [assiDnd, setAssiDnd] = useState(false);
     const [assiDndEnd, setAssiDndEnd] = useState(false);
+    const [msgRead, setMsgRead] = useState(false);
 
 
     //window resize
@@ -110,6 +111,10 @@ const RightCont = (props) => {
     // 소켓 채팅방 연결
     const socketInit = () => {
         const data = { room_id: common.selectUser.room_id};
+        const data2 = { from_id: user.managerInfo.m_id,to_id: common.selectUser.m_id};
+
+        socket.emit("active room", data2);
+
         if(!common.socketRooms.includes(common.selectUser.room_id)){
             socket.emit("join room", data);
             
@@ -130,6 +135,18 @@ const RightCont = (props) => {
             //채팅방 연결 받기
             socket.on("join room", (result) => {
                 console.log(JSON.stringify(result, null, 2));
+            })
+
+            //회원이 채팅방에 들어옴
+            socket.on("active room", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+                const id = result.from_id;
+
+                //매니저가보낸 메시지 전체읽음처리
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
+                    setMsgRead(true);
+                }
             })
 
             //메시지 받기
@@ -255,6 +272,16 @@ const RightCont = (props) => {
             })
         }
     },[socket]);
+
+
+    //메시지 전체읽음처리
+    useEffect(()=>{
+        if(msgRead){
+            setMsgRead(false);
+            const newMsgList = msgList.map(item => ({...item, view_cnt: 0}));
+            setMsgList(newMsgList);
+        }
+    },[msgRead]);
 
 
     //회원정보팝업 닫히면 회원정보버튼 off
@@ -477,13 +504,6 @@ const RightCont = (props) => {
             .then((res)=>{
                 if(res.status === 200){
                     let data = res.data;
-                    // dispatch(confirmPop({
-                    //     confirmPop:true,
-                    //     confirmPopTit:'알림',
-                    //     confirmPopTxt: data.msg,
-                    //     confirmPopBtn:1,
-                    // }));
-                    // setConfirm(true);
                 }
             })
             .catch((error) => {
@@ -913,8 +933,7 @@ const RightCont = (props) => {
                                                     <ul className="txt_ul">
                                                         <li>
                                                             <div className="box flex_bottom">
-                                                                {/* <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.time}</p> */}
-                                                                <p className="time">{cont.view_cnt} {cont.time}</p>
+                                                                <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.time}</p>
                                                                 {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                     :   cont.message_type == "I" && 
                                                                         <ul className="img_ul flex_wrap">

@@ -59,34 +59,22 @@ const MemberListCont = (props) => {
 
     //선택한 회원값이 변경될때마다 li on 변경
     useEffect(()=>{
-        let list = props.list;
-        if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
-            let idx = list.findIndex(item=>item.m_id === common.selectUser.m_id);
-            setListOn(idx);
-        }else if(common.selectUser.hasOwnProperty("manager_id") && common.selectUser.manager_id.length > 0){
-            let idx = list.findIndex(item=>item.manager_id === common.selectUser.manager_id);
-            setListOn(idx);
-        }else{
-            setListOn(null);
-        }
-    },[common.selectUser, props.list]);
-
-
-    useEffect(()=>{
-        console.log(popup.messagePop);
-        console.log(listOn);
+        //단체메시지 팝업일때 listOn = null;
         if(popup.messagePop){
             setListOn(null);
+        }else{
+            let list = props.list;
+            if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
+                let idx = list.findIndex(item=>item.m_id === common.selectUser.m_id);
+                setListOn(idx);
+            }else if(common.selectUser.hasOwnProperty("manager_id") && common.selectUser.manager_id.length > 0){
+                let idx = list.findIndex(item=>item.manager_id === common.selectUser.manager_id);
+                setListOn(idx);
+            }else{
+                setListOn(null);
+            }
         }
-    },[popup.messagePop]);
-
-
-    useEffect(()=>{
-        setListOn(listOn);
-    },[listOn]);
-
-
-    
+    },[common.selectUser, props.list]);
 
 
 
