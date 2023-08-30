@@ -113,7 +113,6 @@ const RightCont = (props) => {
         const data = { room_id: common.selectUser.room_id};
         const data2 = { from_id: user.managerInfo.m_id,to_id: common.selectUser.m_id};
 
-        socket.emit("join room", data);
         socket.emit("active room", data2);
 
         if(!common.socketRooms.includes(common.selectUser.room_id)){
