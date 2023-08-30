@@ -113,6 +113,7 @@ const RightCont = (props) => {
         const data = { room_id: common.selectUser.room_id};
         const data2 = { from_id: user.managerInfo.m_id,to_id: common.selectUser.m_id};
 
+        socket.emit("join room", data);
         socket.emit("active room", data2);
 
         if(!common.socketRooms.includes(common.selectUser.room_id)){
@@ -131,11 +132,6 @@ const RightCont = (props) => {
 
     useEffect(()=>{
         if(socket){
-
-            //채팅방 연결 받기
-            socket.on("join room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-            })
 
             //회원이 채팅방에 들어옴
             socket.on("active room", (result) => {
@@ -156,7 +152,7 @@ const RightCont = (props) => {
                 const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
-                //현재보고있는 채팅방일때만 메시지값 추가
+                //현재보고있는 채팅방일때만 받은 메시지 추가
                 if(userRoomId === result.room_id){
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
@@ -215,7 +211,7 @@ const RightCont = (props) => {
                 const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
                 
-                //현재보고있는 채팅방일때만 이미지값 추가
+                //현재보고있는 채팅방일때만 받은 이미지 추가
                 if(userRoomId === result.room_id){
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
@@ -340,7 +336,6 @@ const RightCont = (props) => {
                 if (floatBoxRef.current !== null && floatListRef.current !== null) {
                     let boxH = floatBoxRef.current.offsetHeight;
                     let listH = floatListRef.current.offsetHeight;
-                    console.log(`boxH : ${boxH} ,listH : ${listH}`);
                     if(floatOn){
                         if(listH <= 43){
                             setBtnToggle(false);
@@ -540,7 +535,6 @@ const RightCont = (props) => {
 
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        console.log(common.selectUser);
 
         //localStorage 에 selectUser값 저장
         localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
@@ -857,10 +851,10 @@ const RightCont = (props) => {
                 </div>
 
                 {assiList && 
-                    <div className={`floating_box flex_between flex_top ${floatOn ? "on" : ""}`} ref={floatBoxRef}>
+                    <div className={`floating_box flex_between flex_top${floatOn ? " on" : ""}`} ref={floatBoxRef}>
                         {assiList.length > 0 ?
                             <>
-                                <div className={`list_box ${floatOn ? "scroll_wrap" : ""}`}>
+                                <div className={`list_box${floatOn ? " scroll_wrap" : ""}`}>
                                     <ul className="flex flex_wrap" ref={floatListRef} >
                                         <DndContext
                                             sensors={sensors}
@@ -892,7 +886,7 @@ const RightCont = (props) => {
                 }
 
             </div>
-            <div className={`bottom_box ${floatOn ? "small" : ""}`}>
+            <div className={`bottom_box${floatOn ? " small" : ""}`}>
                 <div className="over_hidden">
                     {chatOn && myChat &&
                         <div className="mem_box flex_between">
@@ -934,7 +928,7 @@ const RightCont = (props) => {
                                             <div className="date_box">
                                                 <span>{cont.msg}</span>
                                             </div>
-                                        :   <div className={`chat_box ${send ? "send" : ""}`}>
+                                        :   <div className={`chat_box${send ? " send" : ""}`}>
                                                 {send ?
                                                     <>
                                                     {!myChat && <p className="name tx_r">{common.selectUser.from_user}</p>}

@@ -976,7 +976,7 @@ const MemberInfoPop = (props) => {
                                                 {imgList.map((img,i)=>{
                                                     return(
                                                         <li key={`imgUp${i}`}>
-                                                            <div className={`img ${imgNameList[i] ? "on" : ""}`}>
+                                                            <div className={`img${imgNameList[i] ? " on" : ""}`}>
                                                                 {imgNameList[i] && <img src={api_uri + photoPath + imgNameList[i]} alt="프로필이미지"/>}
                                                             </div>
                                                             <div className="img_up">

@@ -40,11 +40,6 @@ const Header = () => {
         if(socket){
             socketInit();
 
-            //채팅방 연결 받기
-            socket.on("join room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-            })
-
             //매니저 메시지알림 받기
             socket.on("admin msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));

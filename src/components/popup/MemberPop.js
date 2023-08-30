@@ -78,7 +78,7 @@ const MemberPop = () => {
                 <div className="member_box">
                     <div className="box">
                         <div className="flex">
-                            <p className={`name ${info.m_gender == "2" ? "mem_w" : ""}`}>{info.m_name}</p>
+                            <p className={`name${info.m_gender == "2" ? " mem_w" : ""}`}>{info.m_name}</p>
                             <p className="age">{info.m_address}<span>&nbsp;·&nbsp;{info.birth}</span></p>
                         </div>
                     </div>

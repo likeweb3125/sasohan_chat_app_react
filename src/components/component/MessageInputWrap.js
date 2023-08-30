@@ -140,7 +140,7 @@ const MessageInputWrap = (props) => {
 
     return(<>
         <div className="message_input_wrap">
-            <div className={`upload_box ${uploadOn ? "on" : ""}`}>
+            <div className={`upload_box${uploadOn ? " on" : ""}`}>
                 <div className="flex_between">
                     <p className="tit">이미지 첨부</p>
                     <button type="button" className="btn_close" onClick={()=>{setUploadOn(false)}}>닫기버튼</button>
@@ -151,10 +151,10 @@ const MessageInputWrap = (props) => {
                             <input {...getInputProps()} />
                         </div>
                     }
-                    <ul className={`flex_wrap ${thumbs.length > 0 ? "w_fit" : ""}`}>
+                    <ul className={`flex_wrap${thumbs.length > 0 ? " w_fit" : ""}`}>
                         {thumbs}
                         {thumbs && thumbs.length < 9 &&
-                            <li className={`drop_li ${files && files.length > 0 ? "" : "w_100"}`}>
+                            <li className={`drop_li${files && files.length > 0 ? "" : " w_100"}`}>
                                 <div {...getRootProps({className: 'dropzone'})}>
                                     <input {...getInputProps()} />
                                     {files && files.length > 0 ?
@@ -181,11 +181,11 @@ const MessageInputWrap = (props) => {
                             rows={1}
                         />
                     </div>
-                    <button type="button" className={`btn_upload ${uploadOn ? "on" : ""}`} onClick={()=>{setUploadOn(!uploadOn)}}>업로드버튼</button>
+                    <button type="button" className={`btn_upload${uploadOn ? " on" : ""}`} onClick={()=>{setUploadOn(!uploadOn)}}>업로드버튼</button>
                 </div>
                 <button 
                     type="button" 
-                    className={`btn_send ${props.textareaValue || files.length > 0 ? "on" : ""}`} 
+                    className={`btn_send${props.textareaValue || files.length > 0 ? " on" : ""}`} 
                     disabled={props.textareaValue || files.length > 0 ? false : true} 
                     onClick={props.onMsgSendHandler}
                 >전송버튼</button>

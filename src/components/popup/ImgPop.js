@@ -112,7 +112,7 @@ const ImgPop = (props) => {
                             <div className="img">
                                 <img src={bigImg} alt="이미지" />
                             </div>
-                            <Swiper ref={swiperRef} className={`thumb_slider ${popup.imgPopList.length < 4 ? "center_slider" : ""}`} {...swiperOptions} >
+                            <Swiper ref={swiperRef} className={`thumb_slider${popup.imgPopList.length < 4 ? " center_slider" : ""}`} {...swiperOptions} >
                                 {popup.imgPopList.map((img,i)=>{
                                     return(
                                         <SwiperSlide key={i} 

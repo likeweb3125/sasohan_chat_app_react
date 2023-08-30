@@ -61,10 +61,10 @@ const MemberBox = (props) => {
                 </label>
                 <div className="box flex_between">
                     <div className="flex">
-                        <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
+                        <p className={`name${props.data.m_gender == "2" ? " mem_w" : ""}`}>{props.data.m_name}</p>
                         <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
                     </div>
-                    <button type="button" className={`btn_mem ${btnOn ? "on" : ""}`} 
+                    <button type="button" className={`btn_mem${btnOn ? " on" : ""}`} 
                         onClick={(e)=>{
                             memBtnClickHandler(e, props.data.m_id);
                         }}
@@ -76,10 +76,10 @@ const MemberBox = (props) => {
             <div className="member_box">
                 <div className="box flex_between">
                     <div className="flex">
-                        <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
+                        <p className={`name${props.data.m_gender == "2" ? " mem_w" : ""}`}>{props.data.m_name}</p>
                         <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
                     </div>
-                    <button type="button" className={`btn_mem ${btnOn ? "on" : ""}`} 
+                    <button type="button" className={`btn_mem${btnOn ? " on" : ""}`} 
                         onClick={(e)=>{
                             memBtnClickHandler(e,props.data.m_id);
                         }}
@@ -106,7 +106,7 @@ const MemberBox = (props) => {
                 <div className="box flex_between flex_top">
                     <div className="txt_box">
                         <div className="flex">
-                            <p className={`name ${props.data.m_gender == "2" ? "mem_w" : ""}`}>{props.data.m_name}</p>
+                            <p className={`name${props.data.m_gender == "2" ? " mem_w" : ""}`}>{props.data.m_name}</p>
                             <p className="age">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.m_born}</span></p>
                         </div>
                         <p className="ellipsis">{props.data.msg}</p>
@@ -121,7 +121,7 @@ const MemberBox = (props) => {
             : props.listType === "chat" && //연결한 대화방리스트일때
             <div className="member_box member_box_chat flex">
                 <div>
-                    <div className={`tag ${props.data.meet_intention == "미결정" ? "ing" : props.data.meet_intention == "결정완료" ? "done" : ""}`}>{props.data.meet_intention}</div>
+                    <div className={`tag${props.data.meet_intention == "미결정" ? " ing" : props.data.meet_intention == "결정완료" ? " done" : ""}`}>{props.data.meet_intention}</div>
                     <p className="txt">{props.data.day}</p>
                 </div>
                 <div className="box flex_between">

@@ -253,7 +253,7 @@ const ManagerProfilePop = (props) => {
                         {imgList.map((img,i)=>{
                             return(
                                 <li key={`imgUp${i}`}>
-                                    <div className={`img ${imgSrcList[i] ? "on" : ""}`}>
+                                    <div className={`img${imgSrcList[i] ? " on" : ""}`}>
                                         {imgSrcList[i] && <img src={imgSrcList[i]} alt="프로필이미지"/>}
                                     </div>
                                     <div className="img_up">
