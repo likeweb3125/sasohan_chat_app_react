@@ -277,23 +277,17 @@ const RightCont = (props) => {
 
     //응대중인회원 가져오기
     const getAssiList = () => {
-        dispatch(loadingPop(true));
-
         axios.get(`${assi_list}`,
             {headers:{Authorization: `Bearer ${token}`}}
         )
         .then((res)=>{
             if(res.status === 200){
-                dispatch(loadingPop(false));
-
                 let data = res.data;
                 setAssiList([...data.userList]);
                 setAssiCount(data.count);
             }
         })
         .catch((error) => {
-            dispatch(loadingPop(false));
-
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
