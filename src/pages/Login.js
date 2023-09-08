@@ -58,16 +58,24 @@ const Login = () => {
                         .then((res)=>{
                             if(res.status === 200){
                                 let data = res.data;
-                                //store에 매니저설정정보 저장
-                                dispatch(managerSetting({...data}));
-                                
+
                                 //단체메시지 설정 안되어있을때 설정페이지로 이동
-                                if(data.set_num == 0 || data.set_range.length == 0){
+                                if(data == null){
                                     navigate("/setting");
-                                }
-                                //설정 되어있으면 메인페이지로 이동
-                                else{
-                                    navigate("/");
+                                    //store에 매니저설정정보 저장
+                                    dispatch(managerSetting({m_id:m_id,set_num:0,set_range:""}));
+                                }else{
+                                    //store에 매니저설정정보 저장
+                                    dispatch(managerSetting({...data}));
+                                    
+                                    //단체메시지 설정 안되어있을때 설정페이지로 이동
+                                    if(data.set_num == 0 || data.set_range.length == 0){
+                                        navigate("/setting");
+                                    }
+                                    //설정 되어있으면 메인페이지로 이동
+                                    else{
+                                        navigate("/");
+                                    }
                                 }
                             }
                         })

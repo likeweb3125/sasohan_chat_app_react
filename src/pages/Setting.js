@@ -40,10 +40,23 @@ const Setting = () => {
         )
         .then((res)=>{
             if(res.status === 200){
+                let data = res.data;
+                
                 dispatch(loadingPop(false));
 
-                setSettingNum(res.data.set_num);
-                setSettingRange(res.data.set_range);
+                //단체메시지 설정 안되어있을때
+                if(data == null){
+                    setConfirm(true);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'설정이 완료된 후 채팅 관리를 이용할 수 있습니다.',
+                        confirmPopBtn:1,
+                    }));
+                }else{
+                    setSettingNum(res.data.set_num);
+                    setSettingRange(res.data.set_range);
+                }
             }
         })
         .catch((error) => {
