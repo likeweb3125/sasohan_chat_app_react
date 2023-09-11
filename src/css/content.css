@@ -51,7 +51,7 @@
 .chat_wrap .inner .chat_box .name{font-size: 14px;color: #373D49;padding-bottom: 4px;}
 .chat_wrap .inner .chat_box .txt_ul>li{margin-bottom: 8px;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-orient: vertical; -ms-flex-direction: column; flex-direction: column;}
 .chat_wrap .inner .chat_box .txt_ul>li .box{width: 100%;}
-.chat_wrap .inner .chat_box .txt_ul>li .txt{padding: 8px 16px;background: #fff;border-radius: 12px;max-width: calc(100% - 90px);}
+.chat_wrap .inner .chat_box .txt_ul>li .txt{padding: 8px 16px;background: #fff;border-radius: 12px;max-width: calc(100% - 90px);white-space: pre-line;}
 .chat_wrap .inner .chat_box .txt_ul>li .time{font-size: 12px;color: #999;padding-left: 8px;}
 .chat_wrap .inner .chat_box .txt_ul>li .img_ul{padding-bottom: 4px;max-width: 252px;margin-right: -4px;}
 .chat_wrap .inner .chat_box .txt_ul>li .img_ul li{width: 80px;height: 80px;border: 1px solid #ddd;border-radius: 8px;overflow: hidden;margin: 0 4px 4px 0;cursor: pointer;}
