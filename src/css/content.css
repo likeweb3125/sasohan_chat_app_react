@@ -129,7 +129,7 @@
 .member_box .box .btn_mem{text-indent: -9999px;font-size: 0;width: 24px;height: 24px;background: url(../images/ic_mem.svg) no-repeat center;}
 .member_box .box .btn_mem.on{background: url(../images/ic_mem_on.svg) no-repeat center;}
 .member_box.custom_check .box>.txt_box{width: calc(100% - 60px);}
-.member_box .box>.txt_box .ellipsis{font-size: 14px;color: #999;margin-top: 5px;}
+.member_box .box>.txt_box .ellipsis{font-size: 14px;color: #999;margin-top: 5px;white-space: pre-line;height: 18px;}
 .member_box .box .time{font-size: 12px;color: #999;margin-bottom: 5px;}
 .member_box .box .num{font-size: 12px;color: #fff;background: #373D49;border-radius: 50%;width: 20px;height: 20px;display: inline-block;text-align: center;padding-top: 3px;}
 .member_box.member_box_chat .tag{width: 60px;height: 24px; font-size: 12px;color: #FC5862;font-weight: 500;text-align: center;border: 1px solid #FC5862;border-radius: 20px;background: #fff;line-height: 23px;}
