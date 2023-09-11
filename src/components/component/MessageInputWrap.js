@@ -179,6 +179,12 @@ const MessageInputWrap = (props) => {
                             onChange={props.onTextareaChange}
                             placeholder="메시지를 입력해주세요"
                             rows={1}
+                            onKeyDown={(e)=>{
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault(); // Enter 키의 기본 동작(줄 바꿈)을 막음
+                                    props.onMsgSendHandler(); // 엔터 키를 눌렀을 때 이벤트 핸들러 실행
+                                }
+                            }}
                         />
                     </div>
                     <button type="button" className={`btn_upload${uploadOn ? " on" : ""}`} onClick={()=>{setUploadOn(!uploadOn)}}>업로드버튼</button>
