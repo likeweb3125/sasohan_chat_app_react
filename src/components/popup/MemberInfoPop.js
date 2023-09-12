@@ -36,7 +36,7 @@ const MemberInfoPop = (props) => {
     const [addressList2, setAddressList2] = useState([]);
     const [loca, setLoca] = useState({});
     const [loca2, setLoca2] = useState({});
-    const [heightList, setHeight] = useState([{txt:"149cm 이하",val:"149"},{txt:"150cm ~ 154cm",val:"150"},{txt:"155cm ~ 159cm",val:"155"},{txt:"160cm ~ 164cm",val:"160"},{txt:"165cm ~ 169cm",val:"165"},{txt:"170cm ~ 174cm",val:"170"},{txt:"175cm ~ 179cm",val:"175"},{txt:"180cm ~ 184cm",val:"180"},{txt:"185cm ~ 189cm",val:"185"},{txt:"190cm ~ 194cm",val:"190"},{txt:"195cm ~ 200cm",val:"195"}]);
+    const [heightList, setHeightList] = useState([{txt:"149cm 이하",val:"149"},{txt:"150cm ~ 154cm",val:"150"},{txt:"155cm ~ 159cm",val:"155"},{txt:"160cm ~ 164cm",val:"160"},{txt:"165cm ~ 169cm",val:"165"},{txt:"170cm ~ 174cm",val:"170"},{txt:"175cm ~ 179cm",val:"175"},{txt:"180cm ~ 184cm",val:"180"},{txt:"185cm ~ 189cm",val:"185"},{txt:"190cm ~ 194cm",val:"190"},{txt:"195cm ~ 200cm",val:"195"}]);
     const [visualList, setVisualList] = useState(["1","2","3","4","5","6","7","8","9","10"]);
     const [mbtiList, setMbtiList] = useState(["ISTP","ISTJ","ISFP","ISFJ","INTP","INTJ","INFP","INFJ","ESTP","ESTJ","ESFP","ESFJ","ENTP","ENTJ","ENFP","ENFJ"]);
     const [jobList, setJobList] = useState([]);
@@ -313,41 +313,44 @@ const MemberInfoPop = (props) => {
     //본인타입 체크박스
     const typeCheck = (event, checked, value) => {
         if (checked) {
-            setType([...type, value]);
+            if(type.length > 2){
+                setConfirm(true);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'최대 3개까지 선택가능합니다.',
+                    confirmPopBtn:1,
+                }));
+                setType(type.filter((el) => el !== value));
+                // event.target.checked = false;
+            }else{
+                setType([...type, value]);
+            }
         } else if (!checked && type.includes(value)) {
             setType(type.filter((el) => el !== value));
         }
-        if(type.length > 2){
-            setConfirm(true);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'최대 3개까지 선택가능합니다.',
-                confirmPopBtn:1,
-            }));
-            setType(type.filter((el) => el !== value));
-            event.target.checked = false;
-        }
     }
+    
 
 
     //상대방타입 체크박스
     const typeCheck2 = (event, checked, value) => {
         if (checked) {
-            setType2([...type2, value]);
+            if(type2.length > 2){
+                setConfirm(true);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'최대 3개까지 선택가능합니다.',
+                    confirmPopBtn:1,
+                }));
+                setType2(type2.filter((el) => el !== value));
+                // event.target.checked = false;
+            }else{
+                setType2([...type2, value]);
+            }
         } else if (!checked && type2.includes(value)) {
             setType2(type2.filter((el) => el !== value));
-        }
-        if(type2.length > 2){
-            setConfirm(true);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'최대 3개까지 선택가능합니다.',
-                confirmPopBtn:1,
-            }));
-            setType2(type2.filter((el) => el !== value));
-            event.target.checked = false;
         }
     }
 
@@ -355,41 +358,44 @@ const MemberInfoPop = (props) => {
     //내관심사 체크박스
     const likeCheck = (event, checked, value) => {
         if (checked) {
-            setLike([...like, value]);
+            if(like.length > 2){
+                setConfirm(true);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'최대 3개까지 선택가능합니다.',
+                    confirmPopBtn:1,
+                }));
+                setLike(like.filter((el) => el !== value));
+                // event.target.checked = false;
+            }else{
+                setLike([...like, value]);
+            }
         } else if (!checked && like.includes(value)) {
             setLike(like.filter((el) => el !== value));
         }
-        if(type.length > 2){
-            setConfirm(true);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'최대 3개까지 선택가능합니다.',
-                confirmPopBtn:1,
-            }));
-            setLike(like.filter((el) => el !== value));
-            event.target.checked = false;
-        }
+        
     }
 
 
     //선호하는데이트 체크박스
     const dateCheck = (event, checked, value) => {
         if (checked) {
-            setDate([...date, value]);
+            if(date.length > 2){
+                setConfirm(true);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'최대 3개까지 선택가능합니다.',
+                    confirmPopBtn:1,
+                }));
+                setDate(date.filter((el) => el !== value));
+                // event.target.checked = false;
+            }else{
+                setDate([...date, value]);
+            }
         } else if (!checked && date.includes(value)) {
             setDate(date.filter((el) => el !== value));
-        }
-        if(type.length > 2){
-            setConfirm(true);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'최대 3개까지 선택가능합니다.',
-                confirmPopBtn:1,
-            }));
-            setDate(date.filter((el) => el !== value));
-            event.target.checked = false;
         }
     }
 
