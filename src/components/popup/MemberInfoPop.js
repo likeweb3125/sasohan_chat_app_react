@@ -87,13 +87,10 @@ const MemberInfoPop = (props) => {
                 setPhotoPath(path);
 
                 const photoList = data.m_photo;
-                const srcList = photoList.map(value => {
-                    return value ? api_uri + value : value;
-                });
                 const nameList = photoList.map(value => {
                     return value ? value.replace(path,"") : value;
                 });
-                setImgSrcList([...srcList]);
+                setImgSrcList([...photoList]);
                 setImgNameList([...nameList]);
             }
         })
@@ -269,9 +266,13 @@ const MemberInfoPop = (props) => {
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data)
-                let imgName = res.data.mediaUrls.replace(photoPath, "");
-                let newList = [...imgNameList];
-                    newList[idx] = imgName;
+                const updatedMediaUrls = res.data.mediaUrls.map(url => {
+                    let updatedUrl = url.replace(api_uri, "");
+                    updatedUrl = updatedUrl.replace(photoPath, "");
+                    return updatedUrl;
+                });
+                  
+                const newList = [...imgNameList, ...updatedMediaUrls];
                 setImgNameList(newList);
             }
         })
@@ -299,7 +300,7 @@ const MemberInfoPop = (props) => {
 
 
     //이미지 삭제
-    const imgDeltHandler = (img,idx) => {
+    const imgDeltHandler = (idx) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
@@ -848,6 +849,10 @@ const MemberInfoPop = (props) => {
             return imgNameList.indexOf(a) - imgNameList.indexOf(b);
         };
         const imgList = imgNameList.sort(compareFunction);
+        const updatedImgList = imgList.map(url => {
+            let updatedUrl = url.replace("upload/profile/user/", "");
+            return updatedUrl;
+        });
 
         let gender = values.gender.replace("gender_","");
 
@@ -864,7 +869,7 @@ const MemberInfoPop = (props) => {
         let t_drink = values.t_drink.replace("t_drink_","");
 
         let body = {
-            m_photo:imgList,
+            m_photo:updatedImgList,
             m_id:info.m_id,
             m_password:values.password,
             m_name:values.name,
@@ -982,8 +987,8 @@ const MemberInfoPop = (props) => {
                                                 {imgList.map((img,i)=>{
                                                     return(
                                                         <li key={`imgUp${i}`}>
-                                                            <div className={`img${imgNameList[i] ? " on" : ""}`}>
-                                                                {imgNameList[i] && <img src={api_uri + photoPath + imgNameList[i]} alt="프로필이미지"/>}
+                                                            <div className={`img${imgSrcList[i] ? " on" : ""}`}>
+                                                                {imgSrcList[i] && <img src={imgSrcList[i]} alt="프로필이미지"/>}
                                                             </div>
                                                             <div className="img_up">
                                                                 <input type="file" className="blind" id={`pic${i}`} accept="image/*" onChange={(e) => {
@@ -992,7 +997,7 @@ const MemberInfoPop = (props) => {
                                                                 }}/>
                                                                 <label htmlFor={`pic${i}`}>이미지등록</label>
                                                             </div>
-                                                            <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(imgNameList[i],i)}}>삭제버튼</button>
+                                                            <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i)}}>삭제버튼</button>
                                                         </li>
                                                     );
                                                 })}

@@ -9,6 +9,7 @@ import ConfirmPop from "./ConfirmPop";
 
 const ManagerProfilePop = (props) => {
     const popup = useSelector((state)=>state.popup);
+    const api_uri = enum_api_uri.api_uri;
     const m_profile = enum_api_uri.m_profile;
     const m_img_add = enum_api_uri.m_img_add;
     const m_pro_modify = enum_api_uri.m_pro_modify;
@@ -49,7 +50,7 @@ const ManagerProfilePop = (props) => {
                 let data = res.data;
                 let path = data.photo_path;
                 setNickName(data.m_n_name);
-                // setPhotoPath(path);
+                setPhotoPath(path);
 
                 const photoList = data.photo;
                 const nameList = photoList.map(value => {
@@ -57,6 +58,7 @@ const ManagerProfilePop = (props) => {
                 });
                 setImgSrcList([...photoList]);
                 setImgNameList([...nameList]);
+                console.log(nameList)
             }
         })
         .catch((error) => {
@@ -84,9 +86,13 @@ const ManagerProfilePop = (props) => {
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data)
-                let imgName = res.data.mediaUrls;
-                let newList = [...imgNameList];
-                    newList[idx] = imgName;
+                const updatedMediaUrls = res.data.mediaUrls.map(url => {
+                    let updatedUrl = url.replace(api_uri, "");
+                    updatedUrl = updatedUrl.replace(photoPath, "");
+                    return updatedUrl;
+                });
+                  
+                const newList = [...imgNameList, ...updatedMediaUrls];
                 setImgNameList(newList);
             }else{
                 dispatch(confirmPop({
@@ -170,10 +176,14 @@ const ManagerProfilePop = (props) => {
             return imgNameList.indexOf(a) - imgNameList.indexOf(b);
         };
         const imgList = imgNameList.sort(compareFunction);
+        const updatedImgList = imgList.map(url => {
+            let updatedUrl = url.replace("upload/profile/manager/", "");
+            return updatedUrl;
+        });
 
         let body = {
             m_n_name:nickName,
-            photo:imgList
+            photo:updatedImgList
         };
         axios.put(`${m_pro_modify}`, body, {
             headers: {
