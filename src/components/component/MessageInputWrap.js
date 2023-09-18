@@ -69,7 +69,9 @@ const MessageInputWrap = (props) => {
         multiple: true, // 여러 개의 파일 선택 가능하도록 설정
         onDrop: acceptedFiles => {
             const formData = new FormData();
-            formData.append("media", acceptedFiles[0]);
+            acceptedFiles.forEach((item)=>{
+                formData.append("media", item);
+            });
             
             axios.post(`${props.group ? g_msg_img_add : msg_img_add}`, formData, {
                 headers: {
@@ -88,9 +90,13 @@ const MessageInputWrap = (props) => {
                         }))
                     ]);
 
-                    let imgName = res.data.mediaUrls.replace(api_uri, "");
-                        imgName = imgName.replace(photoPath, "");
-                    let newList = [...imgNameList,imgName];
+                    const updatedMediaUrls = res.data.mediaUrls.map(url => {
+                        let updatedUrl = url.replace(api_uri, "");
+                        updatedUrl = updatedUrl.replace(photoPath, "");
+                        return updatedUrl;
+                    });
+                      
+                    const newList = [...imgNameList, ...updatedMediaUrls];
                     setImgNameList(newList);
                 }
             })

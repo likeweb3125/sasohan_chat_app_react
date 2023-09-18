@@ -49,7 +49,7 @@ const ManagerProfilePop = (props) => {
                 let data = res.data;
                 let path = data.photo_path;
                 setNickName(data.m_n_name);
-                setPhotoPath(path);
+                // setPhotoPath(path);
 
                 const photoList = data.photo;
                 const nameList = photoList.map(value => {
@@ -84,7 +84,7 @@ const ManagerProfilePop = (props) => {
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data)
-                let imgName = res.data.mediaUrls.replace(photoPath, "");
+                let imgName = res.data.mediaUrls;
                 let newList = [...imgNameList];
                     newList[idx] = imgName;
                 setImgNameList(newList);
