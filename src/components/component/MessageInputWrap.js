@@ -186,7 +186,7 @@ const MessageInputWrap = (props) => {
                             placeholder="메시지를 입력해주세요"
                             rows={1}
                             onKeyDown={(e)=>{
-                                if (e.key === 'Enter' && !e.shiftKey) {
+                                if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
                                     e.preventDefault(); // Enter 키의 기본 동작(줄 바꿈)을 막음
                                     props.onMsgSendHandler(); // 엔터 키를 눌렀을 때 이벤트 핸들러 실행
                                 }
