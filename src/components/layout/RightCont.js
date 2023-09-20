@@ -834,7 +834,8 @@ const RightCont = (props) => {
 
     //typing 값이 변경될때마다 소켓 이벤트 보내기
     useEffect(()=>{
-        if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
+        // 개설된 체팅방이 있을때만
+        if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id.length > 0){
             const data = { room_id: common.selectUser.room_id, msg: typing };
             socket.emit("type msg", data);
         }
