@@ -73,6 +73,8 @@ const RightCont = (props) => {
     const [assiDnd, setAssiDnd] = useState(false);
     const [assiDndEnd, setAssiDndEnd] = useState(false);
     const [msgRead, setMsgRead] = useState(false);
+    const [typing, setTyping] = useState(false);
+    const [typingBox, setTypingBox] = useState(false);
 
 
     //window resize
@@ -96,6 +98,11 @@ const RightCont = (props) => {
             setFloatDeltConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    useEffect(()=>{
+        setTextareaValue(textareaValue);
+    },[textareaValue]);
 
     
     useEffect(()=>{
@@ -130,7 +137,8 @@ const RightCont = (props) => {
                 if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
                     setMsgRead(true);
                 }
-            })
+            });
+
 
             //메시지 받기
             socket.on("chat msg", (result) => {
@@ -141,6 +149,9 @@ const RightCont = (props) => {
 
                 //현재보고있는 채팅방일때만 받은 메시지 추가
                 if(userRoomId === result.room_id){
+
+                    socket.emit("read msg", userRoomId); //현재채팅방에 있으니 read msg 보냄
+
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
@@ -191,6 +202,7 @@ const RightCont = (props) => {
                 }
             });
 
+
             //이미지 받기
             socket.on("image upload", (result) => {
                 console.log(JSON.stringify(result, null, 2));
@@ -200,6 +212,9 @@ const RightCont = (props) => {
                 
                 //현재보고있는 채팅방일때만 받은 이미지 추가
                 if(userRoomId === result.room_id){
+
+                    socket.emit("read msg", userRoomId); //현재채팅방에 있으니 read msg 보냄
+
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
@@ -249,10 +264,49 @@ const RightCont = (props) => {
                 }
             });
 
+
             //에러메시지 받기
             socket.on("chat error", (result) => {
                 console.log(JSON.stringify(result, null, 2));
-            })
+            });
+
+
+            //메시지 읽음처리 받기
+            socket.on("read msg", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const userRoomId = selectUser.room_id;
+
+                //현재보고있는 채팅방일때만 메시지 전체읽음처리
+                if(userRoomId === result.room_id){
+                    setMsgRead(true);
+                }
+            });
+
+
+            //회원 메시지작성중 받기
+            socket.on("type msg", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const userRoomId = selectUser.room_id;
+
+                //현재보고있는 채팅방일때만
+                if(userRoomId === result.room_id){
+                    if(result.msg){
+                        setTypingBox(true);
+
+                        //메시지내역 맨밑으로 스크롤
+                        setTimeout(()=>{
+                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                        },10);
+                    }else{
+                        setTypingBox(false);
+                    }
+                }
+            });
+
         }
     },[socket]);
 
@@ -516,6 +570,7 @@ const RightCont = (props) => {
 
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
+        console.log(common.selectUser);
 
         //localStorage 에 selectUser값 저장
         localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
@@ -754,6 +809,38 @@ const RightCont = (props) => {
     };
 
 
+    //메시지내용입력시 이미지첨부있는지 체크후 소켓 이벤트 보내기
+    const typingHandler = (txt) => {
+        let msg;
+        if(txt.length > 0 || common.msgImgs.length > 0){
+            msg = true;
+        }else{
+            msg = false;
+        }
+        setTyping(msg);
+    };
+
+    //이미지첨부시 메시지내용입력값있는지 체크후 소켓 이벤트 보내기
+    useEffect(()=>{
+        let msg;
+        if(textareaValue.length > 0 || common.msgImgs.length > 0){
+            msg = true;
+        }else{
+            msg = false;
+        }
+        setTyping(msg);
+    },[common.msgImgs]);
+
+
+    //typing 값이 변경될때마다 소켓 이벤트 보내기
+    useEffect(()=>{
+        if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
+            const data = { room_id: common.selectUser.room_id, msg: typing };
+            socket.emit("type msg", data);
+        }
+    },[typing]);
+
+
     //이미지 첨부하기
     const imgAttach = () => {
         let data = {
@@ -968,6 +1055,15 @@ const RightCont = (props) => {
                                         }
                                     </div>);
                                 })}
+                                {typingBox &&
+                                    <div className="typing_box flex">
+                                        <ul className="flex">
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                }
                             </div>
                             : !chatOn && noSetting ? //설정 완료전 일때
                                 <div className="none_box">
@@ -997,7 +1093,10 @@ const RightCont = (props) => {
                 {chatOn && myChat &&
                     <MessageInputWrap 
                         textareaValue={textareaValue}
-                        onTextareaChange={(e)=>{setTextareaValue(e.currentTarget.value)}}
+                        onTextareaChange={(e)=>{
+                            setTextareaValue(e.currentTarget.value);
+                            typingHandler(e.currentTarget.value);
+                        }}
                         onMsgSendHandler={msgSendHandler}
                     />
                 }
