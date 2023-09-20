@@ -117,7 +117,7 @@ const RightCont = (props) => {
     // 소켓 채팅방 연결
     const socketInit = () => {
         const data = { room_id: common.selectUser.room_id};
-        const data2 = { from_id: user.managerInfo.m_id,to_id: common.selectUser.m_id};
+        const data2 = { room_id: common.selectUser.room_id, from_id: user.managerInfo.m_id, to_id: common.selectUser.m_id};
 
         socket.emit("join room", data);
         socket.emit("active room", data2);
@@ -130,10 +130,11 @@ const RightCont = (props) => {
             //회원이 채팅방에 들어옴
             socket.on("active room", (result) => {
                 console.log(JSON.stringify(result, null, 2));
+
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 const id = result.from_id;
 
                 //매니저가보낸 메시지 전체읽음처리
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
                     setMsgRead(true);
                 }
