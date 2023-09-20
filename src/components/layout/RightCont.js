@@ -150,6 +150,12 @@ const RightCont = (props) => {
 
                 //현재보고있는 채팅방일때만 받은 메시지 추가
                 if(userRoomId === result.room_id){
+
+                    if(selectUser.m_id === result.from_id){
+                        let data = { room_id: userRoomId };
+                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    }
+
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
@@ -210,6 +216,12 @@ const RightCont = (props) => {
                 
                 //현재보고있는 채팅방일때만 받은 이미지 추가
                 if(userRoomId === result.room_id){
+
+                    if(selectUser.m_id === result.from_id){
+                        let data = { room_id: userRoomId };
+                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    }
+
                     const msgCount = localStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
@@ -846,9 +858,6 @@ const RightCont = (props) => {
             files: common.msgImgs,
         }
         socket.emit("file upload", data);
-
-        let data2 = { room_id: common.selectUser.room_id };
-        socket.emit("read msg", data2); //현재채팅방에 있으니 read msg 보냄
     };
 
 
@@ -860,9 +869,6 @@ const RightCont = (props) => {
             msg: textareaValue
         }
         socket.emit("chat message", data);
-
-        let data2 = { room_id: common.selectUser.room_id };
-        socket.emit("read msg", data2); //현재채팅방에 있으니 read msg 보냄
     };
 
 
