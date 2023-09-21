@@ -301,7 +301,7 @@ const RightCont = (props) => {
 
                 //현재보고있는 채팅방일때만
                 if(userRoomId === result.room_id){
-                    if(result.msg){
+                    if(result.status){
                         setTypingBox(true);
 
                         //메시지내역 맨밑으로 스크롤
@@ -843,7 +843,7 @@ const RightCont = (props) => {
     useEffect(()=>{
         // 개설된 체팅방이 있을때만
         if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id.length > 0){
-            const data = { room_id: common.selectUser.room_id, msg: typing };
+            const data = { room_id: common.selectUser.room_id, status: typing };
             socket.emit("type msg", data);
         }
     },[typing]);
