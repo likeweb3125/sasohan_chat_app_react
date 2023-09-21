@@ -301,15 +301,18 @@ const RightCont = (props) => {
 
                 //현재보고있는 채팅방일때만
                 if(userRoomId === result.room_id){
-                    if(result.status){
-                        setTypingBox(true);
+                    //상대방회원이 보냈을때만
+                    if(selectUser.m_id === result.m_id){
+                        if(result.status){
+                            setTypingBox(true);
 
-                        //메시지내역 맨밑으로 스크롤
-                        setTimeout(()=>{
-                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                        },10);
-                    }else{
-                        setTypingBox(false);
+                            //메시지내역 맨밑으로 스크롤
+                            setTimeout(()=>{
+                                chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                            },10);
+                        }else{
+                            setTypingBox(false);
+                        }
                     }
                 }
             });
