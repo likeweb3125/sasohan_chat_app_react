@@ -7,7 +7,7 @@ import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
-import { msgSend, selectUser, assiListOn, groupMsg } from "../../store/commonSlice";
+import { msgSend, selectUser, assiListOn, groupMsg, activeRoom } from "../../store/commonSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -127,14 +127,14 @@ const RightCont = (props) => {
     useEffect(()=>{
         if(socket){
 
-            //회원이 채팅방에 들어옴
+            //채팅방에 들어옴
             socket.on("active room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
+                // console.log(JSON.stringify(result, null, 2));
 
                 const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 const id = result.from_id;
 
-                //매니저가보낸 메시지 전체읽음처리
+                //회원이들어왔을때만 매니저가보낸 메시지 전체읽음처리
                 if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
                     setMsgRead(true);
                 }
@@ -151,9 +151,13 @@ const RightCont = (props) => {
                 //현재보고있는 채팅방일때만 받은 메시지 추가
                 if(userRoomId === result.room_id){
 
+                    //회원이 보낸 메시지일때 
                     if(selectUser.m_id === result.from_id){
                         let data = { room_id: userRoomId };
                         socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+
+                        //회원 메시지작성중 false
+                        setTypingBox(false);
                     }
 
                     const msgCount = localStorage.getItem("msgCount");
@@ -194,7 +198,6 @@ const RightCont = (props) => {
                     }else{
                         setMsgList(prevList => [...prevList, ...start, msg]);
                     }
-                    
 
                     //메시지입력 textarea 값 비우기
                     setTextareaValue("");
@@ -217,9 +220,13 @@ const RightCont = (props) => {
                 //현재보고있는 채팅방일때만 받은 이미지 추가
                 if(userRoomId === result.room_id){
 
+                    //회원이 보낸 메시지일때 
                     if(selectUser.m_id === result.from_id){
                         let data = { room_id: userRoomId };
                         socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+
+                        //회원 메시지작성중 false
+                        setTypingBox(false);
                     }
 
                     const msgCount = localStorage.getItem("msgCount");
@@ -292,7 +299,7 @@ const RightCont = (props) => {
             });
 
 
-            //회원 메시지작성중 받기
+            //메시지작성중 받기
             socket.on("type msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
@@ -315,6 +322,13 @@ const RightCont = (props) => {
                         }
                     }
                 }
+            });
+
+
+            //채팅방 나감
+            socket.on("leave room", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+
             });
 
         }
@@ -578,9 +592,14 @@ const RightCont = (props) => {
     },[user.managerSetting]);
 
 
+    useEffect(()=>{
+        console.log(`현재방 : ${common.activeRoom}`);
+    },[common.activeRoom]);
+
+
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        console.log(common.selectUser);
+        // console.log(common.selectUser);
 
         //localStorage 에 selectUser값 저장
         localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
@@ -588,12 +607,23 @@ const RightCont = (props) => {
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
             
-            //연결한대화방 페이지 아닐때 
+            //연결한대화방 페이지 아닐때 (회원검색,메시지 페이지일때)
             if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
                 setMyChat(true);
 
                 //선택한회원 대화방 소켓연결
                 socketInit();
+
+                //현재 채팅방 room_id store 에 저장
+                dispatch(activeRoom(common.selectUser.room_id));
+
+                //전에 입장한 채팅방이있으면 그 채팅방은 나감
+                if(common.activeRoom !== null){
+                    let data = {
+                        room_id: common.activeRoom
+                    }
+                    socket.emit("leave room", data);
+                }
 
                 //선택한회원중에 내가응대중인회원 on
                 setListOn(common.selectUser.m_id);
@@ -659,7 +689,7 @@ const RightCont = (props) => {
                 }else{
                     setMsgList([]);
                     setChatOn(true);
-                    setNoChat(true);
+                    setNoChat(true);   
                 }
             }
 

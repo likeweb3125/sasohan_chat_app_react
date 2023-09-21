@@ -63,8 +63,27 @@
 .chat_wrap .inner .chat_box.send .txt_ul>li .time span{display: block;text-align: right;font-size: 10px;}
 .chat_wrap .inner .typing_box{padding-top: 8px;}
 .chat_wrap .inner .typing_box ul{background: #fff;border-radius: 8px;padding: 17px 16px;}
-.chat_wrap .inner .typing_box ul li{width: 10px;height: 10px;background: #D9D9D9;border-radius: 50%;margin-right: 10px;}
-.chat_wrap .inner .typing_box ul li:last-child{margin-right: 0;}
+.chat_wrap .inner .typing_box ul li{width: 10px;height: 10px;background: #E8E7FF;border-radius: 50%;margin-right: 10px;animation: typingAni1 2s infinite;}
+.chat_wrap .inner .typing_box ul li:nth-child(2){background: #A38CFC;animation: typingAni2 2s infinite;}
+.chat_wrap .inner .typing_box ul li:last-child{margin-right: 0;background: #6840FD;animation: typingAni3 2s infinite;}
+@keyframes typingAni1 {
+    0% { background: #E8E7FF; }
+    33% { background: #6840FD; }
+    66% { background: #A38CFC; }
+    100% { background: #E8E7FF; }
+}
+@keyframes typingAni2 {
+    0% { background: #A38CFC; }
+    33% { background: #E8E7FF; }
+    66% { background: #6840FD; }
+    100% { background: #A38CFC; }
+}
+@keyframes typingAni3 {
+    0% { background: #6840FD; }
+    33% { background: #A38CFC; }
+    66% { background: #E8E7FF; }
+    100% { background: #6840FD; }
+}
 .chat_wrap .none_box{text-align: center;position: absolute;width: 100%;top: 50%;left: 0;transform: translateY(-50%);}
 .chat_wrap .none_box p{font-size: 18px;font-weight: 500;color: #999;padding-top: 15px;}
 
