@@ -846,7 +846,7 @@ const RightCont = (props) => {
     useEffect(()=>{
         // 개설된 체팅방이 있을때만
         if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id.length > 0){
-            const data = { room_id: common.selectUser.room_id, status: typing };
+            const data = { room_id: common.selectUser.room_id, m_id: user.managerInfo.m_id, status: typing };
             socket.emit("type msg", data);
         }
     },[typing]);
