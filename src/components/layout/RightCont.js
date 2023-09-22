@@ -306,20 +306,17 @@ const RightCont = (props) => {
                 const selectUser = JSON.parse(localStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
-                //현재보고있는 채팅방일때만
-                if(userRoomId === result.room_id){
-                    //상대방회원이 보냈을때만
-                    if(selectUser.m_id === result.m_id){
-                        if(result.status){
-                            setTypingBox(true);
+                //현재보고있는 채팅방의 상대방회원이 보냈을때
+                if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
+                    if(result.status){
+                        setTypingBox(true);
 
-                            //메시지내역 맨밑으로 스크롤
-                            setTimeout(()=>{
-                                chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                            },10);
-                        }else{
-                            setTypingBox(false);
-                        }
+                        //메시지내역 맨밑으로 스크롤
+                        setTimeout(()=>{
+                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                        },10);
+                    }else{
+                        setTypingBox(false);
                     }
                 }
             });
@@ -329,6 +326,13 @@ const RightCont = (props) => {
             socket.on("leave room", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
+                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const userRoomId = selectUser.room_id;
+
+                //현재보고있는 채팅방의 상대방회원이 나갔을때
+                if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
+                    setTypingBox(false);
+                }
             });
 
         }
