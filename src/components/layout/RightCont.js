@@ -116,11 +116,32 @@ const RightCont = (props) => {
 
     // 소켓 채팅방 연결
     const socketInit = () => {
-        const data = { room_id: common.selectUser.room_id};
-        const data2 = { room_id: common.selectUser.room_id, from_id: user.managerInfo.m_id, to_id: common.selectUser.m_id};
+        let room_id;
+        
+        if(common.selectUser.room_id){
+            room_id = common.selectUser.room_id;
 
-        socket.emit("join room", data);
-        socket.emit("active room", data2);
+            const data = { room_id: room_id};
+            const data2 = { room_id: room_id, from_id: user.managerInfo.m_id, to_id: common.selectUser.m_id};
+
+            socket.emit("join room", data);
+            socket.emit("active room", data2);
+        }
+        //선택한 회원 room_id 값이 없을때는 매니저ID + 회원ID 조합
+        else{
+            room_id = user.managerInfo.m_id+common.selectUser.m_id;
+
+            const data = { room_id: room_id};
+            const data2 = { room_id: room_id, from_id: user.managerInfo.m_id, to_id: common.selectUser.m_id};
+
+            socket.emit("join room", data);
+            socket.emit("active room", data2);
+        }
+
+        //localStorage 에 selectUser.room_id 값 저장
+        let userData = JSON.parse(localStorage.getItem("selectUser"));
+        userData.room_id = room_id;
+        localStorage.setItem("selectUser",JSON.stringify(userData));
     };
 
 
