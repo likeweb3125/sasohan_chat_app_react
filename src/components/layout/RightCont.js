@@ -282,6 +282,14 @@ const RightCont = (props) => {
             //에러메시지 받기
             socket.on("chat error", (result) => {
                 console.log(JSON.stringify(result, null, 2));
+
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: result.msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
             });
 
 
@@ -596,14 +604,9 @@ const RightCont = (props) => {
     },[user.managerSetting]);
 
 
-    useEffect(()=>{
-        console.log(`현재방 : ${common.activeRoom}`);
-    },[common.activeRoom]);
-
-
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        // console.log(common.selectUser);
+        console.log(common.selectUser);
 
         //localStorage 에 selectUser값 저장
         localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
