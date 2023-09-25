@@ -137,11 +137,6 @@ const RightCont = (props) => {
             socket.emit("join room", data);
             socket.emit("active room", data2);
         }
-
-        //localStorage 에 selectUser.room_id 값 저장
-        let userData = JSON.parse(localStorage.getItem("selectUser"));
-        userData.room_id = room_id;
-        localStorage.setItem("selectUser",JSON.stringify(userData));
     };
 
 
@@ -630,11 +625,20 @@ const RightCont = (props) => {
         console.log(common.selectUser);
 
         //localStorage 에 selectUser값 저장
-        localStorage.setItem("selectUser",JSON.stringify(common.selectUser));
+        let room_id;
+        if(common.selectUser.room_id){
+            room_id = common.selectUser.room_id;
+        }else{//선택한 회원 room_id 값이 없을때는 매니저ID + 회원ID 조합
+            room_id = user.managerInfo.m_id+common.selectUser.m_id;
+        }
+        let userData = {...common.selectUser};
+            userData.room_id = room_id;
+        localStorage.setItem("selectUser",JSON.stringify(userData));
+
 
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
-            
+
             //연결한대화방 페이지 아닐때 (회원검색,메시지 페이지일때)
             if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
                 setMyChat(true);
@@ -643,7 +647,7 @@ const RightCont = (props) => {
                 socketInit();
 
                 //현재 채팅방 room_id store 에 저장
-                dispatch(activeRoom(common.selectUser.room_id));
+                dispatch(activeRoom(room_id));
 
                 //전에 입장한 채팅방이있으면 그 채팅방은 나감
                 if(common.activeRoom !== null){
