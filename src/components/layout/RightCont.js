@@ -136,15 +136,21 @@ const RightCont = (props) => {
             socket.emit("join room", data);
             socket.emit("active room", data2);
         }
+        console.log(room_id);
     };
 
 
     useEffect(()=>{
         if(socket){
 
+            socket.on("join room", (result) => {
+                console.log(JSON.stringify(result, null, 2));
+
+            });
+
             //채팅방에 들어옴
             socket.on("active room", (result) => {
-                // console.log(JSON.stringify(result, null, 2));
+                console.log(JSON.stringify(result, null, 2));
 
                 const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const id = result.from_id;
@@ -919,8 +925,10 @@ const RightCont = (props) => {
 
     //이미지 첨부하기
     const imgAttach = () => {
+        const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+
         let data = {
-            room_id: common.selectUser.room_id,
+            room_id: selectUser.room_id,
             to_id: common.selectUser.m_id,
             msg: "",
             files: common.msgImgs,
@@ -931,8 +939,10 @@ const RightCont = (props) => {
 
     //메시지 보내기
     const textSend = () => {
+        const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+
         let data = {
-            room_id: common.selectUser.room_id,
+            room_id: selectUser.room_id,
             to_id: common.selectUser.m_id,
             msg: textareaValue
         }
