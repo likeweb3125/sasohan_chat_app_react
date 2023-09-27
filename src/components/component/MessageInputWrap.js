@@ -12,8 +12,8 @@ import ConfirmPop from "../popup/ConfirmPop";
 const MessageInputWrap = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const api_uri = enum_api_uri.api_uri;
     const msg_img_add = enum_api_uri.msg_img_add;
     const g_msg_img_add = enum_api_uri.g_msg_img_add;
@@ -75,7 +75,7 @@ const MessageInputWrap = (props) => {
             
             axios.post(`${props.group ? g_msg_img_add : msg_img_add}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${user.tokenValue}`,
                     "Content-Type": "multipart/form-data",
                 },
             })

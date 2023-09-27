@@ -14,7 +14,6 @@ const Message = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
-    const token = localStorage.getItem("token");
     const dispatch = useDispatch();
     const msg_list = enum_api_uri.msg_list;
     const [confirm, setConfirm] = useState(false);
@@ -40,7 +39,7 @@ const Message = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${msg_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -82,7 +81,7 @@ const Message = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${msg_list}?page_no=${1}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

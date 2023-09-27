@@ -10,10 +10,10 @@ import sampleImg from "../../images/sample/img_sample.jpg";
 const ImgListPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const msg_img_list = enum_api_uri.msg_img_list;
     const msg_img_list_admin = enum_api_uri.msg_img_list_admin;
     const api_uri = enum_api_uri.api_uri;
-    const token = localStorage.getItem("token");
     const dispatch = useDispatch();
     const [confirm, setConfirm] = useState(false);
     const [imgList, setImgList] = useState([]);
@@ -33,7 +33,7 @@ const ImgListPop = (props) => {
     //채팅방 모든이미지 가져오기
     const getImgList = () => {
         axios.get(`${msg_img_list.replace(":room_id", common.selectUser.room_id)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -56,7 +56,7 @@ const ImgListPop = (props) => {
     //채팅방 모든이미지 가져오기 - 연결한대화방일때 (연결된 회원끼리 대화방)
     const getImgListAdmin = () => {
         axios.get(`${msg_img_list_admin.replace(":room_id", common.selectUser.room_id)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

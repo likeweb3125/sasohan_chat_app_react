@@ -13,8 +13,8 @@ import ConfirmPop from "./ConfirmPop";
 
 const MemberInfoPop = (props) => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const api_uri = enum_api_uri.api_uri;
     const u_profile = enum_api_uri.u_profile;
     const u_address = enum_api_uri.u_address;
@@ -76,7 +76,7 @@ const MemberInfoPop = (props) => {
     //회원프로필정보 가져오기
     const getInfo = () => {
         axios.get(`${u_profile.replace(":m_id",popup.memPopId)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -110,7 +110,7 @@ const MemberInfoPop = (props) => {
     //주소 시,도 가져오기
     const getAddress = () => {
         axios.get(`${u_address}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -259,7 +259,7 @@ const MemberInfoPop = (props) => {
         formData.append("media", postData.target.files[0]);
         axios.post(`${u_img_add}`, formData, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${user.tokenValue}`,
                 "Content-Type": "multipart/form-data",
             },
         })
@@ -415,7 +415,7 @@ const MemberInfoPop = (props) => {
             setUsableNickName(false);
         }else{
             axios.get(`${u_nick_check}?m_n_name=${nickName}`,
-                {headers:{Authorization: `Bearer ${token}`}}
+                {headers:{Authorization: `Bearer ${user.tokenValue}`}}
             )
             .then((res)=>{
                 if(res.status === 200){
@@ -459,7 +459,7 @@ const MemberInfoPop = (props) => {
             setUsableEmail(false);
         }else{
             axios.get(`${u_email_check}?email=${email}`,
-                {headers:{Authorization: `Bearer ${token}`}}
+                {headers:{Authorization: `Bearer ${user.tokenValue}`}}
             )
             .then((res)=>{
                 if(res.status === 200){
@@ -900,7 +900,7 @@ const MemberInfoPop = (props) => {
             t_religion:values.t_religion,
         };
         axios.put(`${u_pro_modify}`,body,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

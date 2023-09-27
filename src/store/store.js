@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
+import sessionStorage from 'redux-persist/es/storage/session';
 import user from './userSlice';
 import common from './commonSlice';
 import popup from './popupSlice';
@@ -14,7 +15,7 @@ const reducers = combineReducers({
 
 const persistConfig = {
   key: 'root',
-  storage,
+  storage: sessionStorage,
   whitelist: ['user']
 };
 

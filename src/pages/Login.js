@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../config/enum";
-import { isLogin, managerInfo, managerSetting } from "../store/userSlice";
+import { isLogin, managerInfo, managerSetting, tokenValue } from "../store/userSlice";
 import { confirmPop } from "../store/popupSlice";
 import * as CF from "../config/function";
 import ConfirmPop from "../components/popup/ConfirmPop";
@@ -39,8 +39,8 @@ const Login = () => {
                 //store에 로그인 저장
                 dispatch(isLogin(true));
 
-                //로컬스토리지에 토큰 저장
-                localStorage.setItem("token",token);
+                //store에 토큰 저장
+                dispatch(tokenValue(token));
 
                 // 로그인한 매니저정보 가져오기
                 axios.get(`${m_info}`,

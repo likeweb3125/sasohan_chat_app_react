@@ -9,13 +9,13 @@ import ConfirmPop from "./ConfirmPop";
 
 const ManagerProfilePop = (props) => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const api_uri = enum_api_uri.api_uri;
     const m_profile = enum_api_uri.m_profile;
     const m_img_add = enum_api_uri.m_img_add;
     const m_pro_modify = enum_api_uri.m_pro_modify;
     const m_info = enum_api_uri.m_info;
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const [nickName, setNickName] = useState("");
     const [imgList, setImgList] = useState([1,2,3,4,5,6,7,8]);
     const [imgSrcList, setImgSrcList] = useState(["","","","","","","",""]);
@@ -43,7 +43,7 @@ const ManagerProfilePop = (props) => {
     // 맨처음 매니저프로필정보 가져오기
     useEffect(()=>{
         axios.get(`${m_profile}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -79,7 +79,7 @@ const ManagerProfilePop = (props) => {
         formData.append("media", postData.target.files[0]);
         axios.post(`${m_img_add}`, formData, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${user.tokenValue}`,
                 "Content-Type": "multipart/form-data",
             },
         })
@@ -187,14 +187,14 @@ const ManagerProfilePop = (props) => {
         };
         axios.put(`${m_pro_modify}`, body, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${user.tokenValue}`,
             },
         })
         .then((res)=>{
             if(res.status === 200){
                 //매니저정보 가져오기
                 axios.get(`${m_info}`,
-                    {headers:{Authorization: `Bearer ${token}`}}
+                    {headers:{Authorization: `Bearer ${user.tokenValue}`}}
                 )
                 .then((res)=>{
                     if(res.status === 200){

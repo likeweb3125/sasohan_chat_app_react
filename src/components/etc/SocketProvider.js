@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { io } from "socket.io-client";
 import { enum_api_uri } from '../../config/enum';
 
@@ -18,7 +19,12 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const socketUrl = enum_api_uri.api_uri;
-    const token = localStorage.getItem("token");
+    const user = useSelector((state)=>state.user);
+    const [token, setToken] = useState("");
+
+    useEffect(()=>{
+        setToken(user.tokenValue);
+    },[user.tokenValue]);
 
     useEffect(() => {
         // 소켓 객체 생성

@@ -13,7 +13,7 @@ import ConfirmPop from "../components/popup/ConfirmPop";
 const Chat = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
-    const token = localStorage.getItem("token");
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const chat_list = enum_api_uri.chat_list;
     const [confirm, setConfirm] = useState(false);
@@ -41,7 +41,7 @@ const Chat = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${chat_list}?page_no=${page}${sort ? "&sort="+sort : ""}${searchOn ? "&search="+searchValue : ""}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -83,7 +83,7 @@ const Chat = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${chat_list}?page_no=${1}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

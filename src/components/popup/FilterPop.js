@@ -15,8 +15,8 @@ import ConfirmPop from "./ConfirmPop";
 const FilterPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const [confirm, setConfirm] = useState(false);
     const [cancelConfirm, setCancelConfirm] = useState(false);
     const u_address = enum_api_uri.u_address;
@@ -43,7 +43,7 @@ const FilterPop = (props) => {
         dispatch(loadingPop(true));
 
         axios.get(`${u_address}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

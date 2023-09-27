@@ -11,8 +11,8 @@ import ConfirmPop from "../components/popup/ConfirmPop";
 
 const Setting = () => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const m_setting = enum_api_uri.m_setting;
     const m_limit = enum_api_uri.m_limit;
     const [confirm, setConfirm] = useState(false);
@@ -36,7 +36,7 @@ const Setting = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${m_setting}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -112,7 +112,7 @@ const Setting = () => {
         };
 
         axios.post(`${m_limit}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res) => {
             if (res.status === 200) {

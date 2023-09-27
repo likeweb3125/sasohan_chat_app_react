@@ -34,7 +34,6 @@ import {
 
 
 const RightCont = (props) => {
-    const token = localStorage.getItem("token");
     const dispatch = useDispatch();
     const socket = useSocket();
     const popup = useSelector((state)=>state.popup);
@@ -108,8 +107,8 @@ const RightCont = (props) => {
     useEffect(()=>{
         setMsgList(msgList);
 
-        //로컬스토리지에 선택한회원과의 채팅수 저장
-        localStorage.setItem("msgCount",msgList.length);
+        //세션스토리지에 선택한회원과의 채팅수 저장
+        sessionStorage.setItem("msgCount",msgList.length);
     },[msgList]);
 
 
@@ -147,7 +146,7 @@ const RightCont = (props) => {
             socket.on("active room", (result) => {
                 // console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const id = result.from_id;
 
                 //회원이들어왔을때만 매니저가보낸 메시지 전체읽음처리
@@ -161,7 +160,7 @@ const RightCont = (props) => {
             socket.on("chat msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
                 //현재보고있는 채팅방일때만 받은 메시지 추가
@@ -176,7 +175,7 @@ const RightCont = (props) => {
                         setTypingBox(false);
                     }
 
-                    const msgCount = localStorage.getItem("msgCount");
+                    const msgCount = sessionStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
                     let start = [
@@ -230,7 +229,7 @@ const RightCont = (props) => {
             socket.on("image upload", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
                 
                 //현재보고있는 채팅방일때만 받은 이미지 추가
@@ -245,7 +244,7 @@ const RightCont = (props) => {
                         setTypingBox(false);
                     }
 
-                    const msgCount = localStorage.getItem("msgCount");
+                    const msgCount = sessionStorage.getItem("msgCount");
                     let date = new Date();
                         date = moment(date).format("YYYY년 M월 D일 dddd");
                     let start = [
@@ -313,7 +312,7 @@ const RightCont = (props) => {
             socket.on("read msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
                 //현재보고있는 채팅방일때만 메시지 전체읽음처리
@@ -327,7 +326,7 @@ const RightCont = (props) => {
             socket.on("type msg", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
                 //현재보고있는 채팅방의 상대방회원이 보냈을때
@@ -350,7 +349,7 @@ const RightCont = (props) => {
             socket.on("leave room", (result) => {
                 console.log(JSON.stringify(result, null, 2));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 const userRoomId = selectUser.room_id;
 
                 //현재보고있는 채팅방의 상대방회원이 나갔을때
@@ -384,7 +383,7 @@ const RightCont = (props) => {
     //응대중인회원 가져오기
     const getAssiList = () => {
         axios.get(`${assi_list}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -450,7 +449,7 @@ const RightCont = (props) => {
         };
 
         axios.post(`${assi_add}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -498,7 +497,7 @@ const RightCont = (props) => {
         axios.delete(`${assi_delt}`,
             {
                 data: {m_id: floatId},
-                headers: {Authorization: `Bearer ${token}`}
+                headers: {Authorization: `Bearer ${user.tokenValue}`}
             }
         )
         .then((res)=>{
@@ -589,7 +588,7 @@ const RightCont = (props) => {
             };
 
             axios.put(`${assi_order}`,body,
-                {headers: {Authorization: `Bearer ${token}`}}
+                {headers: {Authorization: `Bearer ${user.tokenValue}`}}
             )
             .then((res)=>{
                 if(res.status === 200){
@@ -624,17 +623,21 @@ const RightCont = (props) => {
     useEffect(()=>{
         console.log(common.selectUser);
 
-        //localStorage 에 selectUser값 저장
+        //sessionStorage 에 selectUser값 저장
         let room_id;
-        if(common.selectUser.room_id){
+        if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id){
             room_id = common.selectUser.room_id;
-        }else{//선택한 회원 room_id 값이 없을때는 매니저ID + 회원ID 조합
-            room_id = user.managerInfo.m_id+common.selectUser.m_id;
-        }
-        let userData = {...common.selectUser};
-            userData.room_id = room_id;
-        localStorage.setItem("selectUser",JSON.stringify(userData));
 
+            sessionStorage.setItem("selectUser",JSON.stringify(common.selectUser));
+
+        }else if(common.selectUser.hasOwnProperty("room_id") && !common.selectUser.room_id){//선택한 회원 room_id 값이 없을때는 매니저ID + 회원ID 조합
+            room_id = user.managerInfo.m_id+common.selectUser.m_id;
+
+            let userData = {...common.selectUser};
+            userData.room_id = room_id;
+            sessionStorage.setItem("selectUser",JSON.stringify(userData));
+        }
+        
 
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
@@ -669,7 +672,7 @@ const RightCont = (props) => {
                     //최근 메시지내용 가져오기
                     dispatch(loadingPop(true));
                     axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",common.selectUser.idx+1)}`,
-                        {headers:{Authorization: `Bearer ${token}`}}
+                        {headers:{Authorization: `Bearer ${user.tokenValue}`}}
                     )
                     .then((res)=>{
                         if(res.status === 200){ 
@@ -736,7 +739,7 @@ const RightCont = (props) => {
                     //최근 메시지내용 가져오기 - 연결된 회원끼리 대화
                     dispatch(loadingPop(true));
                     axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx+1)}`,
-                        {headers:{Authorization: `Bearer ${token}`}}
+                        {headers:{Authorization: `Bearer ${user.tokenValue}`}}
                     )
                     .then((res)=>{
                         if(res.status === 200){ 
@@ -796,7 +799,7 @@ const RightCont = (props) => {
         dispatch(loadingPop(true));
 
         axios.get(`${msg_cont_list.replace(":to_id",common.selectUser.m_id).replace(":last_idx",idx)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -841,7 +844,7 @@ const RightCont = (props) => {
         dispatch(loadingPop(true));
 
         axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",idx)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

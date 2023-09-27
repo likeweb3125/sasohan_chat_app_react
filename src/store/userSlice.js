@@ -4,12 +4,16 @@ const user = createSlice({
     name: "user", //state 이름
     initialState: {
         isLogin:false,
+        tokenValue:null,
         managerInfo:{},
         managerSetting:{},
     },
     reducers:{
         isLogin: (state, action) => {
             state.isLogin = action.payload;
+        },
+        tokenValue: (state, action) => {
+            state.tokenValue = action.payload;
         },
         managerInfo: (state, action) => {
             state.managerInfo = action.payload;
@@ -20,5 +24,5 @@ const user = createSlice({
     },
 });
 
-export const { isLogin, managerInfo, managerSetting } = user.actions;
+export const { isLogin, tokenValue, managerInfo, managerSetting } = user.actions;
 export default user;

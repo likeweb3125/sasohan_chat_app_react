@@ -8,8 +8,8 @@ import ConfirmPop from "./ConfirmPop";
 
 const MemberPop = () => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const u_info = enum_api_uri.u_info;
     const [confirm, setConfirm] = useState(false);
     const [info, setInfo] = useState({});
@@ -29,7 +29,7 @@ const MemberPop = () => {
     //회원정보 가져오기
     const getInfo = () => {
         axios.get(`${u_info.replace(":m_id",popup.memPopId)}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

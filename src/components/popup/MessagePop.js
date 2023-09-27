@@ -16,8 +16,8 @@ import MessageInputWrap from "../component/MessageInputWrap";
 const MessagePop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-    const token = localStorage.getItem("token");
     const g_msg_list = enum_api_uri.g_msg_list;
     const g_msg_list_add = enum_api_uri.g_msg_list_add;
     const g_msg_list2 = enum_api_uri.g_msg_list2;
@@ -105,7 +105,7 @@ const MessagePop = (props) => {
         }
 
         axios.post(`${g_msg_list}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}${params ? "&"+params : ""}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -146,7 +146,7 @@ const MessagePop = (props) => {
         }
 
         axios.post(`${g_msg_list2}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -238,7 +238,7 @@ const MessagePop = (props) => {
                 };
 
                 axios.post(`${g_msg_list_add2}`,body,
-                    {headers: {Authorization: `Bearer ${token}`}}
+                    {headers: {Authorization: `Bearer ${user.tokenValue}`}}
                 )
                 .then((res)=>{
                     if(res.status === 200){
@@ -269,7 +269,7 @@ const MessagePop = (props) => {
                 };
 
                 axios.post(`${g_msg_list_add}`,body,
-                    {headers: {Authorization: `Bearer ${token}`}}
+                    {headers: {Authorization: `Bearer ${user.tokenValue}`}}
                 )
                 .then((res)=>{
                     if(res.status === 200){
@@ -304,7 +304,7 @@ const MessagePop = (props) => {
         };
 
         axios.post(`${g_msg_img_send}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res) => {
             if (res.status === 200) {
@@ -340,7 +340,7 @@ const MessagePop = (props) => {
         };
 
         axios.post(`${g_msg_send}`,body,
-            {headers: {Authorization: `Bearer ${token}`}}
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res) => {
             if (res.status === 200) {

@@ -14,7 +14,7 @@ import ConfirmPop from "../components/popup/ConfirmPop";
 const Main = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
-    const token = localStorage.getItem("token");
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const u_all_count = enum_api_uri.u_all_count;
     const u_list = enum_api_uri.u_list;
@@ -50,7 +50,7 @@ const Main = () => {
     //전체회원수 가져오기
     const getAllCount = () => {
         axios.get(`${u_all_count}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -82,7 +82,7 @@ const Main = () => {
         }
 
         axios.get(`${u_list}?page_no=${page}${sort ? "&sort="+sort : ""}${filter ? "&"+filter : ""}${searchOn ? "&search="+searchValue : ""}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -124,7 +124,7 @@ const Main = () => {
         dispatch(loadingPop(true));
 
         axios.get(`${u_list}?page_no=${1}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

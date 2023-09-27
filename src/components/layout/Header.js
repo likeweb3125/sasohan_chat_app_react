@@ -23,7 +23,6 @@ const Header = () => {
     const [pageMove, setPageMove] = useState(null);
     const socket = useSocket();
     const chat_count = enum_api_uri.chat_count;
-    const token = localStorage.getItem("token");
     const [chatCount, setChatCount] = useState(0);
     const [newChat, setNewChat] = useState(0);
     
@@ -45,7 +44,7 @@ const Header = () => {
                 console.log(JSON.stringify(result, null, 2));
                 dispatch(newMsgData(result));
 
-                const selectUser = JSON.parse(localStorage.getItem("selectUser"));
+                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
                 //회원이 매니저에게 채팅했을때 && 현재들어가있는 채팅방 제외 다른채팅방 메시지들만 안읽은메시지알림 추가
                 if(result.from_id !== user.managerInfo.m_id && result.m_id !== selectUser.m_id){
                     setNewChat(newChat+1);
@@ -117,7 +116,7 @@ const Header = () => {
     //안읽은 채팅메시지 가져오기
     const getChatCount = () => {
         axios.get(`${chat_count}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){

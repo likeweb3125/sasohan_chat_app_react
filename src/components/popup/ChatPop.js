@@ -10,10 +10,10 @@ import ConfirmPop from "./ConfirmPop";
 const ChatPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const chat_introduce_list = enum_api_uri.chat_introduce_list;
     const chat_connect = enum_api_uri.chat_connect;
-    const token = localStorage.getItem("token");
     const [confirm, setConfirm] = useState(false);
     const [connectConfirm, setConnectConfirm] = useState(false);
     const [connectOkConfirm, setConnectOkConfirm] = useState(false);
@@ -66,7 +66,7 @@ const ChatPop = (props) => {
         dispatch(loadingPop(true));
 
         axios.get(`${chat_introduce_list.replace(":m_id",common.selectUser.m_id)}${searchTxt ? "?search_name="+searchTxt : ""}`,
-            {headers:{Authorization: `Bearer ${token}`}}
+            {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -189,7 +189,7 @@ const ChatPop = (props) => {
             };
     
             axios.post(`${chat_connect}`,body,
-                {headers: {Authorization: `Bearer ${token}`}}
+                {headers: {Authorization: `Bearer ${user.tokenValue}`}}
             )
             .then((res)=>{
                 if(res.status === 200){
