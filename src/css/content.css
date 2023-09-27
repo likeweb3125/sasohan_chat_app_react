@@ -124,7 +124,7 @@
 .floating_box{height: 43px;overflow: hidden;margin-bottom: 18px;}
 .floating_box.on{height: 172px;margin-bottom: 10px;}
 .floating_box .list_box{width: calc(100% - 28px);height: 100%;}
-.floating_box .list_box>ul>li{/*width: 282px;*/width: 330px; margin:0 8px 8px 0;border: 1px solid #F8F8F8;border-radius: 20px;background: #F8F8F8;padding: 8px 0 8px 16px;cursor: pointer;}
+.floating_box .list_box>ul>li{width: 282px;margin:0 8px 8px 0;border: 1px solid #F8F8F8;border-radius: 20px;background: #F8F8F8;padding: 8px 0 8px 16px;cursor: pointer;}
 .floating_box .list_box>ul>li.on{background: #fff;border-color: #EAEAEA;}
 .floating_box .list_box>ul>li .member_box .box .name{font-size: 14px;}
 .floating_box .list_box>ul>li .member_box .box .age{font-size: 13px;}

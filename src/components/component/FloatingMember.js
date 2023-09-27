@@ -50,7 +50,7 @@ const FloatingMember = (props) => {
                 <div className="box flex_between">
                     <div className="flex">
                         <p className={`name${props.data.m_gender == "2" ? " mem_w" : ""}`}>{props.data.m_name}</p>
-                        <p className="age flex">제주특별자치도 서귀포시<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
+                        <p className="age flex">{props.data.m_address}<span>&nbsp;·&nbsp;{props.data.birth}</span></p>
                     </div>
                     <div className='flex lm5'>
                         <button type="button" className="btn_delt" onClick={props.onDeltHandler}>삭제버튼</button>
