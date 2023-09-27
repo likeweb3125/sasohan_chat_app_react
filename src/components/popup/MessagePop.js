@@ -18,6 +18,7 @@ const MessagePop = (props) => {
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
+    const api_uri = enum_api_uri.api_uri;
     const g_msg_list = enum_api_uri.g_msg_list;
     const g_msg_list_add = enum_api_uri.g_msg_list_add;
     const g_msg_list2 = enum_api_uri.g_msg_list2;
@@ -32,6 +33,7 @@ const MessagePop = (props) => {
     const [idList, setIdList] = useState([]);
     const [textareaValue, setTextareaValue] = useState("");
     const location = useLocation();
+    const [photoPath, setPhotoPath] = useState("upload/chat/");
 
 
     //팝업닫기
@@ -298,9 +300,17 @@ const MessagePop = (props) => {
 
     //이미지 첨부하기
     const imgAttach = () => {
+        //이미지 이름만 전송하기
+        let imgList = common.msgImgs;
+        imgList = imgList.map(url => {
+            let updatedUrl = url.replace(api_uri, "");
+            updatedUrl = updatedUrl.replace(photoPath, "");
+            return updatedUrl;
+        });
+
         let body = {
             to_id: idList,
-            image_array: common.msgImgs
+            image_array: imgList
         };
 
         axios.post(`${g_msg_img_send}`,body,

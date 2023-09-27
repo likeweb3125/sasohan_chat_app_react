@@ -90,13 +90,8 @@ const MessageInputWrap = (props) => {
                         }))
                     ]);
 
-                    const updatedMediaUrls = res.data.mediaUrls.map(url => {
-                        let updatedUrl = url.replace(api_uri, "");
-                        updatedUrl = updatedUrl.replace(photoPath, "");
-                        return updatedUrl;
-                    });
-                      
-                    const newList = [...imgNameList, ...updatedMediaUrls];
+                    const mediaUrls = res.data.mediaUrls;
+                    const newList = [...imgNameList, ...mediaUrls];
                     setImgNameList(newList);
                 }
             })
