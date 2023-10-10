@@ -75,6 +75,21 @@ const ChatPop = (props) => {
                 let data = res.data;
                 // let data = [
                 //     {
+                //         "m_id": "wkdskfk624",
+                //         "m_name": "긴급정산",
+                //         "m_gender": "2",
+                //         "birth": "94",
+                //         "m_address": "전라북도 익산시",
+                //         "introduce_date": "2017.07.07 14:04",
+                //         "manager": "skysjs",
+                //         "flg": "B",
+                //         "p_flg": "E",
+                //         "p_kind": null,
+                //         "p_kind2": null,
+                //         "connect": "대화종료",
+                //         "is_connect": 1
+                //     },
+                //     {
                 //         "m_id": "wkdskfk623",
                 //         "m_name": "긴급정산",
                 //         "m_gender": "2",
@@ -86,7 +101,7 @@ const ChatPop = (props) => {
                 //         "p_flg": "E",
                 //         "p_kind": null,
                 //         "p_kind2": null,
-                //         "connect": "연결중",
+                //         "connect": "대화중",
                 //         "is_connect": 1
                 //     },
                 //     {
@@ -144,11 +159,11 @@ const ChatPop = (props) => {
     };
 
 
-    //맨처음 대화방연결리스트 연결가능한 회원아이디값만 배열로
+    //맨처음 대화방연결리스트 연결여부가 대화종료가 아닌 연결가능,대화중인 회원아이디값만 배열로
     useEffect(()=>{
         if(list){
             const filteredIds = list
-                .filter((item) => item.connect === "연결가능")
+                .filter((item) => item.connect !== "대화종료")
                 .map((item) => item.m_id);
 
             setIdList([...filteredIds]);
@@ -299,8 +314,7 @@ const ChatPop = (props) => {
                                             return(
                                                 <tr 
                                                     key={i}
-                                                    // className={`${checkList.includes(data.m_id) ? "checked" : data.connect != "연결가능" ? "none" : ""}`} 
-                                                    className={`${checkList.includes(data.m_id) ? "checked" : ""}`} 
+                                                    className={`${checkList.includes(data.m_id) ? "checked" : data.connect === "대화종료" ? "none" : ""}`} 
                                                 >
                                                     <td>
                                                         <div className="custom_check">
@@ -314,7 +328,7 @@ const ChatPop = (props) => {
                                                                         checkHandler(isChecked, value);
                                                                     }}
                                                                     checked={checkList.includes(data.m_id)}
-                                                                    // disabled={data.connect == "연결가능" ? false : true}
+                                                                    disabled={data.connect !== "대화종료" ? false : true}
                                                                 />
                                                                 <span className="check"></span>
                                                             </label>
@@ -334,7 +348,7 @@ const ChatPop = (props) => {
                                                         ><span>프리미엄</span></div>
                                                     </td>
                                                     <td>{data.manager}</td>
-                                                    <td><div className={`tag2${data.connect == "연결가능" ? " on" : ""}`}>{data.connect}</div></td>
+                                                    <td><div className={`tag2${data.connect !== "대화종료" ? " on" : ""}`}>{data.connect}</div></td>
                                                 </tr>
                                             );
                                         })
