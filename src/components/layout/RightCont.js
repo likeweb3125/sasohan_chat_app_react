@@ -190,7 +190,7 @@ const RightCont = (props) => {
                             "from_id": result.from_id,
                             "to_id": result.to_id,
                             "msg": "매니저가 회원님께 대화를 신청했어요!",
-                            "time": result.time,
+                            "w_date": result.w_date,
                             "message_type": "Q",
                             "view_cnt": result.view_cnt
                         },
@@ -199,7 +199,7 @@ const RightCont = (props) => {
                             "from_id": result.from_id,
                             "to_id": result.to_id,
                             "msg": date,
-                            "time": result.time,
+                            "w_date": result.w_date,
                             "message_type": "S",
                             "view_cnt": result.view_cnt
                         }
@@ -209,7 +209,7 @@ const RightCont = (props) => {
                         "from_id": result.from_id,
                         "to_id": result.to_id,
                         "msg": result.msg,
-                        "time": result.time,
+                        "w_date": result.w_date,
                         "message_type": result.message_type,
                         "view_cnt": result.view_cnt
                     };
@@ -259,7 +259,7 @@ const RightCont = (props) => {
                             "from_id": result.from_id,
                             "to_id": result.to_id,
                             "msg": "매니저가 회원님께 대화를 신청했어요!",
-                            "time": result.time,
+                            "w_date": result.w_date,
                             "message_type": "Q",
                             "view_cnt": result.view_cnt
                         },
@@ -268,7 +268,7 @@ const RightCont = (props) => {
                             "from_id": result.from_id,
                             "to_id": result.to_id,
                             "msg": date,
-                            "time": result.time,
+                            "w_date": result.w_date,
                             "message_type": "S",
                             "view_cnt": result.view_cnt
                         }
@@ -279,7 +279,7 @@ const RightCont = (props) => {
                         "to_id": result.to_id,
                         "msg": "",
                         "files": result.files,
-                        "time": result.time,
+                        "w_date": result.w_date,
                         "message_type": result.message_type,
                         "view_cnt": result.view_cnt
                     };
@@ -1089,7 +1089,7 @@ const RightCont = (props) => {
                                                     <ul className="txt_ul">
                                                         <li>
                                                             <div className="box flex_bottom">
-                                                                <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.time}</p>
+                                                                <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.w_date}</p>
                                                                 {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                     :   cont.message_type == "I" && 
                                                                         <ul className="img_ul flex_wrap">
@@ -1131,7 +1131,7 @@ const RightCont = (props) => {
                                                                                 })}
                                                                             </ul>
                                                                     }
-                                                                    <p className="time">{cont.time}</p>
+                                                                    <p className="time">{cont.w_date}</p>
                                                                 </div>
                                                             </li>
                                                         </ul>
