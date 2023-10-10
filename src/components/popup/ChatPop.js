@@ -299,7 +299,8 @@ const ChatPop = (props) => {
                                             return(
                                                 <tr 
                                                     key={i}
-                                                    className={`${checkList.includes(data.m_id) ? "checked" : data.connect != "연결가능" ? "none" : ""}`} 
+                                                    // className={`${checkList.includes(data.m_id) ? "checked" : data.connect != "연결가능" ? "none" : ""}`} 
+                                                    className={`${checkList.includes(data.m_id) ? "checked" : ""}`} 
                                                 >
                                                     <td>
                                                         <div className="custom_check">
@@ -313,7 +314,7 @@ const ChatPop = (props) => {
                                                                         checkHandler(isChecked, value);
                                                                     }}
                                                                     checked={checkList.includes(data.m_id)}
-                                                                    disabled={data.connect == "연결가능" ? false : true}
+                                                                    // disabled={data.connect == "연결가능" ? false : true}
                                                                 />
                                                                 <span className="check"></span>
                                                             </label>
@@ -341,43 +342,6 @@ const ChatPop = (props) => {
                                                 <td colSpan={8}><div className="none_data">데이터가 없습니다.</div></td>
                                             </tr>
                                     }
-                                    {/* <tr className="checked">
-                                        <td>
-                                            <div className="custom_check">
-                                                <label className="clearfix">
-                                                    <input type="checkbox" />
-                                                    <span className="check"></span>
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td>2023.04.24 18:40</td>
-                                        <td>박성훈</td>
-                                        <td>제주특별자치도 서귀포시</td>
-                                        <td>96</td>
-                                        <td><div className="tag" style={{"borderColor":"#FC5862","color":"#FC5862"}}>프리미엄</div></td>
-                                        <td>김소혜</td>
-                                        <td><div className="tag2 on">가능</div></td>
-                                    </tr>
-                                    <tr className="none">
-                                        <td>
-                                            <div className="custom_check">
-                                                <label className="clearfix">
-                                                    <input type="checkbox" disabled />
-                                                    <span className="check"></span>
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td>2023.04.24 18:40</td>
-                                        <td>박성훈</td>
-                                        <td>제주특별자치도 서귀포시</td>
-                                        <td>96</td>
-                                        <td><div className="tag" style={{"borderColor":"#FC5862","color":"#FC5862"}}>프리미엄</div></td>
-                                        <td>김소혜</td>
-                                        <td><div className="tag2">불가능</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={8}><div className="none_data">데이터가 없습니다.</div></td>
-                                    </tr> */}
                                 </tbody>
                             </table>
                         </div>
