@@ -567,6 +567,7 @@ const RightCont = (props) => {
 
     const handleDragEnd = (event) => {
         const {active, over} = event;
+        console.log(event)
         
         if (active.id !== over.id) {
             setAssiList((items) => {
@@ -1026,7 +1027,7 @@ const RightCont = (props) => {
                                                             data={mem} 
                                                             onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
                                                             id={mem.m_id}
-                                                        />
+                                                        />                                                                                                                                                                              
                                                     ))}
                                             </SortableContext>
                                         </DndContext>

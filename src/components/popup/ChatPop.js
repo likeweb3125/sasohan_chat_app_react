@@ -87,7 +87,7 @@ const ChatPop = (props) => {
                 //         "p_kind": null,
                 //         "p_kind2": null,
                 //         "connect": "대화종료",
-                //         "is_connect": 1
+                //         "is_connect": 2
                 //     },
                 //     {
                 //         "m_id": "wkdskfk623",
@@ -193,39 +193,16 @@ const ChatPop = (props) => {
     };
 
 
-    // 대화방 연결버튼 클릭시
-    const connectHandler = () => {
+    //대화방 연결버튼 클릭시
+    const connectBtnClickHandler = () => {
         if(checkList.length > 0){
-            dispatch(loadingPop(true));
-
-            let body = {
-                from_id: common.selectUser.m_id,
-                to_id: checkList
-            };
-    
-            axios.post(`${chat_connect}`,body,
-                {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-            )
-            .then((res)=>{
-                if(res.status === 200){
-                    dispatch(loadingPop(false));
-
-                    let data = res.data;
-                    
-                }
-            })
-            .catch((error) => {
-                dispatch(loadingPop(false));
-                
-                const err_msg = CF.errorMsgHandler(error);
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            });
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: "선택한 회원과 대화방을 연결하시겠습니까?",
+                confirmPopBtn:2,
+            }));
+            setConfirm(true);
         }else{
             dispatch(confirmPop({
                 confirmPop:true,
@@ -235,6 +212,46 @@ const ChatPop = (props) => {
             }));
             setConfirm(true);
         }
+    };
+
+
+    //대화방 연결하기
+    const connectHandler = () => {
+        dispatch(loadingPop(true));
+
+        let body = {
+            from_id: common.selectUser.m_id,
+            to_id: checkList
+        };
+
+        axios.post(`${chat_connect}`,body,
+            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(loadingPop(false));
+
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: "대화방 연결이 완료되었습니다.",
+                    confirmPopBtn:1,
+                }));
+                setConnectOkConfirm(true);
+            }
+        })
+        .catch((error) => {
+            dispatch(loadingPop(false));
+            
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
     };
 
 
@@ -365,7 +382,7 @@ const ChatPop = (props) => {
                     <div className="txt flex"><strong>선택한 회원수</strong><span><strong>{CF.MakeIntComma(checkList.length)}</strong> 명</span></div>
                     <div>
                         <button type="button" className="btn_round2 rm8" onClick={cancelHandler}>취소</button>
-                        <button type="button" className="btn_round" onClick={connectHandler}>연결</button>
+                        <button type="button" className="btn_round" onClick={connectBtnClickHandler}>연결</button>
                     </div>
                 </div>
             </div>
@@ -373,6 +390,12 @@ const ChatPop = (props) => {
 
         {/* 대화방연결 닫기,취소 confirm팝업 */}
         {closeConfirm && <ConfirmPop onClickHandler={closePopHandler} />}
+
+        {/* 대화방연결 confirm팝업 */}
+        {connectConfirm && <ConfirmPop onClickHandler={connectHandler} />}
+
+        {/* 대화방연결 완료 confirm팝업 */}
+        {connectOkConfirm && <ConfirmPop closePop="custom" onCloseHandler={closePopHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}
