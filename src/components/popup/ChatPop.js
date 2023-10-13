@@ -202,7 +202,7 @@ const ChatPop = (props) => {
                 confirmPopTxt: "선택한 회원과 대화방을 연결하시겠습니까?",
                 confirmPopBtn:2,
             }));
-            setConfirm(true);
+            setConnectConfirm(true);
         }else{
             dispatch(confirmPop({
                 confirmPop:true,
@@ -265,6 +265,7 @@ const ChatPop = (props) => {
         }));
         setCloseConfirm(true);
     };
+
 
     //서비스 클릭시 툴팁팝업 열기
     const tooltipClickHandler = (e, data) => {
