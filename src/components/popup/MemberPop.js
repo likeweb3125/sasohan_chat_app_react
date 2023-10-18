@@ -57,7 +57,7 @@ const MemberPop = () => {
     //회원정보보기 버튼클릭시
     const detailInfo = () => {
         // 앱가입 회원이면 회원프로필팝업
-        if(info.m_app == "Y"){
+        if(info.m_app){
             dispatch(memInfoPop(true));
         }
         // 기존회원이면 기존사소한관리자 회원정보페이지 새창띄우기

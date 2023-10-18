@@ -147,6 +147,8 @@
 .member_box.custom_check label + .box{padding-left: 8px;width: calc(100% - 24px);}
 .member_box .box .name{font-size: 15px;font-weight: 500;padding-right: 34px;background: url(../images/ic_m.svg) no-repeat center right 8px;line-height: 1.2;}
 .member_box .box .name.mem_w{background: url(../images/ic_w.svg) no-repeat center right 8px;}
+.member_box .box .name.app{position: relative;}
+.member_box .box .name.app::after{position: absolute;content: '';width: 4px;height: 4px;top: 0;left: -6px;border-radius: 50%;background: #6840FD;}
 .member_box .box .age{font-size: 14px;color: #666;padding-left: 12px;position: relative;}
 .member_box .box .age::after{position: absolute;content: "";width: 4px;height: 4px;border-radius: 50%;background: #DDDDDD;left: 0;top: 50%;transform: translateY(-50%);}
 .member_box .box .btn_mem{text-indent: -9999px;font-size: 0;width: 24px;height: 24px;background: url(../images/ic_mem.svg) no-repeat center;}
