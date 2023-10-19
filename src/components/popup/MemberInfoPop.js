@@ -55,6 +55,7 @@ const MemberInfoPop = (props) => {
     const [errorLike, setErrorLike] = useState(false);
     const [errorDate, setErrorDate] = useState(false);
     const [formValues, setFormValues] = useState({});
+    const [hasRunOnce, setHasRunOnce] = useState(false);
 
 
     //팝업닫기
@@ -117,7 +118,7 @@ const MemberInfoPop = (props) => {
                 let data = res.data;
                 setAddressList([...data]);
 
-                let addr = info.m_address.split(" ");
+                let addr = info.m_address_full.split(" ");
                 let checkLoca = data.filter((el) => el.sido_gugun === addr[0]);
                 setLoca(...checkLoca);
             }
@@ -144,7 +145,7 @@ const MemberInfoPop = (props) => {
                 let data = res.data;
                 setAddressList2([...data]);
 
-                let addr = info.m_address.split(" ");
+                let addr = info.m_address_full.split(" ");
                 let checkLoca2 = data.filter((el) => el.sido_gugun === addr[1]);
                 setLoca2(...checkLoca2);
             }
@@ -162,14 +163,18 @@ const MemberInfoPop = (props) => {
     };
 
 
+    useEffect(()=>{
+        //맨처음 주소 시,도 있으면 구,군 가져오기
+        if(loca && loca.hasOwnProperty('sido_gugun') && !hasRunOnce){
+            getAddress2(loca.sido_gugun);
+            setHasRunOnce(true);
+        }
+    },[loca]);
+
+
     //맨처음 회원프로필정보 가져오기
     useEffect(() => {
         getInfo();
-
-        //주소 가져오기
-        if(loca && loca.hasOwnProperty('sido_gugun')){
-            getAddress2(loca.sido_gugun);
-        }
     }, []);
 
 
