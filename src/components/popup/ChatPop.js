@@ -332,7 +332,7 @@ const ChatPop = (props) => {
                                             return(
                                                 <tr 
                                                     key={i}
-                                                    className={`${checkList.includes(data.m_id) ? "checked" : data.connect === "대화종료" ? "none" : ""}`} 
+                                                    className={`${checkList.includes(data.m_id) ? "checked" : data.is_connect > 1 ? "none" : ""}`} 
                                                 >
                                                     <td>
                                                         <div className="custom_check">
@@ -346,7 +346,7 @@ const ChatPop = (props) => {
                                                                         checkHandler(isChecked, value);
                                                                     }}
                                                                     checked={checkList.includes(data.m_id)}
-                                                                    disabled={data.connect !== "대화종료" ? false : true}
+                                                                    disabled={data.is_connect > 1 ? true : false}
                                                                 />
                                                                 <span className="check"></span>
                                                             </label>
@@ -366,7 +366,7 @@ const ChatPop = (props) => {
                                                         ><span>프리미엄</span></div>
                                                     </td>
                                                     <td>{data.manager}</td>
-                                                    <td><div className={`tag2${data.connect !== "대화종료" ? " on" : ""}`}>{data.connect}</div></td>
+                                                    <td><div className={`tag2${data.is_connect > 1 ? "" : " on"}`}>{data.connect}</div></td>
                                                 </tr>
                                             );
                                         })
