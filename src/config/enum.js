@@ -20,7 +20,7 @@ exports.enum_api_uri = {
     u_profile: `${api_uri}v1/user-list/user-profile/:m_id`,
     u_img_add: `${api_uri}v1/user-list/user-image-add`,
     u_nick_check: `${api_uri}v1/user-list/check-nic`,
-    u_email_check: `${api_uri}v1/user-list/check-email`,
+    //u_email_check: `${api_uri}v1/user-list/check-email`, //앱 회원가입시 이메일입력 삭제
     u_pro_modify: `${api_uri}v1/user-list/user-profile-modify`,
     u_address: `${api_uri}v1/select-list/address`,
     u_address2: `${api_uri}v1/select-list/address/:parent_local_code`,

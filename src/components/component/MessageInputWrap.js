@@ -108,6 +108,10 @@ const MessageInputWrap = (props) => {
         }
     });
 
+    useEffect(()=>{
+        console.log(files)
+    },[files]);
+
     //이미지 삭제
     const handleRemove = (id, idx) => {
         setFiles(prevFiles => prevFiles.filter(file => file.id !== id));

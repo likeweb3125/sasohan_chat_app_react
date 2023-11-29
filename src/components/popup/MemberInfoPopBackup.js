@@ -1,3 +1,5 @@
+//앱 회원가입시 이메일입력 삭제전 백업 (231129)
+
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NumericFormat, PatternFormat } from "react-number-format";
@@ -22,6 +24,7 @@ const MemberInfoPop = (props) => {
     const u_select_list = enum_api_uri.u_select_list;
     const u_img_add = enum_api_uri.u_img_add;
     const u_nick_check = enum_api_uri.u_nick_check;
+    const u_email_check = enum_api_uri.u_email_check;
     const u_pro_modify = enum_api_uri.u_pro_modify;
     const [imgList, setImgList] = useState([1,2,3,4,5,6,7,8]);
     const [imgSrcList, setImgSrcList] = useState(["","","","","","","",""]);
@@ -49,6 +52,7 @@ const MemberInfoPop = (props) => {
     const [like, setLike] = useState([]);
     const [date, setDate] = useState([]);
     const [usableNickName, setUsableNickName] = useState(true);
+    const [usableEmail, setUsableEmail] = useState(true);
     const [errorType, setErrorType] = useState(false);
     const [errorLike, setErrorLike] = useState(false);
     const [errorDate, setErrorDate] = useState(false);
@@ -448,6 +452,50 @@ const MemberInfoPop = (props) => {
     };
 
 
+    //이메일 사용가능 확인
+    const emailCheckHandler = (values) => {
+        let email = values.email;
+        if(email.length < 1){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'이메일을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setUsableEmail(false);
+        }else{
+            axios.get(`${u_email_check}?email=${email}`,
+                {headers:{Authorization: `Bearer ${user.tokenValue}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    setConfirm(true);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'사용가능한 이메일 입니다.',
+                        confirmPopBtn:1,
+                    }));
+                    setUsableEmail(true);
+                }
+            })
+            .catch((error) => {
+                if(error.response.status === 401) {
+                    setConfirm(true);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'사용할 수 없는 이메일 입니다.',
+                        confirmPopBtn:1,
+                    }));
+                    setUsableEmail(false);
+                }
+            })
+        }
+    };
+
+
     //회원프로필정보 Yup 유효성검사
     const validationSchema = Yup.object().shape({
         password: Yup.string()
@@ -468,6 +516,9 @@ const MemberInfoPop = (props) => {
         phone: Yup.string()
             .required("휴대폰번호를 입력해주세요.")
             .matches(/^\d{3}-\d{4}-\d{4}$/, "휴대폰번호를 입력해주세요."),
+        email: Yup.string()
+            .required("이메일을 입력해주세요.")
+            .email("이메일을 입력해주세요."),
         height: Yup.string()
             .required("키를 선택해주세요."),
         job: Yup.string()
@@ -584,6 +635,14 @@ const MemberInfoPop = (props) => {
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt:'휴대폰번호를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+        }else if(!values.email || !/^[\w._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(values.email)){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'이메일을 입력해주세요.',
                 confirmPopBtn:1,
             }));
         }else if(address.length == 0){
@@ -746,6 +805,14 @@ const MemberInfoPop = (props) => {
                 confirmPopTxt:'닉네임 사용가능을 확인해주세요.',
                 confirmPopBtn:1,
             }));
+        }else if(!usableEmail){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'이메일 사용가능을 확인해주세요.',
+                confirmPopBtn:1,
+            }));
         }else{
             setModifyConfirm(true);
             dispatch(confirmPop({
@@ -815,6 +882,7 @@ const MemberInfoPop = (props) => {
             m_gender:gender,
             m_birth:values.birth,
             m_c_phone:values.phone,
+            m_email:values.email,
             m_address:address,
             m_height:values.height,
             m_job:values.job,
@@ -893,6 +961,7 @@ const MemberInfoPop = (props) => {
                             gender: "gender_"+info.m_gender || "",
                             birth: info.m_birth || "",
                             phone: info.m_c_phone || "",
+                            email: info.m_email || "",
                             height: info.m_height || "",
                             job: info.m_job || "",
                             visual: info.m_visual || "",
@@ -1093,6 +1162,29 @@ const MemberInfoPop = (props) => {
                                                             {errors.phone && touched.phone &&
                                                                 <div className="alert_txt">
                                                                     {errors.phone} 
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                        <th>이메일</th>
+                                                        <td>
+                                                            <div className="btn_input_box">
+                                                                <div className="custom_input custom_input2">
+                                                                    <input 
+                                                                        type={"text"} 
+                                                                        value={values.email} 
+                                                                        name="email" 
+                                                                        onChange={(e)=>{
+                                                                            handleChange(e);
+                                                                            setUsableEmail(false);
+                                                                        }}
+                                                                        onBlur={handleBlur} 
+                                                                    />
+                                                                </div>
+                                                                <button type="button" disabled={usableEmail ? true : false} onClick={()=>{emailCheckHandler(values)}}>중복체크</button>
+                                                            </div>
+                                                            {errors.email && touched.email &&
+                                                                <div className="alert_txt">
+                                                                    {errors.email} 
                                                                 </div>
                                                             }
                                                         </td>
