@@ -87,7 +87,7 @@ const Header = () => {
 
     //매니저 단체메시지설정 안되어있을때
     useEffect(()=>{
-        if(user.managerSetting.set_num == 0 || user.managerSetting.set_range.length == 0){
+        if(!user.managerSetting.set_num || user.managerSetting.set_range.length == 0){
             setPageMove(false);
         }else{
             setPageMove(true);

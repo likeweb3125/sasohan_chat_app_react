@@ -71,53 +71,6 @@ const ChatPop = (props) => {
                 dispatch(loadingPop(false));
 
                 let data = res.data;
-                // let data = [
-                //     {
-                //         "m_id": "wkdskfk624",
-                //         "m_name": "긴급정산",
-                //         "m_gender": "2",
-                //         "birth": "94",
-                //         "m_address": "전라북도 익산시",
-                //         "introduce_date": "2017.07.07 14:04",
-                //         "manager": "skysjs",
-                //         "flg": "B",
-                //         "p_flg": "E",
-                //         "p_kind": null,
-                //         "p_kind2": null,
-                //         "connect": "대화종료",
-                //         "is_connect": 2
-                //     },
-                //     {
-                //         "m_id": "wkdskfk623",
-                //         "m_name": "긴급정산",
-                //         "m_gender": "2",
-                //         "birth": "94",
-                //         "m_address": "전라북도 익산시",
-                //         "introduce_date": "2017.07.07 14:04",
-                //         "manager": "skysjs",
-                //         "flg": "B",
-                //         "p_flg": "E",
-                //         "p_kind": null,
-                //         "p_kind2": null,
-                //         "connect": "대화중",
-                //         "is_connect": 1
-                //     },
-                //     {
-                //         "m_id": "wkdskfk622",
-                //         "m_name": "긴급정산",
-                //         "m_gender": "2",
-                //         "birth": "94",
-                //         "m_address": "전라북도 익산시",
-                //         "introduce_date": "2017.07.07 14:04",
-                //         "manager": "skysjs",
-                //         "flg": "B",
-                //         "p_flg": "A",
-                //         "p_kind": null,
-                //         "p_kind2": null,
-                //         "connect": "연결가능",
-                //         "is_connect": 0
-                //     }
-                // ]
                 setList([...data]);
             }
         })
@@ -156,12 +109,17 @@ const ChatPop = (props) => {
         }
     };
 
-
-    //맨처음 대화방연결리스트 연결여부가 대화종료가 아닌 연결가능,대화중인 회원아이디값만 배열로
+    // is_connect	connect
+    //      0	     연결가능
+    //      1	      대화중
+    //      2	     대화종료
+    //      3	     연결불가
+    
+    //맨처음 대화방연결리스트 연결여부가 연결가능,대화중인 회원아이디값만 배열로
     useEffect(()=>{
         if(list){
             const filteredIds = list
-                .filter((item) => item.connect !== "대화종료")
+                .filter((item) => item.is_connect < 2)
                 .map((item) => item.m_id);
 
             setIdList([...filteredIds]);
