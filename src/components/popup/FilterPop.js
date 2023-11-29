@@ -18,13 +18,11 @@ const FilterPop = (props) => {
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const [confirm, setConfirm] = useState(false);
-    const [cancelConfirm, setCancelConfirm] = useState(false);
     const u_address = enum_api_uri.u_address;
     const [addressList, setAddressList] = useState([]);
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(filter(true));
         dispatch(filterPop(false));
     };
 
@@ -33,7 +31,6 @@ const FilterPop = (props) => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
-            setCancelConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -72,18 +69,6 @@ const FilterPop = (props) => {
     useEffect(()=>{
         getAddress();
     },[]);
-
-
-    //조건검색기 취소
-    const cancelHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
-            confirmPopBtn:2,
-        }));
-        setCancelConfirm(true);
-    };
 
 
     //조건검색하기
@@ -498,7 +483,7 @@ const FilterPop = (props) => {
                                     fromReset({setFieldValue});
                                 }}>입력 초기화</button>
                                 <div className="btn_box2">
-                                    <button type="button" className="btn_round2" onClick={cancelHandler}>취소</button>
+                                    <button type="button" className="btn_round2" onClick={closePopHandler}>취소</button>
                                     <button type="button" className="btn_round" onClick={()=>{searchHandler(values)}}>검색</button>
                                 </div>
                             </div>
@@ -507,9 +492,6 @@ const FilterPop = (props) => {
                 </Formik>
             </div>
         </div>
-
-        {/* 조건검색기 취소 confirm팝업 */}
-        {cancelConfirm && <ConfirmPop onClickHandler={closePopHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

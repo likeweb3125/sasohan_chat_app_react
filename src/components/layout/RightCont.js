@@ -66,7 +66,6 @@ const RightCont = (props) => {
     const chatRef = useRef();
     const innerRef = useRef();
     const [textareaValue, setTextareaValue] = useState("");
-    const [floatId, setFloatId] = useState("");
     const [chatLastIdx, setChatLastIdx] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [assiDnd, setAssiDnd] = useState(false);
@@ -484,25 +483,11 @@ const RightCont = (props) => {
     };
 
 
-    //플로팅 회원 삭제버튼 클릭시
-    const floatingDeltBtn = (id) => {
-        setFloatId(id);
-
-        setFloatDeltConfirm(true);
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "선택 회원을 삭제하시겠습니까?",
-            confirmPopBtn:2,
-        }));
-    };
-
-
     //플로팅 회원 삭제하기
-    const floatingDelt = () => {
+    const floatingDelt = (id) => {
         axios.delete(`${assi_delt}`,
             {
-                data: {m_id: floatId},
+                data: {m_id: id},
                 headers: {Authorization: `Bearer ${user.tokenValue}`}
             }
         )
@@ -518,8 +503,6 @@ const RightCont = (props) => {
                 setConfirm(true);
 
                 getAssiList();
-
-                setFloatId();
 
                 setListOn("");
                 dispatch(assiListOn(""));
@@ -1025,7 +1008,7 @@ const RightCont = (props) => {
                                                         <FloatingMember 
                                                             key={i}
                                                             data={mem} 
-                                                            onDeltHandler={()=>{floatingDeltBtn(mem.m_id)}}
+                                                            onDeltHandler={()=>{floatingDelt(mem.m_id)}}
                                                             id={mem.m_id}
                                                         />                                                                                                                                                                              
                                                     ))}

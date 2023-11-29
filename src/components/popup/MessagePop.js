@@ -26,7 +26,6 @@ const MessagePop = (props) => {
     const g_msg_send = enum_api_uri.g_msg_send;
     const g_msg_img_send = enum_api_uri.g_msg_img_send;
     const [confirm, setConfirm] = useState(false);
-    const [closeConfirm, setCloseConfirm] = useState(false);
     const [sendConfirm, setSendConfirm] = useState(false);
     const [sendOkConfirm, setSendOkConfirm] = useState(false);
     const [list, setList] = useState([]);
@@ -46,7 +45,6 @@ const MessagePop = (props) => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
-            setCloseConfirm(false);
             setSendConfirm(false);
             setSendOkConfirm(false);
         }
@@ -410,25 +408,13 @@ const MessagePop = (props) => {
     };
 
 
-    //닫기, 취소버튼 클릭시
-    const cancelHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
-            confirmPopBtn:2,
-        }));
-        setCloseConfirm(true);
-    };
-
-
     return(<>
         <div className="pop_wrap message_pop">
             <div className="dim"></div>
             <div className="pop_cont pop_cont3">
                 <div className="pop_tit flex_between">
                     <p className="f_24"><strong>단체 메시지</strong></p>
-                    <button type="button" className="btn_close" onClick={cancelHandler}>닫기버튼</button>
+                    <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
                 <div className="list_cont">
                     <div className="top_box flex_between">
@@ -459,9 +445,6 @@ const MessagePop = (props) => {
 
         {/* 단체메시지 보내기 완료 confirm팝업 */}
         {sendOkConfirm && <ConfirmPop closePop="custom" onCloseHandler={closePopHandler} />}
-
-        {/* 단체메시지 닫기 confirm팝업 */}
-        {closeConfirm && <ConfirmPop onClickHandler={closePopHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

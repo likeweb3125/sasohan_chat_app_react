@@ -17,7 +17,6 @@ const ChatPop = (props) => {
     const [confirm, setConfirm] = useState(false);
     const [connectConfirm, setConnectConfirm] = useState(false);
     const [connectOkConfirm, setConnectOkConfirm] = useState(false);
-    const [closeConfirm, setCloseConfirm] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [list, setList] = useState([]);
     const [idList, setIdList] = useState([]);
@@ -56,7 +55,6 @@ const ChatPop = (props) => {
             setConfirm(false);
             setConnectConfirm(false);
             setConnectOkConfirm(false);
-            setCloseConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -255,18 +253,6 @@ const ChatPop = (props) => {
     };
 
 
-    //닫기, 취소버튼 클릭시
-    const cancelHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: "작성중인 내용을 저장하지 않고 나가시겠습니까?",
-            confirmPopBtn:2,
-        }));
-        setCloseConfirm(true);
-    };
-
-
     //서비스 클릭시 툴팁팝업 열기
     const tooltipClickHandler = (e, data) => {
         const element = e.currentTarget;
@@ -281,7 +267,7 @@ const ChatPop = (props) => {
             <div className="pop_cont pop_cont4">
                 <div className="pop_tit flex_between">
                     <p className="f_24"><strong>대화방 연결</strong></p>
-                    <button type="button" className="btn_close" onClick={cancelHandler}>닫기버튼</button>
+                    <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
                 <SearchBox 
                     placeholder="연결할 회원명 검색"
@@ -382,15 +368,12 @@ const ChatPop = (props) => {
                 <div className="btn_box flex_between tp15">
                     <div className="txt flex"><strong>선택한 회원수</strong><span><strong>{CF.MakeIntComma(checkList.length)}</strong> 명</span></div>
                     <div>
-                        <button type="button" className="btn_round2 rm8" onClick={cancelHandler}>취소</button>
+                        <button type="button" className="btn_round2 rm8" onClick={closePopHandler}>취소</button>
                         <button type="button" className="btn_round" onClick={connectBtnClickHandler}>연결</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        {/* 대화방연결 닫기,취소 confirm팝업 */}
-        {closeConfirm && <ConfirmPop onClickHandler={closePopHandler} />}
 
         {/* 대화방연결 confirm팝업 */}
         {connectConfirm && <ConfirmPop onClickHandler={connectHandler} />}
