@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { messagePopList } from "../../store/popupSlice";
 import { selectUser, pageMore, pageNo } from "../../store/commonSlice";
-
 import MemberBox from "./MemberBox";
 
 
@@ -55,6 +54,7 @@ const MemberListCont = (props) => {
             dispatch(pageNo({pageNo:1,pageLastNo:null}));
         }
     },[common.newList]);
+
 
 
     //선택한 회원값이 변경될때마다 li on 변경

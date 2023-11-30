@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useSocket } from '../etc/SocketProvider';
 import * as CF from "../../config/function";
@@ -20,6 +20,7 @@ const Header = () => {
     const location = useLocation();
     const [confirm, setConfirm] = useState(false);
     const [menuOn, setMenuOn] = useState(1);
+    const [subMenuOn, setSubMenuOn] = useState(1);
     const [pageMove, setPageMove] = useState(null);
     const socket = useSocket();
     const chat_count = enum_api_uri.chat_count;
@@ -66,14 +67,26 @@ const Header = () => {
         const path = location.pathname;
         if(path == "/"){
             setMenuOn(1);
+            setSubMenuOn(1);
+        }
+        if(path == "/1"){
+            setMenuOn(1);
+            setSubMenuOn(2);
+        }
+        if(path == "/2"){
+            setMenuOn(1);
+            setSubMenuOn(3);
         }
         if(path == "/message"){
             setMenuOn(2);
+            setSubMenuOn(null);
         }if(path == "/chat"){
             setMenuOn(3);
+            setSubMenuOn(null);
         }
         if(path == "/setting"){
             setMenuOn(4);
+            setSubMenuOn(null);
         }
     },[location.pathname]);
 
@@ -97,6 +110,8 @@ const Header = () => {
     //헤더메뉴 클릭시
     const navClickHandler = (e) => {
         let id = e.currentTarget.dataset.id;
+        let subId = e.currentTarget.dataset.subId;
+
         if(!pageMove){
             e.preventDefault();
             dispatch(confirmPop({
@@ -107,9 +122,28 @@ const Header = () => {
             }));
             setConfirm(true);
         }
-        // 다른페이지로 이동시 store에 selectUser 값 지우기
-        if(id != menuOn){
-            dispatch(selectUser({}));
+
+        if(id){
+            if(id != 1){
+                setSubMenuOn(null);
+            }else{
+                setSubMenuOn(1);
+            }
+
+            if(id != menuOn){
+                setMenuOn(id);
+
+                // 다른페이지로 이동시 store에 selectUser 값 지우기
+                dispatch(selectUser({}));
+            }
+        }
+        if(subId){
+            if(subId != subMenuOn){
+                setSubMenuOn(subId);
+
+                // 다른페이지로 이동시 store에 selectUser 값 지우기
+                dispatch(selectUser({}));
+            }
         }
     };
 
@@ -153,24 +187,35 @@ const Header = () => {
     return(<>
         <header id="header">
             <div className='top_box'>
-                <a href="/" className='logo' data-id={1} onClick={navClickHandler}>
+                <Link to="/" className='logo' data-id={1} onClick={navClickHandler}>
                     <img src={logo} alt="로고" />
                     <span>채팅 관리자 페이지</span>
-                </a>
+                </Link>
             </div>
             <div className='menu_box scroll_wrap'>
                 <ul>
                     <li>
-                        <a href="/" className={menuOn === 1 ? "on" : ""} data-id={1} onClick={navClickHandler}>회원검색</a>
+                        <Link to="/" className={`menu ${menuOn == 1 ? " on" : ""}`} data-id={1} onClick={navClickHandler}>회원검색</Link>
+                        <ul className='sub_menu_ul'>
+                            <li>
+                                <Link to="/" className={subMenuOn == 1 ? "on" : ""} data-sub-id={1} onClick={navClickHandler}>전체 회원</Link>
+                            </li>
+                            <li>
+                                <Link to="/1" className={subMenuOn == 2 ? "on" : ""} data-sub-id={2} onClick={navClickHandler}>남자 회원</Link>
+                            </li>
+                            <li>
+                                <Link to="/2" className={subMenuOn == 3 ? "on" : ""} data-sub-id={3} onClick={navClickHandler}>여자 회원</Link>
+                            </li>
+                        </ul>
                     </li>
                     <li>
-                        <a href="/message" className={menuOn === 2 ? "on" : ""} data-id={2} onClick={navClickHandler}>메시지{chatCount>0 && <span className='num'>{chatCount >= 999 ? 999 : chatCount}</span>}</a>
+                        <Link to="/message" className={`menu ${menuOn == 2 ? " on" : ""}`} data-id={2} onClick={navClickHandler}>메시지{chatCount>0 && <span className='num'>{chatCount >= 999 ? 999 : chatCount}</span>}</Link>
                     </li>
                     <li>
-                        <a href="/chat" className={menuOn === 3 ? "on" : ""} data-id={3} onClick={navClickHandler}>연결한 대화방</a>
+                        <Link to="/chat" className={`menu ${menuOn == 3 ? " on" : ""}`} data-id={3} onClick={navClickHandler}>연결한 대화방</Link>
                     </li>
                     <li>
-                        <a href="/setting" className={menuOn === 4 ? "on" : ""} data-id={4} onClick={navClickHandler}>설정</a>
+                        <Link to="/setting" className={`menu ${menuOn == 4 ? " on" : ""}`} data-id={4} onClick={navClickHandler}>설정</Link>
                     </li>
                 </ul>
             </div>
@@ -185,7 +230,7 @@ const Header = () => {
                             <p>{user.managerInfo.m_id}</p>
                         </div>
                     </div>
-                    <a href="/setting" data-id={4} onClick={navClickHandler}>더보기버튼</a>
+                    <Link to="/setting" data-id={4} onClick={navClickHandler}>더보기버튼</Link>
                 </div>
                 <ul className='txt_ul flex_between'>
                     <li className='flex_between'>

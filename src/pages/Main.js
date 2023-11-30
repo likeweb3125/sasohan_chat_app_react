@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import QueryString from "qs";
@@ -16,6 +17,8 @@ const Main = () => {
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
+    const { gender_num } = useParams();
+    const location = useLocation();
     const u_all_count = enum_api_uri.u_all_count;
     const u_list = enum_api_uri.u_list;
     const [confirm, setConfirm] = useState(false);
@@ -73,6 +76,12 @@ const Main = () => {
 
     //회원리스트 가져오기
     const getList = (page, sort, newGet, params) => {
+        //회원성별
+        let gender = false;
+        if(gender_num){
+            gender = true;
+        }
+
         dispatch(loadingPop(true));
 
         //조검검색기값 있을때 params 추가
@@ -81,7 +90,7 @@ const Main = () => {
             filter = params;
         }
 
-        axios.get(`${u_list}?page_no=${page}${sort ? "&sort="+sort : ""}${filter ? "&"+filter : ""}${searchOn ? "&search="+searchValue : ""}`,
+        axios.get(`${u_list}?page_no=${page}${sort ? "&sort="+sort : ""}${filter ? "&"+filter : ""}${searchOn ? "&search="+searchValue : ""}${gender ? "&gender="+gender_num : ""}`,
             {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
@@ -121,9 +130,18 @@ const Main = () => {
 
     //맨처음 회원리스트 가져오기
     useEffect(()=>{
+        dispatch(newList(true));
+        dispatch(pageMore(false));
+
+        //회원성별
+        let gender = false;
+        if(gender_num){
+            gender = true;
+        }
+
         dispatch(loadingPop(true));
 
-        axios.get(`${u_list}?page_no=${1}`,
+        axios.get(`${u_list}?page_no=${1}${gender ? "&gender="+gender_num : ""}`,
             {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
@@ -157,7 +175,7 @@ const Main = () => {
             }));
             setConfirm(true);
         });
-    },[]);
+    },[location]);
 
 
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기

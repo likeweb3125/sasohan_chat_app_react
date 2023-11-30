@@ -151,17 +151,24 @@ html,.body{height: auto;}
 #header .top_box{padding: 37px 40px;border-bottom: 1px solid #EAEAEA;}
 #header .top_box .logo span{display: block;font-size: 18px;color: #1B171E;padding-top: 10px;}
 #header .menu_box{padding: 20px 12px 20px 16px;max-height: calc(100% - 290px);}
-#header .menu_box ul li{margin-bottom: 12px;}
-#header .menu_box ul li a{display: block; font-size: 18px;padding: 16px 10px 16px 64px;width: 100%;text-align: left;font-weight: 500;background: url(../images/ic_menu01.svg) no-repeat center left 20px;border-radius: 12px;color: #1B171E;position: relative;}
-#header .menu_box ul li a .num{position: absolute;font-size: 12px;width: 20px;height: 20px;right: 10px;top: 50%;transform: translateY(-50%);border: 1px solid;text-align: center;padding-top: 3px;border-radius: 50%;background: #1B1718;color: #fff;}
-#header .menu_box ul li:nth-child(2) a{background: url(../images/ic_menu02.svg) no-repeat center left 20px;}
-#header .menu_box ul li:nth-child(3) a{background: url(../images/ic_menu03.svg) no-repeat center left 20px;}
-#header .menu_box ul li:nth-child(4) a{background: url(../images/ic_menu04.svg) no-repeat center left 20px;}
-#header .menu_box ul li a.on{background:#6840FD url(../images/ic_menu01_on.svg) no-repeat center left 20px;box-shadow: 0px 4px 16px rgba(104, 64, 253, 0.2);color: #fff;}
-#header .menu_box ul li a.on .num{background: #fff;color: #6840FD;}
-#header .menu_box ul li:nth-child(2) a.on{background:#6840FD url(../images/ic_menu02_on.svg) no-repeat center left 20px;}
-#header .menu_box ul li:nth-child(3) a.on{background:#6840FD url(../images/ic_menu03_on.svg) no-repeat center left 20px;}
-#header .menu_box ul li:nth-child(4) a.on{background:#6840FD url(../images/ic_menu04_on.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li{margin-bottom: 12px;}
+#header .menu_box>ul>li .menu{display: block; font-size: 18px;padding: 16px 10px 16px 64px;width: 100%;text-align: left;font-weight: 500;background: url(../images/ic_menu01.svg) no-repeat center left 20px;border-radius: 12px;color: #1B171E;position: relative;}
+#header .menu_box>ul>li .menu .num{position: absolute;font-size: 12px;width: 20px;height: 20px;right: 10px;top: 50%;transform: translateY(-50%);border: 1px solid;text-align: center;padding-top: 3px;border-radius: 50%;background: #1B1718;color: #fff;}
+#header .menu_box>ul>li:nth-child(2) .menu{background: url(../images/ic_menu02.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li:nth-child(3) .menu{background: url(../images/ic_menu03.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li:nth-child(4) .menu{background: url(../images/ic_menu04.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li .menu.on{background:#6840FD url(../images/ic_menu01_on.svg) no-repeat center left 20px;box-shadow: 0px 4px 16px rgba(104, 64, 253, 0.2);color: #fff;}
+#header .menu_box>ul>li .menu.on .num{background: #fff;color: #6840FD;}
+#header .menu_box>ul>li:nth-child(2) .menu.on{background:#6840FD url(../images/ic_menu02_on.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li:nth-child(3) .menu.on{background:#6840FD url(../images/ic_menu03_on.svg) no-repeat center left 20px;}
+#header .menu_box>ul>li:nth-child(4) .menu.on{background:#6840FD url(../images/ic_menu04_on.svg) no-repeat center left 20px;}
+#header .sub_menu_ul{padding-top: 12px;}
+#header .sub_menu_ul li a{display: block; font-size: 16px;padding: 12px 10px 12px 64px;width: 100%;text-align: left;background: url(../images/ic_menu01_01.svg) no-repeat center left 20px;color: #999;position: relative;border-radius: 8px;}
+#header .sub_menu_ul li:nth-child(2) a{background: url(../images/ic_menu01_02.svg) no-repeat center left 20px;}
+#header .sub_menu_ul li:nth-child(3) a{background: url(../images/ic_menu01_03.svg) no-repeat center left 20px;}
+#header .sub_menu_ul li a.on{background:#F8F8F8 url(../images/ic_menu01_01_on.svg) no-repeat center left 20px;color: #6840FD;}
+#header .sub_menu_ul li:nth-child(2) a.on{background:#F8F8F8 url(../images/ic_menu01_02_on.svg) no-repeat center left 20px;color: #6840FD;}
+#header .sub_menu_ul li:nth-child(3) a.on{background:#F8F8F8 url(../images/ic_menu01_03_on.svg) no-repeat center left 20px;color: #6840FD;}
 #header .bottom_box{position: absolute;width: 100%;bottom: 0;left: 0;padding: 16px 16px 20px;}
 #header .bottom_box .profile{position: relative;padding-right: 28px;margin-bottom: 16px;}
 #header .bottom_box .profile .box{width: 100%;cursor: pointer;}

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import Popup from './components/popup/Popup';
 import Layout from './components/layout/Layout';
 import Login from './pages/Login';
@@ -21,7 +21,10 @@ function App() {
                 <Route path="/login/:m_id" element={<Login />} />
 
                 {/* 메인 - 회원검색 */}
-                <Route path="/" element={<Layout><Main /></Layout>} />
+                <Route path="/" element={<Layout><Outlet/></Layout>}>
+                    <Route path="" element={<Main />}/>
+                    <Route path=":gender_num" element={<Main />}/>
+                </Route>
 
                 {/* 메시지 */}
                 <Route path="/message" element={<Layout><Message /></Layout>} />

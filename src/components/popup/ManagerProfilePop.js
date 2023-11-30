@@ -49,7 +49,11 @@ const ManagerProfilePop = (props) => {
             if(res.status === 200){
                 let data = res.data;
                 let path = data.photo_path;
-                setNickName(data.m_n_name);
+                let name = "";
+                if(name){
+                    name = data.m_n_name;
+                }
+                setNickName(name);
                 setPhotoPath(path);
 
                 const photoList = data.photo;
@@ -140,20 +144,20 @@ const ManagerProfilePop = (props) => {
     //프로필 수정하기 버튼클릭시
     const modifyBtnHandler = () => {
         const noneImg = imgNameList.every((value) => value === ""); 
-        if(noneImg){
-            setConfirm(true);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'프로필에 최소 1개의 사진을 등록해주세요.',
-                confirmPopBtn:1,
-            }));
-        }else if(nickName.length == 0){
+        if(nickName.length == 0){
             setConfirm(true);
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt:'닉네임을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+        }else if(noneImg){
+            setConfirm(true);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'프로필에 최소 1개의 사진을 등록해주세요.',
                 confirmPopBtn:1,
             }));
         }else{
