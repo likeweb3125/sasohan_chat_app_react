@@ -7,6 +7,7 @@ const user = createSlice({
         tokenValue:null,
         managerInfo:{},
         managerSetting:{},
+        superManager:false,
     },
     reducers:{
         isLogin: (state, action) => {
@@ -21,8 +22,11 @@ const user = createSlice({
         managerSetting: (state, action) => {
             state.managerSetting = action.payload;
         },
+        superManager: (state, action) => {
+            state.superManager = action.payload;
+        },
     },
 });
 
-export const { isLogin, tokenValue, managerInfo, managerSetting } = user.actions;
+export const { isLogin, tokenValue, managerInfo, managerSetting, superManager } = user.actions;
 export default user;

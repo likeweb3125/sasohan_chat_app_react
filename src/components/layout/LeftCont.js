@@ -10,11 +10,14 @@ import ConfirmPop from "../popup/ConfirmPop";
 
 const LeftCont = (props) => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const selectList = ["마지막 소개 이력순","최근 가입일자순"];
     const selectList2 = ["높은 일차순","낮은 일차순"];
     const [checkNum, setCheckNum] = useState(0);
     const [confirm, setConfirm] = useState(false);
+    const [selNumList, setSelNumList] = useState([{name:100,value:100},{name:200,value:200},{name:300,value:300},{name:400,value:400},{name:500,value:500},{name:600,value:600},{name:700,value:700},{name:800,value:800},{name:900,value:900},{name:1000,value:1000}]);
+    const [selRangeList, setSelRangeList] = useState([{name:"0~1",value:"0~1"},{name:"2~3",value:"2~3"},{name:"4~6",value:"4~6"},{name:"7~9",value:"7~9"}]);
 
     
     // Confirm팝업 닫힐때
@@ -53,6 +56,18 @@ const LeftCont = (props) => {
             setConfirm(true);
         }
     };
+
+
+    //최고매니저계정일때 단체메시지설정 선택값에 제한없음 추가
+    useEffect(()=>{
+        if(user.superManager){
+            let addList = [{name:"제한없음",value:0}];
+            setSelNumList([...selNumList,...addList]);
+
+            let addList2 = [{name:"제한없음",value:"0"}];
+            setSelRangeList([...selRangeList,...addList2]);
+        }
+    },[]);
 
 
     return(<>
@@ -129,19 +144,19 @@ const LeftCont = (props) => {
                                     <li className="flex_between">
                                         <p>최대 전체선택 인원수</p>
                                         <SelectBox 
-                                            list={["100","200","300","400","500","600","700","800","900","1000"]}
-                                            // list={[{name:"제한없음",value:0},{name:100,value:100},{name:200,value:200},{name:300,value:300},{name:400,value:400},{name:500,value:500},{name:600,value:600},{name:700,value:700},{name:800,value:800},{name:900,value:900},{name:1000,value:1000}]}
+                                            list={selNumList}
                                             selected={props.selectedNum}
                                             onChangeHandler={props.onSelNumChange}
-                                            listType={"number"}
+                                            objectSel={true}
                                         />
                                     </li>
                                     <li className="flex_between">
                                         <p>할당된 회원 번호</p>
                                         <SelectBox 
-                                            list={["0~1","2~3","4~6","7~9"]}
+                                            list={selRangeList}
                                             selected={props.selectedRange}
                                             onChangeHandler={props.onSelRangeChange}
+                                            objectSel={true}
                                         />
                                     </li>
                                 </ul>

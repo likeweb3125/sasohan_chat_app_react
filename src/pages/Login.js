@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../config/enum";
-import { isLogin, managerInfo, managerSetting, tokenValue } from "../store/userSlice";
+import { isLogin, managerInfo, managerSetting, tokenValue, superManager } from "../store/userSlice";
 import { confirmPop } from "../store/popupSlice";
 import * as CF from "../config/function";
 import ConfirmPop from "../components/popup/ConfirmPop";
@@ -35,12 +35,21 @@ const Login = () => {
         .then((res)=>{
             if(res.status === 200){
                 let token = res.data.accessToken;
+                
+                let st = false;
+                if(res.data.st == "Y"){
+                    st = true;
+                }
+                // let st = true;
 
                 //store에 로그인 저장
                 dispatch(isLogin(true));
 
                 //store에 토큰 저장
                 dispatch(tokenValue(token));
+
+                //store에 최고매니저계정인지 값 저장 (st값이 "Y"이면 단체메시지설정 제한없음 선택가능 계정)
+                dispatch(superManager(st));
 
                 // 로그인한 매니저정보 가져오기
                 axios.get(`${m_info}`,

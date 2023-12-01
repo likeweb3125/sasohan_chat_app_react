@@ -128,8 +128,9 @@ const Main = () => {
     };
 
 
-    //맨처음 회원리스트 가져오기
+    //맨처음 회원리스트 가져오기 && gender_num 변경시마다 회원리스트 가져오기
     useEffect(()=>{
+        setSearchValue("");
         dispatch(newList(true));
         dispatch(pageMore(false));
 
@@ -175,7 +176,7 @@ const Main = () => {
             }));
             setConfirm(true);
         });
-    },[location]);
+    },[gender_num]);
 
 
     //회원리스트내역에서 스크롤시 그다음페이지내역 추가로 가져오기

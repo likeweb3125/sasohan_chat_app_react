@@ -18,8 +18,8 @@ const Setting = () => {
     const [confirm, setConfirm] = useState(false);
     const [saveConfirm, setSaveConfirm] = useState(false);
     const [saveOkConfirm, setSaveOkConfirm] = useState(false);
-    const [settingNum, setSettingNum] = useState();
-    const [settingRange, setSettingRange] = useState();
+    const [settingNum, setSettingNum] = useState("");
+    const [settingRange, setSettingRange] = useState("");
     const [memList, setMemList] = useState([]);
 
     // Confirm팝업 닫힐때
@@ -75,7 +75,7 @@ const Setting = () => {
 
     //설정 저장버튼 클릭시
     const saveBtnHandler = () => {
-        if(!settingNum){
+        if(settingNum < 0){
             setConfirm(true);
             dispatch(confirmPop({
                 confirmPop:true,

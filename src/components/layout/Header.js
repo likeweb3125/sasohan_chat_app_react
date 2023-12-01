@@ -100,10 +100,20 @@ const Header = () => {
 
     //매니저 단체메시지설정 안되어있을때
     useEffect(()=>{
-        if(!user.managerSetting.set_num || user.managerSetting.set_range.length == 0){
-            setPageMove(false);
-        }else{
-            setPageMove(true);
+        //최고매니저계정일때
+        if(user.superManager){
+            if(user.managerSetting.set_num < 0 || user.managerSetting.set_range.length == 0){
+                setPageMove(false);
+            }else{
+                setPageMove(true);
+            }
+        }
+        else{
+            if(user.managerSetting.set_num < 1 || user.managerSetting.set_range.length == 0){
+                setPageMove(false);
+            }else{
+                setPageMove(true);
+            }
         }
     },[user.managerSetting]);
 
@@ -121,28 +131,28 @@ const Header = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }
+        }else{
+            if(id){
+                if(id != 1){
+                    setSubMenuOn(null);
+                }else{
+                    setSubMenuOn(1);
+                }
 
-        if(id){
-            if(id != 1){
-                setSubMenuOn(null);
-            }else{
-                setSubMenuOn(1);
+                if(id != menuOn){
+                    setMenuOn(id);
+
+                    // 다른페이지로 이동시 store에 selectUser 값 지우기
+                    dispatch(selectUser({}));
+                }
             }
+            if(subId){
+                if(subId != subMenuOn){
+                    setSubMenuOn(subId);
 
-            if(id != menuOn){
-                setMenuOn(id);
-
-                // 다른페이지로 이동시 store에 selectUser 값 지우기
-                dispatch(selectUser({}));
-            }
-        }
-        if(subId){
-            if(subId != subMenuOn){
-                setSubMenuOn(subId);
-
-                // 다른페이지로 이동시 store에 selectUser 값 지우기
-                dispatch(selectUser({}));
+                    // 다른페이지로 이동시 store에 selectUser 값 지우기
+                    dispatch(selectUser({}));
+                }
             }
         }
     };

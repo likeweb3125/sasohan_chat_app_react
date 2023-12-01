@@ -181,7 +181,10 @@ const MessagePop = (props) => {
         if(path == "/message"){
             getList2();
         }else{
-            getList();
+            // 최고매니저계정으로 단체메시지설정값이 제한없음이면 리스트 안가져옴
+            if(!user.superManager){
+                getList();
+            }
         }
     },[popup.messagePopList]);
 
@@ -378,7 +381,8 @@ const MessagePop = (props) => {
    
     //단체메시지전송 버튼 클릭시
     const msgSendHandler = () => {
-        if(list.length > 0){
+        //최고매니저계정일때 list [] 빈배열로 메시지전송
+        if(user.superManager){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -387,13 +391,23 @@ const MessagePop = (props) => {
             }));
             setSendConfirm(true);
         }else{
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'선택된 회원이 없습니다.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(list.length > 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: "단체메시지를 선택한 회원에게 전송하시겠습니까?",
+                    confirmPopBtn:2,
+                }));
+                setSendConfirm(true);
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'선택된 회원이 없습니다.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         }
     };
 
@@ -416,20 +430,23 @@ const MessagePop = (props) => {
                     <p className="f_24"><strong>단체 메시지</strong></p>
                     <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
-                <div className="list_cont">
-                    <div className="top_box flex_between">
-                        <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
-                        <div className="flex">
-                            <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
-                            <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
+                {/* 최고매니저계정으로 단체메시지설정값이 제한없음이면 미노출 */}
+                {!user.superManager &&
+                    <div className="list_cont">
+                        <div className="top_box flex_between">
+                            <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
+                            <div className="flex">
+                                <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
+                                <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
+                            </div>
                         </div>
+                        <MemberListCont
+                            list={list}
+                            listType="member"
+                        />
                     </div>
-                    <MemberListCont
-                        list={list}
-                        listType="member"
-                    />
-                </div>
-                <div>
+                }
+                <div style={user.superManager && {"borderTop":"1px solid #EAEAEA"}}>
                     <MessageInputWrap 
                         textareaValue={textareaValue}
                         onTextareaChange={(e)=>{setTextareaValue(e.currentTarget.value)}}

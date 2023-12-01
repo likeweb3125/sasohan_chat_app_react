@@ -611,7 +611,7 @@ const RightCont = (props) => {
 
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        console.log(common.selectUser);
+        // console.log(common.selectUser);
 
         //sessionStorage 에 selectUser값 저장
         let room_id;
