@@ -49,7 +49,7 @@ const Login = () => {
                 dispatch(tokenValue(token));
 
                 //store에 최고매니저계정인지 값 저장 (st값이 "Y"이면 단체메시지설정 제한없음 선택가능 계정)
-                dispatch(superManager(st));
+                // dispatch(superManager(st));
 
                 // 로그인한 매니저정보 가져오기
                 axios.get(`${m_info}`,
