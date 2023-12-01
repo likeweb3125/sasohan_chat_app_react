@@ -6,6 +6,7 @@ import Main from './pages/Main';
 import Message from './pages/Message';
 import Chat from './pages/Chat';
 import Setting from './pages/Setting';
+import MemberProfile from './pages/MemberProfile';
 import './css/reset.css';
 import './css/common.css';
 import './css/main.css';
@@ -34,6 +35,9 @@ function App() {
 
                 {/* 설정 */}
                 <Route path="/setting" element={<Layout><Setting /></Layout>} />
+
+                {/* 앱회원 프로펄상세 */}
+                <Route path="/profile/:m_id" element={<MemberProfile />} />
 
             </Routes>
 

@@ -218,6 +218,10 @@ html,.body{height: auto;}
 .mem_info_pop .scroll_wrap{max-height: 70vh;}
 .mem_info_pop .profile_img_ul{width: 696px;}
 .check_list_box .custom_check{width: 20%;margin-bottom: 10px;}
+/* 회원정보상세페이지로변경 */
+.mem_profile_wrap .mem_info_pop{position: relative;}
+.mem_profile_wrap .pop_cont{width: 100%;border-radius: 0;}
+.mem_profile_wrap .scroll_wrap{max-height: none;}
 
 /* 사진모아보기 팝업 */
 .img_pop .pop_cont{width: 668px;background: none;padding: 0 52px;}

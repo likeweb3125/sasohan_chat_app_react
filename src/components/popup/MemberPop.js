@@ -56,9 +56,12 @@ const MemberPop = () => {
 
     //회원정보보기 버튼클릭시
     const detailInfo = () => {
-        // 앱가입 회원이면 회원프로필팝업
+        // 앱가입 회원이면 회원프로필 새창으로 띄우기
         if(info.m_app){
-            dispatch(memInfoPop(true));
+            // dispatch(memInfoPop(true));
+            const currentUrl = window.location.origin;
+            const url = `${currentUrl}/profile/${popup.memPopId}`;
+            window.open(url, "_blank");
         }
         // 기존회원이면 기존사소한관리자 회원정보페이지 새창띄우기
         else{

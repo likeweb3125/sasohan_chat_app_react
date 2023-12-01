@@ -39,8 +39,9 @@ const Popup = () => {
             {/* 회원정보 팝업 */}
             {popup.memPop && <MemberPop />}
 
-            {/* 회원정보상세 팝업 */}
-            {popup.memInfoPop && <MemberInfoPop />}
+            {/* 회원정보상세 팝업 */} 
+            {/* -> 회원정보상세 새창으로 변경 */}
+            {/* {popup.memInfoPop && <MemberInfoPop />} */}
 
             {/* 조건검색기 팝업 */}
             {popup.filterPop && <FilterPop />}
