@@ -301,6 +301,8 @@ const MessagePop = (props) => {
 
     //이미지 첨부하기
     const imgAttach = () => {
+        dispatch(loadingPop(true));
+
         //이미지 이름만 전송하기
         let imgList = common.msgImgs;
         imgList = imgList.map(url => {
@@ -319,6 +321,8 @@ const MessagePop = (props) => {
         )
         .then((res) => {
             if (res.status === 200) {
+                dispatch(loadingPop(false));
+
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
@@ -331,6 +335,8 @@ const MessagePop = (props) => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+            
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                     confirmPop:true,
@@ -345,6 +351,8 @@ const MessagePop = (props) => {
 
     //메시지 보내기
     const textSend = () => {
+        dispatch(loadingPop(true));
+
         let body = {
             to_id: idList,
             msg: textareaValue
@@ -355,6 +363,8 @@ const MessagePop = (props) => {
         )
         .then((res) => {
             if (res.status === 200) {
+                dispatch(loadingPop(false));
+
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
@@ -367,6 +377,8 @@ const MessagePop = (props) => {
             }
         })
         .catch((error) => {
+            dispatch(loadingPop(false));
+
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
