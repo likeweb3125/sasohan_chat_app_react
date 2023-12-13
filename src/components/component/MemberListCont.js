@@ -115,8 +115,8 @@ const MemberListCont = (props) => {
                                                                 idx:mem.last_idx,
                                                                 manager_id:mem.manager_id,
                                                                 from_id:mem.from_id,
-                                                                from_user:mem.from_user.m_name,
-                                                                to_user:mem.to_user.m_name,
+                                                                from_user:mem.from_user ? mem.from_user.m_name : "탈퇴한 회원",
+                                                                to_user:mem.to_user ? mem.to_user.m_name : "탈퇴한 회원",
                                                             }
                                                         )
                                                     );

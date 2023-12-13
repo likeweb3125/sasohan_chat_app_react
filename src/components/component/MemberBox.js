@@ -128,12 +128,22 @@ const MemberBox = (props) => {
                     <div className="txt_box">
                         <ul>
                             <li className="flex">
-                                <p className="name">{props.data.from_user && props.data.from_user.m_name}</p>
-                                <p className="age">{props.data.from_user && props.data.from_user.m_address}<span>&nbsp;·&nbsp;{props.data.from_user && props.data.from_user.birth}</span></p>
+                                {props.data.from_user ? 
+                                    <>
+                                        <p className="name">{props.data.from_user && props.data.from_user.m_name}</p>
+                                        <p className="age">{props.data.from_user && props.data.from_user.m_address}<span>&nbsp;·&nbsp;{props.data.from_user && props.data.from_user.birth}</span></p>
+                                    </>
+                                    :<p>탈퇴한 회원입니다.</p>
+                                }
                             </li>
                             <li className="flex">
-                                <p className="name">{props.data.to_user && props.data.to_user.m_name}</p>
-                                <p className="age">{props.data.to_user && props.data.to_user.m_address}<span>&nbsp;·&nbsp;{props.data.to_user && props.data.to_user.birth}</span></p>
+                                {props.data.to_user ? 
+                                    <>
+                                        <p className="name">{props.data.to_user.m_name}</p>
+                                        <p className="age">{props.data.to_user && props.data.to_user.m_address}<span>&nbsp;·&nbsp;{props.data.to_user && props.data.to_user.birth}</span></p>
+                                    </>
+                                    :<p>탈퇴한 회원입니다.</p>
+                                }
                             </li>
                         </ul>
                     </div>
