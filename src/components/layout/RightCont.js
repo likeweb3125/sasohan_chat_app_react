@@ -625,11 +625,6 @@ const RightCont = (props) => {
     },[user.managerSetting]);
 
 
-    useEffect(()=>{
-        console.log(common.activeRoom);
-    },[common.activeRoom]);
-
-
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
         console.log(common.selectUser);
@@ -911,7 +906,7 @@ const RightCont = (props) => {
         setTyping(msg);
     };
 
-    //이미지첨부시 메시지내용입력값있는지 체크후 소켓 이벤트 보내기
+    //메시지입력시 or 이미지첨부시 메시지내용입력값있는지 체크후 소켓 이벤트 보내기
     useEffect(()=>{
         let msg;
         if(textareaValue.length > 0 || common.msgImgs.length > 0){
@@ -920,7 +915,7 @@ const RightCont = (props) => {
             msg = false;
         }
         setTyping(msg);
-    },[common.msgImgs]);
+    },[textareaValue, common.msgImgs]);
 
 
     //typing 값이 변경될때마다 소켓 이벤트 보내기
@@ -928,6 +923,7 @@ const RightCont = (props) => {
         // 개설된 체팅방이 있을때만
         if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id.length > 0){
             const data = { room_id: common.selectUser.room_id, m_id: user.managerInfo.m_id, status: typing };
+            console.log(data)
             socket.emit("type msg", data);
         }
     },[typing]);
@@ -1003,6 +999,11 @@ const RightCont = (props) => {
             dispatch(groupMsg(false));
         }
     },[common.groupMsg]);
+
+
+    useEffect(()=>{
+        console.log(common.activeRoom)
+    },[common.activeRoom]);
 
     
     

@@ -50,7 +50,7 @@ const ManagerProfilePop = (props) => {
                 let data = res.data;
                 let path = data.photo_path;
                 let name = "";
-                if(name){
+                if(data.m_n_name){
                     name = data.m_n_name;
                 }
                 setNickName(name);
