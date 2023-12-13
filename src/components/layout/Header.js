@@ -37,24 +37,27 @@ const Header = () => {
 
 
     useEffect(()=>{
+        //매니저 메시지알림 받기
+        const handleAdminMsg = (result) => {
+            console.log(JSON.stringify(result, null, 2));
+            dispatch(newMsgData(result));
+
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            //회원이 매니저에게 채팅했을때 && 현재들어가있는 채팅방 제외 다른채팅방 메시지들만 안읽은메시지알림 추가
+            if(result.from_id !== user.managerInfo.m_id && result.m_id !== selectUser.m_id){
+                setNewChat(newChat+1);
+            }
+        };
+
         if(socket){
             socketInit();
 
             //매니저 메시지알림 받기
-            socket.on("admin msg", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-                dispatch(newMsgData(result));
-
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                //회원이 매니저에게 채팅했을때 && 현재들어가있는 채팅방 제외 다른채팅방 메시지들만 안읽은메시지알림 추가
-                if(result.from_id !== user.managerInfo.m_id && result.m_id !== selectUser.m_id){
-                    setNewChat(newChat+1);
-                }
-            })
+            socket.on("admin msg", handleAdminMsg);
 
             // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
             return () => {
-                socket.off("admin msg");
+                socket.off("admin msg",handleAdminMsg);
             };
         }
     },[socket]);
