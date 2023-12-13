@@ -68,7 +68,7 @@ const MemberListCont = (props) => {
                 let idx = list.findIndex(item=>item.m_id === common.selectUser.m_id);
                 setListOn(idx);
             }else if(common.selectUser.hasOwnProperty("manager_id") && common.selectUser.manager_id.length > 0){
-                let idx = list.findIndex(item=>item.manager_id === common.selectUser.manager_id);
+                let idx = list.findIndex(item=>item.room_id === common.selectUser.room_id);
                 setListOn(idx);
             }else{
                 setListOn(null);
