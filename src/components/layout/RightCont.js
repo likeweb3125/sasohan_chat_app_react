@@ -135,162 +135,208 @@ const RightCont = (props) => {
             socket.emit("join room", data);
             socket.emit("active room", data2);
         }
+        console.log(room_id);
     };
 
 
     useEffect(()=>{
-        if(socket){
+        //채팅방 개설
+        const handleJoinRoom = (result) => {
+            console.log(JSON.stringify(result, null, 2));
+        };
 
-            socket.on("join room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
+        //채팅방에 들어옴
+        const handleActiveRoom = (result) => {
+            console.log("active room");
+            console.log(JSON.stringify(result, null, 2));
 
-            });
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const id = result.from_id;
 
-            //채팅방에 들어옴
-            socket.on("active room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
+            //회원이들어왔을때만 매니저가보낸 메시지 전체읽음처리
+            if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
+                setMsgRead(true);
+            }
+        };
 
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const id = result.from_id;
+        //메시지 받기
+        const handleChatMsg = (result) => {
+            console.log(JSON.stringify(result, null, 2));
 
-                //회원이들어왔을때만 매니저가보낸 메시지 전체읽음처리
-                if(selectUser.hasOwnProperty("m_id") && selectUser.m_id.length > 0 && selectUser.m_id === id){
-                    setMsgRead(true);
-                }
-            });
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const userRoomId = selectUser.room_id;
 
+            //현재보고있는 채팅방일때만 받은 메시지 추가
+            if(userRoomId === result.room_id){
 
-            //메시지 받기
-            socket.on("chat msg", (result) => {
-                console.log(JSON.stringify(result, null, 2));
+                //회원이 보낸 메시지일때 
+                if(selectUser.m_id === result.from_id){
+                    let data = { room_id: userRoomId };
+                    socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
 
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const userRoomId = selectUser.room_id;
-
-                //현재보고있는 채팅방일때만 받은 메시지 추가
-                if(userRoomId === result.room_id){
-
-                    //회원이 보낸 메시지일때 
-                    if(selectUser.m_id === result.from_id){
-                        let data = { room_id: userRoomId };
-                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
-
-                        //회원 메시지작성중 false
-                        setTypingBox(false);
-                    }
-
-                    const msgCount = sessionStorage.getItem("msgCount");
-                    let date = new Date();
-                        date = moment(date).format("YYYY년 M월 D일 dddd");
-                    let start = [
-                        {
-                            "idx": result.idx,
-                            "from_id": result.from_id,
-                            "to_id": result.to_id,
-                            "msg": "매니저가 회원님께 대화를 신청했어요!",
-                            "w_date": result.w_date,
-                            "message_type": "Q",
-                            "view_cnt": result.view_cnt
-                        },
-                        {
-                            "idx": result.idx,
-                            "from_id": result.from_id,
-                            "to_id": result.to_id,
-                            "msg": date,
-                            "w_date": result.w_date,
-                            "message_type": "S",
-                            "view_cnt": result.view_cnt
-                        }
-                    ];
-                    let msg = {
-                        "idx": result.idx,
-                        "from_id": result.from_id,
-                        "to_id": result.to_id,
-                        "msg": result.msg,
-                        "w_date": result.w_date,
-                        "message_type": result.message_type,
-                        "view_cnt": result.view_cnt
-                    };
-
-                    if(msgCount > 0){
-                        setMsgList(prevList => [...prevList, msg]);
-                    }else{
-                        setMsgList(prevList => [...prevList, ...start, msg]);
-                    }
-
+                    //회원 메시지작성중 false
+                    setTypingBox(false);
+                }else{
                     //메시지입력 textarea 값 비우기
                     setTextareaValue("");
-
-                    //메시지내역 맨밑으로 스크롤
-                    if (chatRef.current) {
-                        setTimeout(()=>{
-                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                        },10);
-                    }
                 }
-            });
 
-
-            //이미지 받기
-            socket.on("image upload", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const userRoomId = selectUser.room_id;
-                
-                //현재보고있는 채팅방일때만 받은 이미지 추가
-                if(userRoomId === result.room_id){
-
-                    //회원이 보낸 메시지일때 
-                    if(selectUser.m_id === result.from_id){
-                        let data = { room_id: userRoomId };
-                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
-
-                        //회원 메시지작성중 false
-                        setTypingBox(false);
-                    }
-
-                    const msgCount = sessionStorage.getItem("msgCount");
-                    let date = new Date();
-                        date = moment(date).format("YYYY년 M월 D일 dddd");
-                    let start = [
-                        {
-                            "idx": result.idx,
-                            "from_id": result.from_id,
-                            "to_id": result.to_id,
-                            "msg": "매니저가 회원님께 대화를 신청했어요!",
-                            "w_date": result.w_date,
-                            "message_type": "Q",
-                            "view_cnt": result.view_cnt
-                        },
-                        {
-                            "idx": result.idx,
-                            "from_id": result.from_id,
-                            "to_id": result.to_id,
-                            "msg": date,
-                            "w_date": result.w_date,
-                            "message_type": "S",
-                            "view_cnt": result.view_cnt
-                        }
-                    ];
-                    let msg = {
+                const msgCount = sessionStorage.getItem("msgCount");
+                let date = new Date();
+                    date = moment(date).format("YYYY년 M월 D일 dddd");
+                let start = [
+                    {
                         "idx": result.idx,
                         "from_id": result.from_id,
                         "to_id": result.to_id,
-                        "msg": "",
-                        "files": result.files,
+                        "msg": "매니저가 회원님께 대화를 신청했어요!",
                         "w_date": result.w_date,
-                        "message_type": result.message_type,
+                        "message_type": "Q",
                         "view_cnt": result.view_cnt
-                    };
-
-                    if(msgCount > 0){
-                        setMsgList(prevList => [...prevList, msg]);
-                    }else{
-                        setMsgList(prevList => [...prevList, ...start, msg]);
+                    },
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": date,
+                        "w_date": result.w_date,
+                        "message_type": "S",
+                        "view_cnt": result.view_cnt
                     }
+                ];
+                let msg = {
+                    "idx": result.idx,
+                    "from_id": result.from_id,
+                    "to_id": result.to_id,
+                    "msg": result.msg,
+                    "w_date": result.w_date,
+                    "message_type": result.message_type,
+                    "view_cnt": result.view_cnt
+                };
 
-                    dispatch(msgSend(true));
+                if(msgCount > 0){
+                    setMsgList(prevList => [...prevList, msg]);
+                }else{
+                    setMsgList(prevList => [...prevList, ...start, msg]);
+                }
+
+                //메시지내역 맨밑으로 스크롤
+                if (chatRef.current) {
+                    setTimeout(()=>{
+                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                    },10);
+                }
+            }
+        };
+
+        //이미지 받기
+        const handleImageUpload = (result) => {
+            console.log(JSON.stringify(result, null, 2));
+
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const userRoomId = selectUser.room_id;
+            
+            //현재보고있는 채팅방일때만 받은 이미지 추가
+            if(userRoomId === result.room_id){
+
+                //회원이 보낸 메시지일때 
+                if(selectUser.m_id === result.from_id){
+                    let data = { room_id: userRoomId };
+                    socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+
+                    //회원 메시지작성중 false
+                    setTypingBox(false);
+                }
+
+                const msgCount = sessionStorage.getItem("msgCount");
+                let date = new Date();
+                    date = moment(date).format("YYYY년 M월 D일 dddd");
+                let start = [
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": "매니저가 회원님께 대화를 신청했어요!",
+                        "w_date": result.w_date,
+                        "message_type": "Q",
+                        "view_cnt": result.view_cnt
+                    },
+                    {
+                        "idx": result.idx,
+                        "from_id": result.from_id,
+                        "to_id": result.to_id,
+                        "msg": date,
+                        "w_date": result.w_date,
+                        "message_type": "S",
+                        "view_cnt": result.view_cnt
+                    }
+                ];
+                let msg = {
+                    "idx": result.idx,
+                    "from_id": result.from_id,
+                    "to_id": result.to_id,
+                    "msg": "",
+                    "files": result.files,
+                    "w_date": result.w_date,
+                    "message_type": result.message_type,
+                    "view_cnt": result.view_cnt
+                };
+
+                if(msgCount > 0){
+                    setMsgList(prevList => [...prevList, msg]);
+                }else{
+                    setMsgList(prevList => [...prevList, ...start, msg]);
+                }
+
+                dispatch(msgSend(true));
+
+                //메시지내역 맨밑으로 스크롤
+                if (chatRef.current) {
+                    setTimeout(()=>{
+                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                    },10);
+                }
+            }
+        };
+
+        //에러메시지 받기
+        const handleChatError = (result) => {
+            console.log(JSON.stringify(result, null, 2));
+
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: result.msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        };
+
+        //메시지 읽음처리 받기
+        const handleReadMsg = (result) => {
+            console.log("read msg");
+            console.log(JSON.stringify(result, null, 2));
+
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const userRoomId = selectUser.room_id;
+
+            //현재보고있는 채팅방일때만 메시지 전체읽음처리
+            if(userRoomId === result.room_id){
+                setMsgRead(true);
+            }
+        };
+
+        //메시지작성중 받기
+        const handleTypeMsg = (result) => {
+            console.log(JSON.stringify(result, null, 2));
+            
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const userRoomId = selectUser.room_id;
+
+            //현재보고있는 채팅방의 상대방회원이 보냈을때
+            if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
+                if(result.status){
+                    setTypingBox(true);
 
                     //메시지내역 맨밑으로 스크롤
                     if (chatRef.current) {
@@ -298,87 +344,62 @@ const RightCont = (props) => {
                             chatRef.current.scrollTop = chatRef.current.scrollHeight;
                         },10);
                     }
-                }
-            });
-
-
-            //에러메시지 받기
-            socket.on("chat error", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: result.msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            });
-
-
-            //메시지 읽음처리 받기
-            socket.on("read msg", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const userRoomId = selectUser.room_id;
-
-                //현재보고있는 채팅방일때만 메시지 전체읽음처리
-                if(userRoomId === result.room_id){
-                    setMsgRead(true);
-                }
-            });
-
-
-            //메시지작성중 받기
-            socket.on("type msg", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const userRoomId = selectUser.room_id;
-
-                //현재보고있는 채팅방의 상대방회원이 보냈을때
-                if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
-                    if(result.status){
-                        setTypingBox(true);
-
-                        //메시지내역 맨밑으로 스크롤
-                        if (chatRef.current) {
-                            setTimeout(()=>{
-                                chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                            },10);
-                        }
-                    }else{
-                        setTypingBox(false);
-                    }
-                }
-            });
-
-
-            //채팅방 나감
-            socket.on("leave room", (result) => {
-                console.log(JSON.stringify(result, null, 2));
-
-                const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-                const userRoomId = selectUser.room_id;
-
-                //현재보고있는 채팅방의 상대방회원이 나갔을때
-                if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
+                }else{
                     setTypingBox(false);
                 }
-            });
+            }
+        };
+
+        //채팅방 나감
+        const handleLeavRoom = (result) => {
+            console.log("leave room");
+            console.log(JSON.stringify(result, null, 2));
+
+            const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
+            const userRoomId = selectUser.room_id;
+
+            //현재보고있는 채팅방의 상대방회원이 나갔을때
+            if(userRoomId === result.room_id && selectUser.m_id === result.m_id){
+                setTypingBox(false);
+            }
+        };
+
+        if(socket){
+            //채팅방 개설
+            socket.on("join room", handleJoinRoom);
+
+            //채팅방에 들어옴
+            socket.on("active room", handleActiveRoom);
+
+            //메시지 받기
+            socket.on("chat msg", handleChatMsg);
+
+            //이미지 받기
+            socket.on("image upload", handleImageUpload);
+
+            //에러메시지 받기
+            socket.on("chat error", handleChatError);
+
+            //메시지 읽음처리 받기
+            socket.on("read msg", handleReadMsg);
+
+            //메시지작성중 받기
+            socket.on("type msg", handleTypeMsg);
+
+            //채팅방 나감
+            socket.on("leave room", handleLeavRoom);
 
 
             // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
             return () => {
-                socket.off("join room");
-                socket.off("active room");
-                socket.off("chat msg");
-                socket.off("image upload");
-                socket.off("chat error");
-                socket.off("read msg");
-                socket.off("type msg");
-                socket.off("leave room");
+                socket.off("join room",handleJoinRoom);
+                socket.off("active room",handleActiveRoom);
+                socket.off("chat msg",handleChatMsg);
+                socket.off("image upload",handleImageUpload);
+                socket.off("chat error",handleChatError);
+                socket.off("read msg",handleReadMsg);
+                socket.off("type msg",handleTypeMsg);
+                socket.off("leave room",handleLeavRoom);
             };
         }
     },[socket]);
@@ -923,7 +944,6 @@ const RightCont = (props) => {
         // 개설된 체팅방이 있을때만
         if(common.selectUser.hasOwnProperty("room_id") && common.selectUser.room_id.length > 0){
             const data = { room_id: common.selectUser.room_id, m_id: user.managerInfo.m_id, status: typing };
-            console.log(data)
             socket.emit("type msg", data);
         }
     },[typing]);
