@@ -670,7 +670,7 @@ const RightCont = (props) => {
 
                 //현재 채팅방 room_id store 에 저장
                 dispatch(activeRoom(room_id));
-                
+
 
                 //선택한회원중에 내가응대중인회원 on
                 setListOn(common.selectUser.m_id);
@@ -1086,45 +1086,19 @@ const RightCont = (props) => {
                                     return(<div key={i}>
                                         {cont.message_type == "Q" ?
                                             <div className="tit_box">{common.selectUser.m_name} 님께 대화를 신청했어요!</div>
-                                        : cont.message_type == "N" ?
-                                            <div className="tit_box">{cont.msg}</div>
                                         : cont.message_type == "S" ?
                                             <div className="date_box">
                                                 <span>{cont.msg}</span>
                                             </div>
-                                        :   <div className={`chat_box${send ? " send" : ""}`}>
-                                                {send ?
-                                                    <>
-                                                    {!myChat && <p className="name tx_r">{common.selectUser.from_user}</p>}
-                                                    <ul className="txt_ul">
-                                                        <li>
-                                                            <div className="box flex_bottom">
-                                                                <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.w_date}</p>
-                                                                {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
-                                                                    :   cont.message_type == "I" && 
-                                                                        <ul className="img_ul flex_wrap">
-                                                                            {cont.files.map((img,i)=>{
-                                                                                return(
-                                                                                    <li key={i} 
-                                                                                        onClick={()=>{
-                                                                                            dispatch(imgPop({imgPop:true,imgPopList:[...cont.files],imgPopIdx:i}));
-                                                                                        }}
-                                                                                    >
-                                                                                        <img src={img} alt="이미지" />
-                                                                                    </li>
-                                                                                );
-                                                                            })}
-                                                                        </ul>
-                                                                }
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                    </>
-                                                    :   <>
-                                                        <p className="name">{myChat ? common.selectUser.m_name : common.selectUser.to_user}</p>
+                                        :   cont.message_type == "T" || cont.message_type == "I" ?
+                                            <div className={`chat_box${send ? " send" : ""}`}>
+                                                    {send ?
+                                                        <>
+                                                        {!myChat && <p className="name tx_r">{common.selectUser.from_user}</p>}
                                                         <ul className="txt_ul">
                                                             <li>
                                                                 <div className="box flex_bottom">
+                                                                    <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.w_date}</p>
                                                                     {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                         :   cont.message_type == "I" && 
                                                                             <ul className="img_ul flex_wrap">
@@ -1141,13 +1115,39 @@ const RightCont = (props) => {
                                                                                 })}
                                                                             </ul>
                                                                     }
-                                                                    <p className="time">{cont.w_date}</p>
                                                                 </div>
                                                             </li>
                                                         </ul>
                                                         </>
-                                                }
+                                                        :   <>
+                                                            <p className="name">{myChat ? common.selectUser.m_name : common.selectUser.to_user}</p>
+                                                            <ul className="txt_ul">
+                                                                <li>
+                                                                    <div className="box flex_bottom">
+                                                                        {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
+                                                                            :   cont.message_type == "I" && 
+                                                                                <ul className="img_ul flex_wrap">
+                                                                                    {cont.files.map((img,i)=>{
+                                                                                        return(
+                                                                                            <li key={i} 
+                                                                                                onClick={()=>{
+                                                                                                    dispatch(imgPop({imgPop:true,imgPopList:[...cont.files],imgPopIdx:i}));
+                                                                                                }}
+                                                                                            >
+                                                                                                <img src={img} alt="이미지" />
+                                                                                            </li>
+                                                                                        );
+                                                                                    })}
+                                                                                </ul>
+                                                                        }
+                                                                        <p className="time">{cont.w_date}</p>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                            </>
+                                                    }
                                             </div>
+                                        :   <div className="tit_box">{cont.msg}</div>
                                         }
                                     </div>);
                                 })}
