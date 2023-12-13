@@ -135,7 +135,6 @@ const RightCont = (props) => {
             socket.emit("join room", data);
             socket.emit("active room", data2);
         }
-        console.log(room_id);
     };
 
 
@@ -223,9 +222,11 @@ const RightCont = (props) => {
                     setTextareaValue("");
 
                     //메시지내역 맨밑으로 스크롤
-                    setTimeout(()=>{
-                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                    },10);
+                    if (chatRef.current) {
+                        setTimeout(()=>{
+                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                        },10);
+                    }
                 }
             });
 
@@ -292,9 +293,11 @@ const RightCont = (props) => {
                     dispatch(msgSend(true));
 
                     //메시지내역 맨밑으로 스크롤
-                    setTimeout(()=>{
-                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                    },10);
+                    if (chatRef.current) {
+                        setTimeout(()=>{
+                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                        },10);
+                    }
                 }
             });
 
@@ -340,9 +343,11 @@ const RightCont = (props) => {
                         setTypingBox(true);
 
                         //메시지내역 맨밑으로 스크롤
-                        setTimeout(()=>{
-                            chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                        },10);
+                        if (chatRef.current) {
+                            setTimeout(()=>{
+                                chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                            },10);
+                        }
                     }else{
                         setTypingBox(false);
                     }
@@ -363,6 +368,18 @@ const RightCont = (props) => {
                 }
             });
 
+
+            // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
+            return () => {
+                socket.off("join room");
+                socket.off("active room");
+                socket.off("chat msg");
+                socket.off("image upload");
+                socket.off("chat error");
+                socket.off("read msg");
+                socket.off("type msg");
+                socket.off("leave room");
+            };
         }
     },[socket]);
 
@@ -550,7 +567,6 @@ const RightCont = (props) => {
 
     const handleDragEnd = (event) => {
         const {active, over} = event;
-        console.log(event)
         
         if (active.id !== over.id) {
             setAssiList((items) => {
@@ -609,9 +625,14 @@ const RightCont = (props) => {
     },[user.managerSetting]);
 
 
+    useEffect(()=>{
+        console.log(common.activeRoom);
+    },[common.activeRoom]);
+
+
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        // console.log(common.selectUser);
+        console.log(common.selectUser);
 
         //sessionStorage 에 selectUser값 저장
         let room_id;
@@ -639,9 +660,6 @@ const RightCont = (props) => {
                 //선택한회원 대화방 소켓연결
                 socketInit();
 
-                //현재 채팅방 room_id store 에 저장
-                dispatch(activeRoom(room_id));
-
                 //전에 입장한 채팅방이있으면 그 채팅방은 나감
                 if(common.activeRoom !== null){
                     let data = {
@@ -649,6 +667,10 @@ const RightCont = (props) => {
                     }
                     socket.emit("leave room", data);
                 }
+
+                //현재 채팅방 room_id store 에 저장
+                dispatch(activeRoom(room_id));
+                
 
                 //선택한회원중에 내가응대중인회원 on
                 setListOn(common.selectUser.m_id);
@@ -682,9 +704,11 @@ const RightCont = (props) => {
                                 setChatLastIdx(idx);
 
                                 //메시지내역 맨밑으로 스크롤
-                                setTimeout(()=>{
-                                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                                },10);
+                                if (chatRef.current) {
+                                    setTimeout(()=>{
+                                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                                    },10);
+                                }
                             }
                             //대화내용이 없을때
                             else{
@@ -748,9 +772,11 @@ const RightCont = (props) => {
                                 setChatLastIdx(idx);
 
                                 //메시지내역 맨밑으로 스크롤
-                                setTimeout(()=>{
-                                    chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                                },10);
+                                if (chatRef.current) {
+                                    setTimeout(()=>{
+                                        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                                    },10);
+                                }
                             }
                             //대화내용이 없을때
                             else{

@@ -51,6 +51,11 @@ const Header = () => {
                     setNewChat(newChat+1);
                 }
             })
+
+            // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
+            return () => {
+                socket.off("admin msg");
+            };
         }
     },[socket]);
 

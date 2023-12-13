@@ -107,10 +107,7 @@ const MessageInputWrap = (props) => {
             });
         }
     });
-
-    useEffect(()=>{
-        console.log(files)
-    },[files]);
+    
 
     //이미지 삭제
     const handleRemove = (id, idx) => {
@@ -123,7 +120,7 @@ const MessageInputWrap = (props) => {
     
     // 썸네일 미리보기 생성
     const thumbs = files.map((file,i) => (
-        <li key={file.id}>
+        <li key={i}>
             <img
                 src={file.preview}
                 // 이미지 로드 후 data uri 폐기
