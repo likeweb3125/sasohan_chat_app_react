@@ -97,13 +97,23 @@ const MessageInputWrap = (props) => {
             })
             .catch((error) => {
                 const err_msg = CF.errorMsgHandler(error);
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
+                if(error.response.status === 401){//토큰에러시 에러팝업
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else{
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }
             });
         }
     });

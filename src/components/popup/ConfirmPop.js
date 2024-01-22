@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";

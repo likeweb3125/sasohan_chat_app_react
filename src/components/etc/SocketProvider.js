@@ -24,6 +24,7 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(()=>{
         setToken(user.tokenValue);
+        console.log(user.tokenValue);
     },[user.tokenValue]);
 
     useEffect(() => {
