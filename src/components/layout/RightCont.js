@@ -135,7 +135,6 @@ const RightCont = (props) => {
             socket.emit("join room", data);
             socket.emit("active room", data2);
         }
-        console.log(room_id);
     };
 
 
@@ -168,7 +167,9 @@ const RightCont = (props) => {
 
             //현재보고있는 채팅방일때만 받은 메시지 추가
             if(userRoomId === result.room_id){
-
+                console.log(common.activeRoom);
+                console.log(selectUser);
+                console.log(userRoomId);
                 //회원이 보낸 메시지일때 
                 if(selectUser.m_id === result.from_id){
                     let data = { room_id: userRoomId };
@@ -364,9 +365,9 @@ const RightCont = (props) => {
             }
         };
 
-        //소켓 에러 받기
-        const handleSocketError = (result) => {
-            console.log('socket error');
+        //토큰 에러 받기
+        const handleTokenError = (result) => {
+            console.log('token error');
             console.log(JSON.stringify(result, null, 2));
 
             dispatch(confirmPop({
@@ -379,8 +380,6 @@ const RightCont = (props) => {
 
 
         if(socket){
-            console.log(socket);
-
 
             //채팅방 개설
             socket.on("join room", handleJoinRoom);
@@ -406,8 +405,8 @@ const RightCont = (props) => {
             //채팅방 나감
             socket.on("leave room", handleLeavRoom);
 
-            //소켓 에러 받기
-            socket.on("socket error", handleSocketError);
+            //토큰 에러 받기
+            socket.on("token error", handleTokenError);
 
 
             // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
@@ -420,7 +419,7 @@ const RightCont = (props) => {
                 socket.off("read msg",handleReadMsg);
                 socket.off("type msg",handleTypeMsg);
                 socket.off("leave room",handleLeavRoom);
-                socket.off("socket error",handleSocketError);
+                socket.off("token error",handleTokenError);
             };
         }
     },[socket]);

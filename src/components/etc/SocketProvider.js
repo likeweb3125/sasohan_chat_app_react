@@ -40,7 +40,7 @@ export const SocketProvider = ({ children }) => {
             });
         
             setSocket(socketIo);
-        
+            
             return () => {
                 // 컴포넌트 언마운트 시 소켓 연결 종료
                 socketIo.disconnect();
