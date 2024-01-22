@@ -648,7 +648,7 @@ const RightCont = (props) => {
 
     //store에 selectUser 값이 바뀔때
     useEffect(()=>{
-        console.log(common.selectUser);
+        // console.log(common.selectUser);
 
         //sessionStorage 에 selectUser값 저장
         let room_id;
@@ -1021,11 +1021,6 @@ const RightCont = (props) => {
     },[common.groupMsg]);
 
 
-    useEffect(()=>{
-        console.log(common.activeRoom)
-    },[common.activeRoom]);
-
-    
     
     return(<>
         <div className="right_cont">
@@ -1105,13 +1100,13 @@ const RightCont = (props) => {
                                     }
 
                                     return(<div key={i}>
-                                        {cont.message_type == "Q" ?
+                                        {cont.message_type == "Q" ? //대화시작
                                             <div className="tit_box">{common.selectUser.m_name} 님께 대화를 신청했어요!</div>
-                                        : cont.message_type == "S" ?
+                                        : cont.message_type == "S" ? //날짜
                                             <div className="date_box">
                                                 <span>{cont.msg}</span>
                                             </div>
-                                        :   cont.message_type == "T" || cont.message_type == "I" ?
+                                        :   cont.message_type == "T" || cont.message_type == "I" ? //텍스트메시지 or 이미지
                                             <div className={`chat_box${send ? " send" : ""}`}>
                                                     {send ?
                                                         <>

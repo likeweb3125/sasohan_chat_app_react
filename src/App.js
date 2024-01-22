@@ -36,7 +36,7 @@ function App() {
                 {/* 설정 */}
                 <Route path="/setting" element={<Layout><Setting /></Layout>} />
 
-                {/* 앱회원 프로펄상세 */}
+                {/* 앱회원 프로필상세 */}
                 <Route path="/profile/:m_id" element={<MemberProfile />} />
 
             </Routes>
