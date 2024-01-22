@@ -35,7 +35,7 @@ const ConfirmPop = (props) => {
                     <div className="pop_cont">
                         <div className="pop_tit flex_between">
                             <p className="f_24"><strong>{popup.confirmPopTit}</strong></p>
-                            <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
+                            {popup.confirmPopBtn && <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>}
                         </div>
                         <p className="tx_c bm30">{popup.confirmPopTxt}</p>
                         {popup.confirmPopBtn === 1 &&

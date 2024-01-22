@@ -301,6 +301,7 @@ const RightCont = (props) => {
 
         //에러메시지 받기
         const handleChatError = (result) => {
+            console.log('chat error');
             console.log(JSON.stringify(result, null, 2));
 
             dispatch(confirmPop({
@@ -442,7 +443,6 @@ const RightCont = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -525,7 +525,6 @@ const RightCont = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -575,7 +574,6 @@ const RightCont = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -659,7 +657,6 @@ const RightCont = (props) => {
                         confirmPop:true,
                         confirmPopTit:'알림',
                         confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                        confirmPopBtn:1,
                     }));
                     setConfirm(true);
                 }else{
@@ -783,7 +780,6 @@ const RightCont = (props) => {
                                 confirmPop:true,
                                 confirmPopTit:'알림',
                                 confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                                confirmPopBtn:1,
                             }));
                             setConfirm(true);
                         }else{
@@ -860,7 +856,6 @@ const RightCont = (props) => {
                                 confirmPop:true,
                                 confirmPopTit:'알림',
                                 confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                                confirmPopBtn:1,
                             }));
                             setConfirm(true);
                         }else{
@@ -920,7 +915,6 @@ const RightCont = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -975,7 +969,6 @@ const RightCont = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -1053,6 +1046,7 @@ const RightCont = (props) => {
             msg: textareaValue
         }
         socket.emit("chat message", data);
+        console.log(`메시지 보내기:${JSON.stringify(data)}`);
     };
 
 

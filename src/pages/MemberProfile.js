@@ -102,7 +102,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -140,7 +139,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -177,7 +175,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -236,7 +233,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -292,7 +288,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -338,7 +333,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
@@ -919,7 +913,6 @@ const MemberProfile = (props) => {
                     confirmPop:true,
                     confirmPopTit:'알림',
                     confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
-                    confirmPopBtn:1,
                 }));
                 setConfirm(true);
             }else{
