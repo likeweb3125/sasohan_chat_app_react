@@ -181,8 +181,12 @@ const MessagePop = (props) => {
         if(path == "/message"){
             getList2();
         }else{
-            // 최고매니저계정으로 단체메시지설정값이 제한없음이면 리스트 안가져옴
-            if(!user.superManager){
+            // 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음일때만 리스트 안가져옴
+            if(user.superManager){
+                if(user.managerSetting.set_num > 0){
+                    getList();
+                }
+            }else{
                 getList();
             }
         }
@@ -442,8 +446,8 @@ const MessagePop = (props) => {
                     <p className="f_24"><strong>단체 메시지</strong></p>
                     <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
-                {/* 최고매니저계정으로 단체메시지설정값이 제한없음이면 미노출 */}
-                {!user.superManager &&
+                {/* 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음일때만 미노출 */}
+                {(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)) &&
                     <div className="list_cont">
                         <div className="top_box flex_between">
                             <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
@@ -458,7 +462,7 @@ const MessagePop = (props) => {
                         />
                     </div>
                 }
-                <div style={user.superManager && {"borderTop":"1px solid #EAEAEA"}}>
+                <div style={user.superManager ? {"borderTop": "1px solid #EAEAEA"} : {}}>
                     <MessageInputWrap 
                         textareaValue={textareaValue}
                         onTextareaChange={(e)=>{setTextareaValue(e.currentTarget.value)}}

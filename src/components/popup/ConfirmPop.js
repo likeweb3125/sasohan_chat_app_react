@@ -37,7 +37,7 @@ const ConfirmPop = (props) => {
                             <p className="f_24"><strong>{popup.confirmPopTit}</strong></p>
                             {popup.confirmPopBtn && <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>}
                         </div>
-                        <p className="tx_c bm30">{popup.confirmPopTxt}</p>
+                        <p className="tx_c bm30" dangerouslySetInnerHTML={{__html: popup.confirmPopTxt}}></p>
                         {popup.confirmPopBtn === 1 &&
                             <button type="button" className="btn" onClick={closePopHandler}>확인</button>
                         }

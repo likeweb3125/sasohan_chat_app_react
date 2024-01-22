@@ -71,7 +71,7 @@ const ManagerProfilePop = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{

@@ -142,7 +142,7 @@ const RightCont = (props) => {
     useEffect(()=>{
         //채팅방 개설
         const handleJoinRoom = (result) => {
-            console.log(JSON.stringify(result, null, 2));
+            console.log(`join room : ${JSON.stringify(result, null, 2)}`);
         };
 
         //채팅방에 들어옴
@@ -301,7 +301,6 @@ const RightCont = (props) => {
 
         //에러메시지 받기
         const handleChatError = (result) => {
-            console.log('chat error');
             console.log(JSON.stringify(result, null, 2));
 
             dispatch(confirmPop({
@@ -365,7 +364,24 @@ const RightCont = (props) => {
             }
         };
 
+        //소켓 에러 받기
+        const handleSocketError = (result) => {
+            console.log('socket error');
+            console.log(JSON.stringify(result, null, 2));
+
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
+            }));
+            setConfirm(true);
+        };
+
+
         if(socket){
+            console.log(socket);
+
+
             //채팅방 개설
             socket.on("join room", handleJoinRoom);
 
@@ -390,6 +406,9 @@ const RightCont = (props) => {
             //채팅방 나감
             socket.on("leave room", handleLeavRoom);
 
+            //소켓 에러 받기
+            socket.on("socket error", handleSocketError);
+
 
             // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
             return () => {
@@ -401,6 +420,7 @@ const RightCont = (props) => {
                 socket.off("read msg",handleReadMsg);
                 socket.off("type msg",handleTypeMsg);
                 socket.off("leave room",handleLeavRoom);
+                socket.off("socket error",handleSocketError);
             };
         }
     },[socket]);
@@ -442,7 +462,7 @@ const RightCont = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{
@@ -524,7 +544,7 @@ const RightCont = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{
@@ -573,7 +593,7 @@ const RightCont = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{
@@ -656,7 +676,7 @@ const RightCont = (props) => {
                     dispatch(confirmPop({
                         confirmPop:true,
                         confirmPopTit:'알림',
-                        confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                        confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                     }));
                     setConfirm(true);
                 }else{
@@ -779,7 +799,7 @@ const RightCont = (props) => {
                             dispatch(confirmPop({
                                 confirmPop:true,
                                 confirmPopTit:'알림',
-                                confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                                confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                             }));
                             setConfirm(true);
                         }else{
@@ -855,7 +875,7 @@ const RightCont = (props) => {
                             dispatch(confirmPop({
                                 confirmPop:true,
                                 confirmPopTit:'알림',
-                                confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                                confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                             }));
                             setConfirm(true);
                         }else{
@@ -914,7 +934,7 @@ const RightCont = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{
@@ -968,7 +988,7 @@ const RightCont = (props) => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'현재창을 닫고 다시 로그인해주세요.',
+                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
             }else{
