@@ -31,13 +31,14 @@ export const SocketProvider = ({ children }) => {
         if(token){
             const socketIo = io(socketUrl, {
                 cors: {
-                    origin: "*",
+                    // origin: "*",
+                    origin: ['https://www.sasohan.net', 'https://sasohan.net', 'https://chat.sasohan.net'],
                 },
                 extraHeaders: {
                     Authorization: `Bearer ${token}`,
                 },
                 reconnection: true, // 자동 재연결 활성화
-                withCredentials: true
+                withCredentials: true,
             });
         
             setSocket(socketIo);

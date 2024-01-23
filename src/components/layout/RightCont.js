@@ -377,6 +377,7 @@ const RightCont = (props) => {
 
 
         if(socket){
+            console.log(socket);
 
             //채팅방 개설
             socket.on("join room", handleJoinRoom);
