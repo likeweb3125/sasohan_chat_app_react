@@ -56,7 +56,8 @@ const FloatingMember = (props) => {
                         <button type="button" className="btn_delt" onClick={props.onDeltHandler}>삭제버튼</button>
                         <button type="button" className="btn_dnd" {...attributes} {...listeners}>이동버튼</button>
                     </div>
-                </div> 
+                </div>
+                {/* <div className='num'>10</div> */}
             </div>
         </li>
     );

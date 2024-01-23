@@ -165,6 +165,15 @@
 .member_box.member_box_chat .txt_box ul li:nth-child(2){padding-top: 7px;}
 .member_box .box .btn_delt{text-indent: -9999px;font-size: 0;width: 24px;height: 16px;background: url(../images/ic_delt.svg) no-repeat center;}
 .member_box .box .btn_dnd{text-indent: -9999px;font-size: 0;;width: 40px;height: 16px;background: url(../images/ic_dnd.svg) no-repeat center left 10px;background-size: 7px;cursor: grab;}
+/* .member_box .num{    font-size: 12px;
+    color: #fff;
+    background: #373D49;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    text-align: center;
+    padding-top: 3px;position: absolute;} */
 
 /* 프로필업로드 */
 .profile_img_ul>li{width: 80px;height: 80px;border: 1px solid #ddd;border-radius: 8px;overflow: hidden;position: relative;margin:0 8px 8px 0;}

@@ -167,9 +167,6 @@ const RightCont = (props) => {
 
             //현재보고있는 채팅방일때만 받은 메시지 추가
             if(userRoomId === result.room_id){
-                console.log(common.activeRoom);
-                console.log(selectUser);
-                console.log(userRoomId);
                 //회원이 보낸 메시지일때 
                 if(selectUser.m_id === result.from_id){
                     let data = { room_id: userRoomId };
@@ -724,6 +721,8 @@ const RightCont = (props) => {
 
         //회원선택했을때 메시지내용가져오기
         if(Object.keys(common.selectUser).length > 0){
+            //메시지입력 textarea 값 비우기
+            setTextareaValue("");
 
             //연결한대화방 페이지 아닐때 (회원검색,메시지 페이지일때)
             if(common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){

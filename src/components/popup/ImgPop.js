@@ -39,7 +39,6 @@ const ImgPop = (props) => {
     //다음버튼 클릭시
     const nextHandler = () => {
         if (swiperRef.current && swiperRef.current.swiper) {
-            console.log(slideOnIdx)
             setSlideOnIdx(slideOnIdx + 1);
             swiperRef.current.swiper.slideTo(slideOnIdx + 1);
         }

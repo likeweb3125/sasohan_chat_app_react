@@ -37,6 +37,7 @@ export const SocketProvider = ({ children }) => {
                     Authorization: `Bearer ${token}`,
                 },
                 reconnection: true, // 자동 재연결 활성화
+                withCredentials: true
             });
         
             setSocket(socketIo);
