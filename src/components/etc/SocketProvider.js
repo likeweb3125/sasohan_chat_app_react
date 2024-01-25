@@ -39,7 +39,7 @@ export const SocketProvider = ({ children }) => {
                 },
                 reconnection: true, // 자동 재연결 활성화
                 withCredentials: true,
-                transports: ['websocket']
+                // transports: ['websocket']
             });
         
             setSocket(socketIo);
