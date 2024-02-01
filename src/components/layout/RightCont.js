@@ -170,7 +170,9 @@ const RightCont = (props) => {
                 //회원이 보낸 메시지일때 
                 if(selectUser.m_id === result.from_id){
                     let data = { room_id: userRoomId };
-                    socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    setTimeout(()=>{
+                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    },300);
 
                     //회원 메시지작성중 false
                     setTypingBox(false);
@@ -240,7 +242,9 @@ const RightCont = (props) => {
                 //회원이 보낸 메시지일때 
                 if(selectUser.m_id === result.from_id){
                     let data = { room_id: userRoomId };
-                    socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    setTimeout(()=>{
+                        socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
+                    },300);
 
                     //회원 메시지작성중 false
                     setTypingBox(false);
