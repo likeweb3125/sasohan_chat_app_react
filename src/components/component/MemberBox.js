@@ -130,7 +130,7 @@ const MemberBox = (props) => {
                             <li className="flex">
                                 {props.data.from_user ? 
                                     <>
-                                        <p className="name">{props.data.from_user && props.data.from_user.m_name}</p>
+                                        <p className={`name${props.data.from_user.m_gender == 2 ? ' mem_w' : ''}`}>{props.data.from_user && props.data.from_user.m_name}</p>
                                         <p className="age">{props.data.from_user && props.data.from_user.m_address}<span>&nbsp;·&nbsp;{props.data.from_user && props.data.from_user.birth}</span></p>
                                     </>
                                     :<p>탈퇴한 회원입니다.</p>
@@ -139,7 +139,7 @@ const MemberBox = (props) => {
                             <li className="flex">
                                 {props.data.to_user ? 
                                     <>
-                                        <p className="name">{props.data.to_user.m_name}</p>
+                                        <p className={`name${props.data.to_user.m_gender == 2 ? ' mem_w' : ''}`}>{props.data.to_user.m_name}</p>
                                         <p className="age">{props.data.to_user && props.data.to_user.m_address}<span>&nbsp;·&nbsp;{props.data.to_user && props.data.to_user.birth}</span></p>
                                     </>
                                     :<p>탈퇴한 회원입니다.</p>
