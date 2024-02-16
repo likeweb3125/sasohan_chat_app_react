@@ -381,8 +381,6 @@ const RightCont = (props) => {
 
 
         if(socket){
-            console.log(socket);
-
             //채팅방 개설
             socket.on("join room", handleJoinRoom);
 
@@ -1048,28 +1046,42 @@ const RightCont = (props) => {
     //이미지 첨부하기
     const imgAttach = () => {
         const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-
-        let data = {
+        const join_data = {room_id: selectUser.room_id};
+        const data = {  
             room_id: selectUser.room_id,
             to_id: common.selectUser.m_id,
             msg: "",
             files: common.msgImgs,
         }
-        socket.emit("file upload", data);
+
+        //소켓 연결을위해 join room 전송
+        socket.emit("join room", join_data);
+        
+        //소켓 join room 후에 chat message 전송
+        setTimeout(()=>{
+            socket.emit("file upload", data);
+        },200);
     };
 
 
     //메시지 보내기
     const textSend = () => {
         const selectUser = JSON.parse(sessionStorage.getItem("selectUser"));
-
-        let data = {
+        const join_data = {room_id: selectUser.room_id};
+        const data = {
             room_id: selectUser.room_id,
             to_id: common.selectUser.m_id,
             msg: textareaValue
         }
-        socket.emit("chat message", data);
-        console.log(`메시지 보내기:${JSON.stringify(data)}`);
+
+        //소켓 연결을위해 join room 전송
+        socket.emit("join room", join_data);
+
+        //소켓 join room 후에 chat message 전송
+        setTimeout(()=>{
+            socket.emit("chat message", data);
+            console.log(`메시지 보내기:${JSON.stringify(data)}`);
+        },200);
     };
 
 
