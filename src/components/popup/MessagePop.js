@@ -53,7 +53,10 @@ const MessagePop = (props) => {
 
     //회원리스트 값 변경될때마다 회원아이디값만 배열로
     useEffect(()=>{
-        let newIdList = list.map(item => item.m_id).filter(Boolean);
+        let newIdList = [];
+        if(list.length > 0){
+            newIdList = list.map(item => item.m_id).filter(Boolean);
+        }
         setIdList(newIdList);
     },[list]);
 
@@ -121,7 +124,7 @@ const MessagePop = (props) => {
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
-                confirmPopTit:'알림',
+                confirmPopTit:'알림1',
                 confirmPopTxt: err_msg,
                 confirmPopBtn:1,
             }));
@@ -170,10 +173,6 @@ const MessagePop = (props) => {
         });
     };
 
-    useEffect(()=>{
-        console.log(popup.memCheckPopCheckList);
-    },[popup.memCheckPopCheckList]);
-
 
     useEffect(()=>{
         console.log(popup.messagePopList);
@@ -185,6 +184,10 @@ const MessagePop = (props) => {
             if(user.superManager){
                 if(user.managerSetting.set_num > 0){
                     getList();
+                }else{
+                    const checkList = popup.messagePopList;
+                    const newList = checkList.map(item => ({ m_id: item }));
+                    setList([...newList]);
                 }
             }else{
                 getList();
@@ -195,16 +198,30 @@ const MessagePop = (props) => {
 
     //회원 삭제시
     useEffect(()=>{
-        let deltList = popup.messagePopDeltList;
-        let newList = list.filter(item => !deltList.includes(item.m_id));
-        setList(newList);
+        // 최고매니저계정 아니거나, 최고매니저계정이지만 최대전체선택 인원수가 제한없음아닐때만
+        if(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)){
+            let newList = [];
+            if(popup.messagePopDeltList.length > 0){
+                let deltList = popup.messagePopDeltList;
+                newList = list.filter(item => !deltList.includes(item.m_id));
+            }
+            setList(newList);
+        }
     },[popup.messagePopDeltList]);
 
     
     //회원 추가시
     useEffect(()=>{
-        let addList = popup.messagePopAddList;
-        setList([...addList,...list]);
+        // 최고매니저계정 아니거나, 최고매니저계정이지만 최대전체선택 인원수가 제한없음아닐때만
+        if(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)){
+            let newList = [];
+            if(popup.messagePopAddList.length > 0){
+                newList = popup.messagePopAddList;
+                setList([...newList,...list]);
+            }else{
+                setList(newList);
+            }
+        }
     },[popup.messagePopAddList]);
 
 
@@ -397,7 +414,7 @@ const MessagePop = (props) => {
    
     //단체메시지전송 버튼 클릭시
     const msgSendHandler = () => {
-        //최고매니저계정일때 list [] 빈배열로 메시지전송
+        //최고매니저계정일때
         if(user.superManager){
             dispatch(confirmPop({
                 confirmPop:true,
