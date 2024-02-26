@@ -398,6 +398,30 @@ const Main = () => {
     },[listSelected]);
 
 
+    //소켓 메시지 받으면 회원리스트값 변경 (last_idx 값 변경)
+    useEffect(()=>{
+        if(Object.keys(common.newMsgData).length > 0){  
+            const updatedUserList = [...userList]; // 복사해서 수정할 새로운 배열 생성
+
+            for (let i = 0; i < updatedUserList.length; i++) {
+                if (updatedUserList[i].m_id === common.newMsgData.m_id) {
+                    // 기존 요소를 새로운 값으로 대체
+                    updatedUserList.splice(i, 1, {
+                        ...updatedUserList[i],
+                        last_idx: common.newMsgData.idx,
+                    });
+                    break;
+                }
+            }
+
+            setUserList(updatedUserList);
+
+            //store messagePopList 값 지우기 (체크리스트)
+            dispatch(messagePopList([]));
+        }
+    },[common.newMsgData]);
+
+
 
     return(<>
         <LeftCont
