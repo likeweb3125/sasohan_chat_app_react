@@ -71,13 +71,23 @@ const Main = () => {
                 }));
                 setConfirm(true);
             }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
+                const err_msg = CF.errorMsgHandler(error);
+                if(error.response.status === 401){//토큰에러시 에러팝업
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
+                    }));
+                    setConfirm(true);
+                }else{
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }
             }
         });
     };
