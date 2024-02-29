@@ -33,6 +33,17 @@ const MessagePop = (props) => {
     const [textareaValue, setTextareaValue] = useState("");
     const location = useLocation();
     const [photoPath, setPhotoPath] = useState("upload/chat/");
+    const [noneList, setNoneList] = useState(false);
+
+
+    useEffect(()=>{
+        //최고매니저계정이고, 단체메시지설정값 최대전체선택 인원수가 제한없음이고, 회원을 선택한게아니라 전체회원에게 단체메시지 전송일때는 회원리스트 미노출
+        if(user.superManager && user.managerSetting.set_num == 0 && popup.messagePopList.length === 0){
+            setNoneList(true);
+        }else{
+            setNoneList(false);
+        }
+    },[]);
 
 
     //팝업닫기
@@ -124,7 +135,7 @@ const MessagePop = (props) => {
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
-                confirmPopTit:'알림1',
+                confirmPopTit:'알림',
                 confirmPopTxt: err_msg,
                 confirmPopBtn:1,
             }));
@@ -175,14 +186,13 @@ const MessagePop = (props) => {
 
 
     useEffect(()=>{
-        console.log(popup.messagePopList);
         const path = location.pathname;
         if(path == "/message"){
             getList2();
         }else{
-            // 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음일때만 리스트 안가져옴
-            if(user.superManager){
-                if(user.managerSetting.set_num > 0){
+            // 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음이고 회원선택을 안했을때만 리스트 안가져옴
+            if(user.superManager && user.managerSetting.set_num == 0){
+                if(popup.messagePopList.length > 0){
                     getList();
                 }else{
                     const checkList = popup.messagePopList;
@@ -463,15 +473,16 @@ const MessagePop = (props) => {
                     <p className="f_24"><strong>단체 메시지</strong></p>
                     <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                 </div>
-                {/* 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음일때만 미노출 */}
-                {(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)) &&
+                {!noneList && 
                     <div className="list_cont">
                         <div className="top_box flex_between">
                             <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
-                            <div className="flex">
-                                <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
-                                <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
-                            </div>
+                            {!user.superManager &&
+                                <div className="flex">
+                                    <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
+                                    <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
+                                </div>
+                            }
                         </div>
                         <MemberListCont
                             list={list}
