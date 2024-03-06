@@ -7,7 +7,7 @@ import { chatPop, confirmPop, tooltipPop, loadingPop } from "../../store/popupSl
 import SearchBox from "../component/SearchBox";
 import ConfirmPop from "./ConfirmPop";
 
-const ChatPop = (props) => {
+const ChatPop = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
@@ -19,8 +19,9 @@ const ChatPop = (props) => {
     const [connectOkConfirm, setConnectOkConfirm] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [list, setList] = useState([]);
-    const [idList, setIdList] = useState([]);
+    const [seqList, setSeqList] = useState([]);
     const [checkList, setCheckList] = useState([]);
+    const [idCheckList, setIdCheckList] = useState([]);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
 
@@ -124,14 +125,14 @@ const ChatPop = (props) => {
     //      2	     대화종료
     //      3	     연결불가
     
-    //맨처음 대화방연결리스트 연결여부가 연결가능,대화중인 회원아이디값만 배열로
+    //맨처음 대화방연결리스트 연결여부가 연결가능,대화중인 seq값 배열로저장
     useEffect(()=>{
         if(list){
-            const filteredIds = list
+            const filteredSeq = list
                 .filter((item) => item.is_connect < 2)
-                .map((item) => item.m_id);
+                .map((item) => item.seq);
 
-            setIdList([...filteredIds]);
+            setSeqList([...filteredSeq]);
         }
     },[list]);
 
@@ -139,7 +140,7 @@ const ChatPop = (props) => {
     //전체선택 체크박스 체크시
     const allCheckHandler = (checked) => {
         if(checked){
-            setCheckList([...idList]);
+            setCheckList([...seqList]);
         }else{
             setCheckList([]);
         }
@@ -155,6 +156,17 @@ const ChatPop = (props) => {
             newList = newList.filter((el)=>el !== value);
         }
         setCheckList(newList);
+    };
+
+    //체크박스 체크시 (회원아이디)
+    const idCheckHandler = async (checked, value) => {
+        let newList = idCheckList;
+        if(checked){
+            newList = newList.concat(value);
+        }else if(!checked && newList.includes(value)){
+            newList = newList.filter((el)=>el !== value);
+        }
+        setIdCheckList(newList);
     };
 
 
@@ -186,7 +198,8 @@ const ChatPop = (props) => {
 
         let body = {
             from_id: common.selectUser.m_id,
-            to_id: checkList
+            to_id: idCheckList,
+            seq: checkList
         };
 
         axios.post(`${chat_connect}`,body,
@@ -237,6 +250,7 @@ const ChatPop = (props) => {
         dispatch(tooltipPop({tooltipPop:true,tooltipPopPosition:[top,left],tooltipPopData:data}));
     };
 
+
     return(<>
         <div className="pop_wrap chat_pop"> 
             <div className="dim"></div>
@@ -273,7 +287,7 @@ const ChatPop = (props) => {
                                                 <label className="clearfix">
                                                     <input type="checkbox" 
                                                         onChange={(e)=>{allCheckHandler(e.currentTarget.checked)}} 
-                                                        checked={idList.length > 0 && idList.length === checkList.length && idList.every(item => checkList.includes(item))}
+                                                        checked={seqList.length > 0 && seqList.length === checkList.length && seqList.every(item => checkList.includes(item))}
                                                     />
                                                     <span className="check"></span>
                                                 </label>
@@ -294,20 +308,21 @@ const ChatPop = (props) => {
                                             return(
                                                 <tr 
                                                     key={i}
-                                                    className={`${checkList.includes(data.m_id) ? "checked" : data.is_connect > 1 ? "none" : ""}`} 
+                                                    className={`${checkList.includes(data.seq) ? "checked" : data.is_connect > 1 ? "none" : ""}`} 
                                                 >
                                                     <td>
                                                         <div className="custom_check">
-                                                            <label className="clearfix" htmlFor={`check_${data.m_id}`}>
+                                                            <label className="clearfix" htmlFor={`check_${data.seq}`}>
                                                                 <input type="checkbox" 
-                                                                    id={`check_${data.m_id}`}
-                                                                    value={data.m_id}
+                                                                    id={`check_${data.seq}`}
+                                                                    value={data.seq}
                                                                     onChange={(e) => {
                                                                         const isChecked = e.currentTarget.checked;
                                                                         const value = e.currentTarget.value;
                                                                         checkHandler(isChecked, value);
+                                                                        idCheckHandler(isChecked, data.m_id);
                                                                     }}
-                                                                    checked={checkList.includes(data.m_id)}
+                                                                    checked={checkList.includes(data.seq)}
                                                                     disabled={data.is_connect > 1 ? true : false}
                                                                 />
                                                                 <span className="check"></span>

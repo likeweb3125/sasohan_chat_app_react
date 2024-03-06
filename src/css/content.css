@@ -126,7 +126,7 @@
 .floating_box .list_box{width: calc(100% - 28px);height: 100%;}
 .floating_box .list_box>ul>li{width: 282px;margin:0 8px 8px 0;border: 1px solid #F8F8F8;border-radius: 20px;background: #F8F8F8;padding: 8px 0 8px 16px;cursor: pointer;}
 .floating_box .list_box>ul>li.on{background: #fff;border-color: #EAEAEA;}
-.floating_box .list_box>ul>li .member_box .box .name{font-size: 14px;}
+.floating_box .list_box>ul>li .member_box .box .name{font-size: 13px;padding-right: 20px;background-position: center right;}
 .floating_box .list_box>ul>li .member_box .box .age{font-size: 13px;}
 .floating_box .btn_toggle{font-size: 0;text-indent: -9999px;width: 28px;height: 28px;position: relative;margin-top: 6px;}
 .floating_box .btn_toggle::after{position: absolute;content: "";top: 0;left: 0; width: 28px;height: 28px;background: url(../images/arrow_down.svg) no-repeat center;}
