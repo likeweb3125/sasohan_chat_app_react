@@ -7,6 +7,8 @@ import { enum_api_uri } from "../../config/enum";
 import { msgImgs, msgSend } from "../../store/commonSlice";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../popup/ConfirmPop";
+import ic_plus from "../../images/ic_plus.svg";
+
 
 const MessageInputWrap = (props) => {
     const popup = useSelector((state)=>state.popup);
@@ -59,53 +61,65 @@ const MessageInputWrap = (props) => {
 
     // 이미지 등록
     const { getRootProps, getInputProps } = useDropzone({
-        maxFiles:9,
         accept: {
-          'image/*': []
+            'image/*': []
         },
         multiple: true, // 여러 개의 파일 선택 가능하도록 설정
         onDrop: acceptedFiles => {
-            const formData = new FormData();
-            acceptedFiles.forEach((item)=>{
-                formData.append("media", item);
-                console.log(item);
-            });
-            
-            axios.post(`${props.group ? g_msg_img_add : msg_img_add}`, formData, {
-                headers: {
-                    Authorization: `Bearer ${user.tokenValue}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then((res) => {
-                if (res.status === 201) {
-                    const mediaUrls = res.data.mediaUrls;
-                    const newList = [...imgNameList, ...mediaUrls];
-                    setImgNameList(newList);
-                }
-            })
-            .catch((error) => {
-                const err_msg = CF.errorMsgHandler(error);
-                if(error.response.status === 401){//토큰에러시 에러팝업
-                    dispatch(confirmPop({
-                        confirmPop:true,
-                        confirmPopTit:'알림',
-                        confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                    }));
-                    setConfirm(true);
-                }else{
-                    dispatch(confirmPop({
-                        confirmPop:true,
-                        confirmPopTit:'알림',
-                        confirmPopTxt: err_msg,
-                        confirmPopBtn:1,
-                    }));
-                    setConfirm(true);
-                }
-            });
+            const files = acceptedFiles.length + imgNameList.length;
+
+            if(acceptedFiles.length === 0){
+                return;
+            }else if(files > 9){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'이미지는 최대 9개까지 첨부 가능합니다.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else{
+                const formData = new FormData();
+                acceptedFiles.forEach((item)=>{
+                    formData.append("media", item);
+                });
+                
+                axios.post(`${props.group ? g_msg_img_add : msg_img_add}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${user.tokenValue}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((res) => {
+                    if (res.status === 201) {
+                        const mediaUrls = res.data.mediaUrls;
+                        const newList = [...imgNameList, ...mediaUrls];
+                        setImgNameList(newList);
+                    }
+                })
+                .catch((error) => {
+                    const err_msg = CF.errorMsgHandler(error);
+                    if(error.response.status === 401){//토큰에러시 에러팝업
+                        dispatch(confirmPop({
+                            confirmPop:true,
+                            confirmPopTit:'알림',
+                            confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
+                        }));
+                        setConfirm(true);
+                    }else{
+                        dispatch(confirmPop({
+                            confirmPop:true,
+                            confirmPopTit:'알림',
+                            confirmPopTxt: err_msg,
+                            confirmPopBtn:1,
+                        }));
+                        setConfirm(true);
+                    }
+                });
+            }
         }
     });
-    
+   
 
     //이미지 삭제
     const handleRemove = (idx) => {
@@ -160,6 +174,7 @@ const MessageInputWrap = (props) => {
                         }
                     </ul>
                 </div>
+                {thumbs && thumbs.length > 0 && <p className="f_14 flex tm5">이미지를 <img src={ic_plus} alt="플러스아이콘" /> 아이콘이있는 박스를 클릭하거나 드래그 앤 드롭하여 첨부하세요!</p>}
             </div>
             <div className="input_box flex_between">
                 <div className="box">

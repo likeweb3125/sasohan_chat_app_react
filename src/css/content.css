@@ -101,7 +101,7 @@
 .message_input_wrap .upload_box .drop_box li:last-child{margin-right: 0;}
 .message_input_wrap .upload_box .drop_box li img{width: 100%;height: 100%;object-fit: cover;}
 .message_input_wrap .upload_box .drop_box li .btn_delt{position: absolute;width: 24px;height: 24px;top: 0;right: 0;background: rgba(0,0,0,0.4) url(../images/ic_delt_w.svg) no-repeat center;font-size: 0;text-indent: -9999px;}
-.message_input_wrap .upload_box .drop_box .drop_li{border: none;height: auto;}
+.message_input_wrap .upload_box .drop_box .drop_li{border: none;height: auto;cursor: pointer;}
 .message_input_wrap .upload_box .drop_box .drop_li .txt_box .txt1{font-size: 14px;font-weight: 500;width: 104px;margin: 0 auto 8px;border: 1px solid #999;border-radius: 8px;height: 32px;line-height: 32px;color: #999;}
 .message_input_wrap .upload_box .drop_box .drop_li .txt_box .txt2{font-size: 14px;}
 .message_input_wrap .upload_box .drop_box .drop_li .txt_box .txt2 span{display: block;font-size: 12px;color: #999;padding-top: 3px;}
