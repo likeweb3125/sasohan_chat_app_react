@@ -13,7 +13,7 @@ import MemberListCont from "../component/MemberListCont";
 import MessageInputWrap from "../component/MessageInputWrap";
 
 
-const MessagePop = (props) => {
+const MessagePop = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);

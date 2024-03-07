@@ -21,6 +21,7 @@ const MessageInputWrap = (props) => {
     const [confirm, setConfirm] = useState(false);
 
 
+
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){

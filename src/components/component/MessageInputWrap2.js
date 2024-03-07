@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useDropzone } from 'react-dropzone';
+import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
@@ -13,13 +14,15 @@ const MessageInputWrap = (props) => {
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
+    const api_uri = enum_api_uri.api_uri;
     const msg_img_add = enum_api_uri.msg_img_add;
     const g_msg_img_add = enum_api_uri.g_msg_img_add;
     const [uploadOn, setUploadOn] = useState(false);
+    const [files, setFiles] = useState([]);
     const [imgNameList, setImgNameList] = useState([]);
+    const [photoPath, setPhotoPath] = useState("upload/chat/");
     const textareaRef = useRef(null);
     const [confirm, setConfirm] = useState(false);
-
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -27,7 +30,6 @@ const MessageInputWrap = (props) => {
             setConfirm(false);
         }
     },[popup.confirmPop]);
-
 
     //메시지 textarea 높이조정
     useEffect(() => {
@@ -38,24 +40,26 @@ const MessageInputWrap = (props) => {
         }
     }, [props.textareaValue]);
 
-
     //이미지 첨부-----------------------------------------
+    useEffect(()=>{
+        setFiles(files);
+    },[files]);
+
     //이미지첨부 리스트 store에 저장
     useEffect(()=>{
         setImgNameList(imgNameList);
         dispatch(msgImgs([...imgNameList]));
     },[imgNameList]);
 
-
     //채팅메시지 전송시 이미지첨부리스트 값 비우기
     useEffect(()=>{
         if(common.msgSend){
+            setFiles([]);
             setImgNameList([]);
             setUploadOn(false);
             dispatch(msgSend(false));
         }
     },[common.msgSend]);
-
 
     // 이미지 등록
     const { getRootProps, getInputProps } = useDropzone({
@@ -68,7 +72,6 @@ const MessageInputWrap = (props) => {
             const formData = new FormData();
             acceptedFiles.forEach((item)=>{
                 formData.append("media", item);
-                console.log(item);
             });
             
             axios.post(`${props.group ? g_msg_img_add : msg_img_add}`, formData, {
@@ -79,6 +82,15 @@ const MessageInputWrap = (props) => {
             })
             .then((res) => {
                 if (res.status === 201) {
+                    setFiles(prevFiles => [
+                        ...prevFiles,
+                        ...acceptedFiles.map((file,i) => ({
+                            id: uuidv4(), // 고유한 식별자로 파일 이름 사용
+                            file,
+                            // preview: URL.createObjectURL(file)
+                        }))
+                    ]);
+
                     const mediaUrls = res.data.mediaUrls;
                     const newList = [...imgNameList, ...mediaUrls];
                     setImgNameList(newList);
@@ -108,24 +120,42 @@ const MessageInputWrap = (props) => {
     
 
     //이미지 삭제
-    const handleRemove = (idx) => {
+    const handleRemove = (id, idx) => {
+        setFiles(prevFiles => prevFiles.filter(file => file.id !== id));
+
         let newNameList = [...imgNameList];
             newNameList.splice(idx,1);
         setImgNameList(newNameList);
     };
 
+
+    useEffect(()=>{
+        console.log(files);
+    },[files]);
+
+    useEffect(()=>{
+        console.log(imgNameList);
+    },[imgNameList]);
     
     // 썸네일 미리보기 생성
-    const thumbs = imgNameList.map((url,i) => (
+    const thumbs = files.map((file,i) => (
         <li key={i}>
             <img
-                src={url}
+                src={file.preview}
+                // 이미지 로드 후 data uri 폐기
+                onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                }}
                 alt="이미지"
             />
-            <button className="btn_delt" onClick={() => handleRemove(i)}>삭제버튼</button> {/* 삭제 버튼 추가 */}
+            <button className="btn_delt" onClick={() => handleRemove(file.id,i)}>삭제버튼</button> {/* 삭제 버튼 추가 */}
         </li>
     ));
 
+    useEffect(() => {
+        // 컴포넌트 언마운트 시 data uri 폐기
+        return () => files.forEach(file => URL.revokeObjectURL(file.preview));
+    }, [files]);
     //이미지 첨부-----------------------------------------
 
 
@@ -145,10 +175,10 @@ const MessageInputWrap = (props) => {
                     <ul className={`flex_wrap${thumbs.length > 0 ? " w_fit" : ""}`}>
                         {thumbs}
                         {thumbs && thumbs.length < 9 &&
-                            <li className={`drop_li${imgNameList && imgNameList.length > 0 ? "" : " w_100"}`}>
+                            <li className={`drop_li${files && files.length > 0 ? "" : " w_100"}`}>
                                 <div {...getRootProps({className: 'dropzone'})}>
                                     <input {...getInputProps()} />
-                                    {imgNameList && imgNameList.length > 0 ?
+                                    {files && files.length > 0 ?
                                         <div className="add_box"></div>
                                         :   <div className="txt_box tx_c">
                                                 <div className="txt1">이미지 첨부</div>
@@ -182,8 +212,8 @@ const MessageInputWrap = (props) => {
                 </div>
                 <button 
                     type="button" 
-                    className={`btn_send${props.textareaValue || imgNameList.length > 0 ? " on" : ""}`} 
-                    disabled={props.textareaValue || imgNameList.length > 0 ? false : true} 
+                    className={`btn_send${props.textareaValue || files.length > 0 ? " on" : ""}`} 
+                    disabled={props.textareaValue || files.length > 0 ? false : true} 
                     onClick={props.onMsgSendHandler}
                 >전송버튼</button>
             </div>
