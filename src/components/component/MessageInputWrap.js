@@ -174,7 +174,7 @@ const MessageInputWrap = (props) => {
                         }
                     </ul>
                 </div>
-                {thumbs && thumbs.length > 0 && <p className="f_14 flex_center tm5">이미지를 <img src={ic_plus} alt="플러스아이콘" /> 아이콘이있는 박스를 클릭하거나 드래그 앤 드롭하여 첨부하세요!</p>}
+                {thumbs && (thumbs.length > 0 && thumbs.length < 9) && <p className="f_14 flex_center tm5">이미지를 <img src={ic_plus} alt="플러스아이콘" /> 아이콘이있는 박스를 클릭하거나 드래그 앤 드롭하여 첨부하세요!</p>}
             </div>
             <div className="input_box flex_between">
                 <div className="box">
