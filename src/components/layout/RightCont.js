@@ -63,6 +63,7 @@ const RightCont = (props) => {
     const [noPower, setNoPower] = useState(null);
     const [myChat, setMyChat] = useState(null);
     const [msgList, setMsgList] = useState([]);
+    const [messageList, setMessageList] = useState([]);
     const chatRef = useRef();
     const innerRef = useRef();
     const [textareaValue, setTextareaValue] = useState("");
@@ -102,9 +103,79 @@ const RightCont = (props) => {
         setTextareaValue(textareaValue);
     },[textareaValue]);
 
+
+    //채팅리스트내역에 날짜객체값 추가 함수
+    const msgDateAdd = (list) => {
+        // 결과를 담을 새로운 배열
+        const resultList = [];
+
+        // list 배열 순회
+        for (let i = 0; i < list.length; i++) {
+            const prevMsg = list[i - 1];
+            const currentMsg = list[i];
+            const nextMsg = list[i + 1];
+            
+            // 현재 객체가 message_type이 'T' || 'I' 인지 확인
+            if (currentMsg.message_type === 'T' || currentMsg.message_type === 'I') {
+                //이전 객체가 없으면 현재날짜 객체 추가
+                if(!prevMsg){
+                    resultList.push({
+                        msg: formatDate(currentMsg.w_date_org),
+                        w_date: currentMsg.w_date,
+                        w_date_org: currentMsg.w_date_org,
+                        message_type: 'S'
+                    });
+                }
+
+                // 현재 객체를 resultList 배열에 추가
+                resultList.push(currentMsg);
+
+                // 다음 객체가 존재하고 그 다음 객체의 message_type이 'T' || 'I' 인지 확인
+                if (nextMsg && (nextMsg.message_type === 'T' || nextMsg.message_type === 'I')) {
+
+                    // 현재 객체와 다음 객체의 w_date_org 값이 다른지 확인 (시간 제외)
+                    if (getDateWithoutTime(currentMsg.w_date_org) !== getDateWithoutTime(nextMsg.w_date_org)) {
+                        // 다르다면 새로운 객체를 생성하여 resultList 배열에 추가
+                        resultList.push({
+                            msg: formatDate(nextMsg.w_date_org),
+                            w_date: nextMsg.w_date,
+                            w_date_org: nextMsg.w_date_org,
+                            message_type: 'S'
+                        });
+                    }
+                }
+
+            }else{
+                // resultList 배열에 현재 객체 추가
+                resultList.push(currentMsg);
+            }
+            
+        }
+        return resultList;
+    };
+
+    // 시간을 제외한 날짜만 반환하는 함수
+    function getDateWithoutTime(dateString) {
+        return dateString.split(' ')[0]; // 공백을 기준으로 문자열을 나누고 날짜 부분만 반환
+    }
+
+    // 날짜 포맷을 변경하는 함수 (예: "2024-02-19 16:30" -> "2024년 2월 19일")
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long'
+        });
+    }
+
     
+    //msgList 값 변경시
     useEffect(()=>{
-        setMsgList(msgList);
+        //날짜 로직추가
+        const newMsgList = msgDateAdd(msgList);
+        setMessageList(newMsgList);
 
         //세션스토리지에 선택한회원과의 채팅수 저장
         sessionStorage.setItem("msgCount",msgList.length);
@@ -136,6 +207,8 @@ const RightCont = (props) => {
             socket.emit("active room", data2);
         }
     };
+
+    
 
 
     useEffect(()=>{
@@ -1190,9 +1263,9 @@ const RightCont = (props) => {
                         </div>
                     }
                     <div className="chat_wrap scroll_wrap" ref={chatRef} onScroll={chatScroll}>
-                        {chatOn && msgList && msgList.length > 0 ?
+                        {chatOn && messageList && messageList.length > 0 ?
                             <div className="inner" ref={innerRef}>
-                                {msgList.map((cont,i)=>{
+                                {messageList.map((cont,i)=>{
                                     let send;
                                     if(myChat){
                                         if(cont.from_id === user.managerInfo.m_id){
@@ -1216,7 +1289,7 @@ const RightCont = (props) => {
                                                 <span>{cont.msg}</span>
                                             </div>
                                         :   cont.message_type == "T" || cont.message_type == "I" ? //텍스트메시지 or 이미지
-                                            <div className={`chat_box${send ? " send" : ""}`}>
+                                            <div className={`chat_box${send ? " send" : ""} ${cont.idx ? cont.idx : ''}`}>
                                                     {send ?
                                                         <>
                                                         {!myChat && <p className="name tx_r">{common.selectUser.from_user}</p>}
