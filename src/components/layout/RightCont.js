@@ -264,6 +264,7 @@ const RightCont = (props) => {
                         "to_id": result.to_id,
                         "msg": "매니저가 회원님께 대화를 신청했어요!",
                         "w_date": result.w_date,
+                        "w_date_org": result.w_date_formated,
                         "message_type": "Q",
                         "view_cnt": result.view_cnt
                     },
@@ -273,6 +274,7 @@ const RightCont = (props) => {
                         "to_id": result.to_id,
                         "msg": date,
                         "w_date": result.w_date,
+                        "w_date_org": result.w_date_formated,
                         "message_type": "S",
                         "view_cnt": result.view_cnt
                     }
@@ -283,6 +285,7 @@ const RightCont = (props) => {
                     "to_id": result.to_id,
                     "msg": result.msg,
                     "w_date": result.w_date,
+                    "w_date_org": result.w_date_formated,
                     "message_type": result.message_type,
                     "view_cnt": result.view_cnt
                 };
@@ -333,6 +336,7 @@ const RightCont = (props) => {
                         "to_id": result.to_id,
                         "msg": "매니저가 회원님께 대화를 신청했어요!",
                         "w_date": result.w_date,
+                        "w_date_org": result.w_date_formated,
                         "message_type": "Q",
                         "view_cnt": result.view_cnt
                     },
@@ -342,6 +346,7 @@ const RightCont = (props) => {
                         "to_id": result.to_id,
                         "msg": date,
                         "w_date": result.w_date,
+                        "w_date_org": result.w_date_formated,
                         "message_type": "S",
                         "view_cnt": result.view_cnt
                     }
@@ -353,6 +358,7 @@ const RightCont = (props) => {
                     "msg": "",
                     "files": result.files,
                     "w_date": result.w_date,
+                    "w_date_org": result.w_date_formated,
                     "message_type": result.message_type,
                     "view_cnt": result.view_cnt
                 };
