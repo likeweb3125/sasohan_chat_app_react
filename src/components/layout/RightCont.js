@@ -1281,6 +1281,10 @@ const RightCont = (props) => {
                                         }
                                     }
 
+                                    //날짜 변환
+                                    const date = moment(cont.w_date_org).format('A hh:mm');
+
+
                                     return(<div key={i}>
                                         {cont.message_type == "Q" ? //대화시작
                                             <div className="tit_box">{common.selectUser.m_name} 님께 대화를 신청했어요!</div>
@@ -1296,7 +1300,7 @@ const RightCont = (props) => {
                                                         <ul className="txt_ul">
                                                             <li>
                                                                 <div className="box flex_bottom">
-                                                                    <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{cont.w_date}</p>
+                                                                    <p className="time">{cont.view_cnt == 0 && <span>읽음</span>}{date}</p>
                                                                     {cont.message_type == "T" ? <div className="txt">{cont.msg}</div>
                                                                         :   cont.message_type == "I" && 
                                                                             <ul className="img_ul flex_wrap">
@@ -1338,7 +1342,7 @@ const RightCont = (props) => {
                                                                                     })}
                                                                                 </ul>
                                                                         }
-                                                                        <p className="time">{cont.w_date}</p>
+                                                                        <p className="time">{date}</p>
                                                                     </div>
                                                                 </li>
                                                             </ul>
