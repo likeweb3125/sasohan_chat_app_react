@@ -153,20 +153,9 @@ const Message = () => {
 
     //회원명 검색하기
     const searchHandler = () => {
-        if(searchValue.length > 0){
-            dispatch(newList(true));
-            dispatch(pageMore(false));
-            setSearchOn(true);
-        }else{
-            setSearchOn(false);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: "검색할 회원명을 입력해주세요.",
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }
+        dispatch(newList(true));
+        dispatch(pageMore(false));
+        setSearchOn(true);
     };
 
     
