@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { messagePopList } from "../../store/popupSlice";
+import { messagePopList, chatPasswordCheckPop, chatPasswordCheckPopSelectUser, chatPasswordCheckPopClose } from "../../store/popupSlice";
 import { selectUser, pageMore, pageNo } from "../../store/commonSlice";
+import { chatPasswordCheck } from "../../store/userSlice";
 import MemberBox from "./MemberBox";
 
 
@@ -10,6 +11,7 @@ const MemberListCont = (props) => {
     const common = useSelector((state)=>state.common);
     const dispatch = useDispatch();
     const [listOn, setListOn] = useState(null);
+    const [PrevListOn, setPrevListOn] = useState(null);
     const [idList, setIdList] = useState([]);
     const listRef = useRef();
 
@@ -76,6 +78,14 @@ const MemberListCont = (props) => {
         }
     },[common.selectUser, props.list]);
 
+    useEffect(()=>{
+        if(popup.chatPasswordCheckPopClose){
+            setListOn(PrevListOn);
+            setPrevListOn(null);
+            dispatch(chatPasswordCheckPopClose(false));
+        }
+    },[popup.chatPasswordCheckPopClose]);
+
 
 
     return(
@@ -103,13 +113,16 @@ const MemberListCont = (props) => {
                                     <li key={i} className={listOn === i ? "on" : ""} 
                                         onClick={()=>{
                                             setListOn(i);
+                                            setPrevListOn(listOn);
 
                                             // 단체메시지 전송팝업이 안열려있을때만 가능 (단체메시지 리스트내역과 겹침 방지)
                                             if(!popup.messagePop){
                                                 // 연결한 대화방 페이지일때
                                                 if(props.listType === "chat"){
+                                                    dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
+                                                    dispatch(chatPasswordCheckPop(true)); //채팅방 비밀번호 체크
                                                     dispatch(
-                                                        selectUser(
+                                                        chatPasswordCheckPopSelectUser(
                                                             {
                                                                 room_id:mem.room_id,
                                                                 idx:mem.last_idx,

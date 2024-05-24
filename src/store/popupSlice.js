@@ -57,6 +57,11 @@ const popup = createSlice({
         managerProfilePop: false,
         managerProfilePopPosition:[],
 
+        //연결한대화방 채팅내역 비밀번호입력 팝업
+        chatPasswordCheckPop: false,
+        chatPasswordCheckPopSelectUser: {},
+        chatPasswordCheckPopClose: false,
+
         //로딩팝업
         loadingPop: false,
     },
@@ -133,6 +138,15 @@ const popup = createSlice({
         managerProfilePopPosition: (state, action) => {
             state.managerProfilePopPosition = action.payload;
         },
+        chatPasswordCheckPop: (state, action) => {
+            state.chatPasswordCheckPop = action.payload;
+        },
+        chatPasswordCheckPopSelectUser: (state, action) => {
+            state.chatPasswordCheckPopSelectUser = action.payload;
+        },
+        chatPasswordCheckPopClose: (state, action) => {
+            state.chatPasswordCheckPopClose = action.payload;
+        },
         loadingPop: (state, action) => {
             state.loadingPop = action.payload;
         },
@@ -160,6 +174,9 @@ export const {
     filterPop,
     managerProfilePop,
     managerProfilePopPosition,
+    chatPasswordCheckPop,
+    chatPasswordCheckPopSelectUser,
+    chatPasswordCheckPopClose,
     loadingPop
 } = popup.actions;
 export default popup;

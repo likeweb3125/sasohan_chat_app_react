@@ -6,8 +6,9 @@ import 'moment/locale/ko';
 import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
+import { chatPop, imgPop, confirmPop, loadingPop, chatPasswordCheckPop, chatPasswordCheckPopSelectUser } from "../../store/popupSlice";
 import { msgSend, selectUser, assiListOn, groupMsg, activeRoom } from "../../store/commonSlice";
+import { chatPassword, chatPasswordCheck } from "../../store/userSlice";
 import ConfirmPop from "../popup/ConfirmPop";
 import FloatingMember from "../component/FloatingMember";
 import MemberBox from "../component/MemberBox";
@@ -33,7 +34,7 @@ import {
 } from '@dnd-kit/sortable';
 
 
-const RightCont = (props) => {
+const RightCont = () => {
     const dispatch = useDispatch();
     const socket = useSocket();
     const popup = useSelector((state)=>state.popup);
@@ -911,10 +912,11 @@ const RightCont = (props) => {
                 // 선택한 연결한대화방이 있을때만 메시지내용가져오기
                 if(common.selectUser.room_id.length > 0 && common.selectUser.idx){
                     setChatOn(true);
-
+                    
                     //최근 메시지내용 가져오기 - 연결된 회원끼리 대화
                     dispatch(loadingPop(true));
-                    axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx+1)}`,
+                    const body = {password: user.chatPassword};
+                    axios.post(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",common.selectUser.idx+1)}`, body,
                         {headers:{Authorization: `Bearer ${user.tokenValue}`}}
                     )
                     .then((res)=>{
@@ -949,6 +951,7 @@ const RightCont = (props) => {
                     })
                     .catch((error) => {
                         dispatch(loadingPop(false));
+                        dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
 
                         const err_msg = CF.errorMsgHandler(error);
                         if(error.response.status === 401){//토큰에러시 에러팝업
@@ -958,6 +961,24 @@ const RightCont = (props) => {
                                 confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                             }));
                             setConfirm(true);
+                        }else if(error.response.status === 400){//채팅방 비밀번호 값 없을때
+                            dispatch(confirmPop({
+                                confirmPop:true,
+                                confirmPopTit:'알림',
+                                confirmPopTxt:err_msg,
+                                confirmPopBtn:1,
+                            }));
+                            setConfirm(true);
+                        }else if(error.response.status === 403){//채팅방 비밀번호 틀렸을때
+                            dispatch(confirmPop({
+                                confirmPop:true,
+                                confirmPopTit:'알림',
+                                confirmPopTxt:err_msg,
+                                confirmPopBtn:1,
+                            }));
+                            setConfirm(true);
+
+                            dispatch(selectUser({})); //selectUser 값 비우기
                         }else{
                             if(err_msg == "대화방이 존재하지 않습니다."){
                                 setChatOn(true);
@@ -979,6 +1000,14 @@ const RightCont = (props) => {
             setNoSelect(true);
         }
     },[common.selectUser]);
+
+
+    useEffect(()=>{
+        if(user.chatPasswordCheck){
+            const data = popup.chatPasswordCheckPopSelectUser;
+            dispatch(selectUser({...data}));
+        }
+    },[user.chatPasswordCheck]);
 
 
     //메시지내용 가져오기 - 매니저와 회원의 대화
@@ -1039,7 +1068,8 @@ const RightCont = (props) => {
     const getMessageAdmin = (idx) => {
         dispatch(loadingPop(true));
 
-        axios.get(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",idx)}`,
+        const body = {password: user.chatPassword};
+        axios.post(`${msg_cont_list_admin.replace(":room_id",common.selectUser.room_id).replace(":last_idx",idx)}`,body,
             {headers:{Authorization: `Bearer ${user.tokenValue}`}}
         )
         .then((res)=>{
@@ -1062,6 +1092,7 @@ const RightCont = (props) => {
         })
         .catch((error) => {
             dispatch(loadingPop(false));
+            dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
 
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 에러팝업
@@ -1071,6 +1102,24 @@ const RightCont = (props) => {
                     confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
                 }));
                 setConfirm(true);
+            }else if(error.response.status === 400){//채팅방 비밀번호 값 없을때
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else if(error.response.status === 403){//채팅방 비밀번호 틀렸을때
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+
+                dispatch(selectUser({})); //selectUser 값 비우기
             }else{
                 if(err_msg == "대화방이 존재하지 않습니다."){
                     setChatOn(true);

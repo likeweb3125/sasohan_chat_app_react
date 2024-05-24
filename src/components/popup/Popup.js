@@ -11,6 +11,7 @@ import MessagePop from "./MessagePop";
 import MemberCheckPop from "./MemberCheckPop";
 import FilterPop from "./FilterPop";
 import ManagerProfilePop from "./ManagerProfilePop";
+import ChatPasswordCheckPop from "./ChatPasswordCheckPop";
 import LoadingPop from "./LoadingPop";
 
 const Popup = () => {
@@ -48,6 +49,9 @@ const Popup = () => {
 
             {/* 매니저프로필 팝업 */}
             {popup.managerProfilePop && <ManagerProfilePop />}
+
+            {/* 연결한대화방 채팅내역 비밀번호입력 팝업 */}
+            {popup.chatPasswordCheckPop && <ChatPasswordCheckPop />}
 
             {/* 로딩 팝업 */}
             {popup.loadingPop && <LoadingPop />}

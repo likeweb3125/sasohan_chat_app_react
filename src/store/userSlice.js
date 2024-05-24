@@ -8,6 +8,8 @@ const user = createSlice({
         managerInfo:{},
         managerSetting:{},
         superManager:false,
+        chatPasswordCheck:false,
+        chatPassword:'',
     },
     reducers:{
         isLogin: (state, action) => {
@@ -25,8 +27,14 @@ const user = createSlice({
         superManager: (state, action) => {
             state.superManager = action.payload;
         },
+        chatPasswordCheck: (state, action) => {
+            state.chatPasswordCheck = action.payload;
+        },
+        chatPassword: (state, action) => {
+            state.chatPassword = action.payload;
+        },
     },
 });
 
-export const { isLogin, tokenValue, managerInfo, managerSetting, superManager } = user.actions;
+export const { isLogin, tokenValue, managerInfo, managerSetting, superManager, chatPasswordCheck, chatPassword } = user.actions;
 export default user;

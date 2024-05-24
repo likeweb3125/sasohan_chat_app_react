@@ -270,7 +270,7 @@ const Header = () => {
                             <img src={user.managerInfo.m_f_photo ? user.managerInfo.m_f_photo : none_profile} alt="프로필이미지" />
                         </div>
                         <div className='txt'>
-                            <h6>매칭매니저</h6>
+                            <h6>{user.managerInfo.manager_type_text}</h6>
                             <p>{user.managerInfo.m_id}</p>
                         </div>
                     </div>
