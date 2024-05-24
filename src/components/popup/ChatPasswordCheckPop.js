@@ -60,6 +60,12 @@ const ChatPasswordCheckPop = () => {
                                 const val = e.currentTarget.value;
                                 setPassword(val);
                             }}
+                            onKeyDown={(e)=>{
+                                if(e.key === "Enter") {
+                                    e.preventDefault();
+                                    passwordCheckHandler();
+                                }
+                            }}
                         />
                     </div>
                 </div>

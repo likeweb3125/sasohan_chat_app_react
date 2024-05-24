@@ -78,6 +78,8 @@ const MemberListCont = (props) => {
         }
     },[common.selectUser, props.list]);
 
+
+    //연결한 대화방 채팅방 비밀번호확인팝업 닫았을때
     useEffect(()=>{
         if(popup.chatPasswordCheckPopClose){
             setListOn(PrevListOn);

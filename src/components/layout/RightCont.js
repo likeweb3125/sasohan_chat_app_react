@@ -952,6 +952,7 @@ const RightCont = () => {
                     .catch((error) => {
                         dispatch(loadingPop(false));
                         dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
+                        dispatch(chatPassword('')); //연결한대화방 채팅방 비밀번호 비우기
 
                         const err_msg = CF.errorMsgHandler(error);
                         if(error.response.status === 401){//토큰에러시 에러팝업
@@ -1002,6 +1003,7 @@ const RightCont = () => {
     },[common.selectUser]);
 
 
+    //연결한 대화방 채팅방 비밀번호확인할때
     useEffect(()=>{
         if(user.chatPasswordCheck){
             const data = popup.chatPasswordCheckPopSelectUser;
@@ -1093,6 +1095,7 @@ const RightCont = () => {
         .catch((error) => {
             dispatch(loadingPop(false));
             dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
+            dispatch(chatPassword('')); //연결한대화방 채팅방 비밀번호 비우기
 
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 에러팝업
