@@ -6,7 +6,7 @@ import 'moment/locale/ko';
 import { useSocket } from "../etc/SocketProvider";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { chatPop, imgPop, confirmPop, loadingPop, chatPasswordCheckPop, chatPasswordCheckPopSelectUser } from "../../store/popupSlice";
+import { chatPop, imgPop, confirmPop, loadingPop } from "../../store/popupSlice";
 import { msgSend, selectUser, assiListOn, groupMsg, activeRoom } from "../../store/commonSlice";
 import { chatPassword, chatPasswordCheck } from "../../store/userSlice";
 import ConfirmPop from "../popup/ConfirmPop";
@@ -952,7 +952,6 @@ const RightCont = () => {
                     .catch((error) => {
                         dispatch(loadingPop(false));
                         dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
-                        dispatch(chatPassword('')); //연결한대화방 채팅방 비밀번호 비우기
 
                         const err_msg = CF.errorMsgHandler(error);
                         if(error.response.status === 401){//토큰에러시 에러팝업
@@ -970,6 +969,9 @@ const RightCont = () => {
                                 confirmPopBtn:1,
                             }));
                             setConfirm(true);
+
+                            dispatch(selectUser({})); //selectUser 값 비우기
+                            dispatch(chatPassword(''));  //연결한대화방 채팅방 비밀번호값 비우기
                         }else if(error.response.status === 403){//채팅방 비밀번호 틀렸을때
                             dispatch(confirmPop({
                                 confirmPop:true,
@@ -980,6 +982,7 @@ const RightCont = () => {
                             setConfirm(true);
 
                             dispatch(selectUser({})); //selectUser 값 비우기
+                            dispatch(chatPassword(''));  //연결한대화방 채팅방 비밀번호값 비우기
                         }else{
                             if(err_msg == "대화방이 존재하지 않습니다."){
                                 setChatOn(true);
@@ -1095,7 +1098,6 @@ const RightCont = () => {
         .catch((error) => {
             dispatch(loadingPop(false));
             dispatch(chatPasswordCheck(false)); //연결한대화방 채팅방 비밀번호체크 false
-            dispatch(chatPassword('')); //연결한대화방 채팅방 비밀번호 비우기
 
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 에러팝업
@@ -1113,6 +1115,9 @@ const RightCont = () => {
                     confirmPopBtn:1,
                 }));
                 setConfirm(true);
+
+                dispatch(selectUser({})); //selectUser 값 비우기
+                dispatch(chatPassword(''));  //연결한대화방 채팅방 비밀번호값 비우기
             }else if(error.response.status === 403){//채팅방 비밀번호 틀렸을때
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -1123,6 +1128,7 @@ const RightCont = () => {
                 setConfirm(true);
 
                 dispatch(selectUser({})); //selectUser 값 비우기
+                dispatch(chatPassword(''));  //연결한대화방 채팅방 비밀번호값 비우기
             }else{
                 if(err_msg == "대화방이 존재하지 않습니다."){
                     setChatOn(true);
