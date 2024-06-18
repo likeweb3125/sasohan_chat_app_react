@@ -26,8 +26,6 @@ const MemberProfile = (props) => {
     const u_pro_modify = enum_api_uri.u_pro_modify;
     const [imgList, setImgList] = useState([1,2,3,4,5,6,7,8]);
     const [imgSrcList, setImgSrcList] = useState(["","","","","","","",""]);
-    const [imgNameList, setImgNameList] = useState(["","","","","","","",""]);
-    const [photoPath, setPhotoPath] = useState("");
     const [confirm, setConfirm] = useState(false);
     const [modifyConfirm, setModifyConfirm] = useState(false);
     const [modifyOkConfirm, setModifyOkConfirm] = useState(false);
@@ -84,15 +82,8 @@ const MemberProfile = (props) => {
                 let data = res.data;
                 setInfo({...data});
 
-                let path = data.file_path;
-                setPhotoPath(path);
-
                 const photoList = data.m_photo;
-                const nameList = photoList.map(value => {
-                    return value ? value.replace(path,"") : value;
-                });
                 setImgSrcList([...photoList]);
-                setImgNameList([...nameList]);
             }
         })
         .catch((error) => {
@@ -304,7 +295,7 @@ const MemberProfile = (props) => {
 
 
     //이미지 등록
-    const imgUpHandler = (fileBlob, postData, idx) => {
+    const imgUpHandler = (postData, idx) => {
         const formData = new FormData();
         formData.append("media", postData.target.files[0]);
         axios.post(`${u_img_add}`, formData, {
@@ -315,15 +306,9 @@ const MemberProfile = (props) => {
         })
         .then((res) => {
             if (res.status === 201) {
-                console.log(res.data)
-                const updatedMediaUrls = res.data.mediaUrls.map(url => {
-                    let updatedUrl = url.replace(api_uri, "");
-                    updatedUrl = updatedUrl.replace(photoPath, "");
-                    return updatedUrl;
-                });
-                  
-                const newList = [...imgNameList, ...updatedMediaUrls];
-                setImgNameList(newList);
+                let newList = [...imgSrcList];
+                newList[idx] = res.data.mediaUrls[0];
+                setImgSrcList(newList);
             }
         })
         .catch((error) => {
@@ -345,16 +330,6 @@ const MemberProfile = (props) => {
                 setConfirm(true);
             }
         });
-        const reader = new FileReader();
-        reader.readAsDataURL(fileBlob);
-        return new Promise((resolve) => {
-          reader.onload = () => {
-            let newList = [...imgSrcList];
-                newList[idx] = reader.result
-            setImgSrcList(newList);
-            resolve();
-          };
-        });
     };
 
 
@@ -363,10 +338,6 @@ const MemberProfile = (props) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
-
-        let newNameList = [...imgNameList];
-            newNameList[idx] = "";
-        setImgNameList(newNameList);
     };
 
 
@@ -840,13 +811,9 @@ const MemberProfile = (props) => {
         const compareFunction = (a, b) => {
             if (a === "") return 1;
             if (b === "") return -1;
-            return imgNameList.indexOf(a) - imgNameList.indexOf(b);
+            return imgSrcList.indexOf(a) - imgSrcList.indexOf(b);
         };
-        const imgList = imgNameList.sort(compareFunction);
-        const updatedImgList = imgList.map(url => {
-            let updatedUrl = url.replace("upload/profile/user/", "");
-            return updatedUrl;
-        });
+        const m_photo = imgSrcList.sort(compareFunction);
 
         let gender = values.gender.replace("gender_","");
 
@@ -863,7 +830,7 @@ const MemberProfile = (props) => {
         let t_drink = values.t_drink.replace("t_drink_","");
 
         let body = {
-            m_photo:updatedImgList,
+            m_photo:m_photo,
             m_id:info.m_id,
             m_password:values.password,
             m_name:values.name,
@@ -992,7 +959,7 @@ const MemberProfile = (props) => {
                                                                 </div>
                                                                 <div className="img_up">
                                                                     <input type="file" className="blind" id={`pic${i}`} accept="image/*" onChange={(e) => {
-                                                                        imgUpHandler(e.currentTarget.files[0], e, i);
+                                                                        imgUpHandler(e, i);
                                                                         e.currentTarget.value = '';
                                                                     }}/>
                                                                     <label htmlFor={`pic${i}`}>이미지등록</label>

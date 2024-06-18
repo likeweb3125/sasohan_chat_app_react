@@ -19,8 +19,6 @@ const ManagerProfilePop = (props) => {
     const [nickName, setNickName] = useState("");
     const [imgList, setImgList] = useState([1,2,3,4,5,6,7,8]);
     const [imgSrcList, setImgSrcList] = useState(["","","","","","","",""]);
-    const [imgNameList, setImgNameList] = useState(["","","","","","","",""]);
-    const [photoPath, setPhotoPath] = useState("");
     const [confirm, setConfirm] = useState(false);
     const [modifyConfirm, setModifyConfirm] = useState(false);
     const [modifyOkConfirm, setModifyOkConfirm] = useState(false);
@@ -48,21 +46,14 @@ const ManagerProfilePop = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data;
-                let path = data.photo_path;
                 let name = "";
                 if(data.m_n_name){
                     name = data.m_n_name;
                 }
                 setNickName(name);
-                setPhotoPath(path);
 
                 const photoList = data.photo;
-                const nameList = photoList.map(value => {
-                    return value ? value.replace(path,"") : value;
-                });
                 setImgSrcList([...photoList]);
-                setImgNameList([...nameList]);
-                console.log(nameList)
             }
         })
         .catch((error) => {
@@ -87,7 +78,7 @@ const ManagerProfilePop = (props) => {
     },[]);
 
     //이미지 등록
-    const imgUpHandler = (fileBlob, postData, idx) => {
+    const imgUpHandler = (postData, idx) => {
         const formData = new FormData();
         formData.append("media", postData.target.files[0]);
         axios.post(`${m_img_add}`, formData, {
@@ -98,15 +89,9 @@ const ManagerProfilePop = (props) => {
         })
         .then((res) => {
             if (res.status === 201) {
-                console.log(res.data)
-                const updatedMediaUrls = res.data.mediaUrls.map(url => {
-                    let updatedUrl = url.replace(api_uri, "");
-                    updatedUrl = updatedUrl.replace(photoPath, "");
-                    return updatedUrl;
-                });
-                  
-                const newList = [...imgNameList, ...updatedMediaUrls];
-                setImgNameList(newList);
+                let newList = [...imgSrcList];
+                newList[idx] = res.data.mediaUrls[0];
+                setImgSrcList(newList);
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -136,16 +121,6 @@ const ManagerProfilePop = (props) => {
                 setConfirm(true);
             }
         });
-        const reader = new FileReader();
-        reader.readAsDataURL(fileBlob);
-        return new Promise((resolve) => {
-          reader.onload = () => {
-            let newList = [...imgSrcList];
-                newList[idx] = reader.result
-            setImgSrcList(newList);
-            resolve();
-          };
-        });
     };
 
     //이미지 삭제
@@ -153,15 +128,11 @@ const ManagerProfilePop = (props) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
-
-        let newNameList = [...imgNameList];
-            newNameList[idx] = "";
-        setImgNameList(newNameList);
     };
 
     //프로필 수정하기 버튼클릭시
     const modifyBtnHandler = () => {
-        const noneImg = imgNameList.every((value) => value === ""); 
+        const noneImg = imgSrcList.every((value) => value === ""); 
         if(nickName.length == 0){
             setConfirm(true);
             dispatch(confirmPop({
@@ -195,17 +166,13 @@ const ManagerProfilePop = (props) => {
         const compareFunction = (a, b) => {
             if (a === "") return 1;
             if (b === "") return -1;
-            return imgNameList.indexOf(a) - imgNameList.indexOf(b);
+            return imgSrcList.indexOf(a) - imgSrcList.indexOf(b);
         };
-        const imgList = imgNameList.sort(compareFunction);
-        const updatedImgList = imgList.map(url => {
-            let updatedUrl = url.replace("upload/profile/manager/", "");
-            return updatedUrl;
-        });
+        const photo = imgSrcList.sort(compareFunction);
 
         let body = {
             m_n_name:nickName,
-            photo:updatedImgList
+            photo:photo
         };
         axios.put(`${m_pro_modify}`, body, {
             headers: {
@@ -308,7 +275,7 @@ const ManagerProfilePop = (props) => {
                                     </div>
                                     <div className="img_up">
                                         <input type="file" className="blind" id={`pic${i}`} accept="image/*" onChange={(e) => {
-                                            imgUpHandler(e.currentTarget.files[0], e, i);
+                                            imgUpHandler(e, i);
                                             e.currentTarget.value = '';
                                         }}/>
                                         <label htmlFor={`pic${i}`}>이미지등록</label>
