@@ -7,12 +7,13 @@ import { managerProfilePop, confirmPop } from "../../store/popupSlice";
 import { managerInfo } from "../../store/userSlice";
 import ConfirmPop from "./ConfirmPop";
 
-const ManagerProfilePop = (props) => {
+
+const ManagerProfilePop = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
-    const api_uri = enum_api_uri.api_uri;
     const m_profile = enum_api_uri.m_profile;
     const m_img_add = enum_api_uri.m_img_add;
+    const m_img_delt = enum_api_uri.m_img_delt;
     const m_pro_modify = enum_api_uri.m_pro_modify;
     const m_info = enum_api_uri.m_info;
     const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const ManagerProfilePop = (props) => {
     const [confirm, setConfirm] = useState(false);
     const [modifyConfirm, setModifyConfirm] = useState(false);
     const [modifyOkConfirm, setModifyOkConfirm] = useState(false);
+    const [deltImgList, setDeltImgList] = useState([]);
+
 
     //팝업닫기
     const closePopHandler = () => {
@@ -124,11 +127,17 @@ const ManagerProfilePop = (props) => {
     };
 
     //이미지 삭제
-    const imgDeltHandler = (idx) => {
+    const imgDeltHandler = (idx, img) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
+
+        const imgName = img.split('/').pop() || '';
+        const newDeltImgList = [...deltImgList];
+        newDeltImgList.push(imgName);
+        setDeltImgList(newDeltImgList);
     };
+
 
     //프로필 수정하기 버튼클릭시
     const modifyBtnHandler = () => {
@@ -160,8 +169,52 @@ const ManagerProfilePop = (props) => {
         }
     };
 
-    //프로필 수정하기
+
+    //프로필 수정진행 -> 삭제할이미지 있으면 삭제후 프로필수정
     const modifyHandler = () => {
+        if(deltImgList.length > 0){
+            // 삭제할 이미지가 있는 경우 각 이미지를 순회하며 삭제
+            deltImgList.forEach((imageName, index) => {
+                profileImgDelt(imageName, index === deltImgList.length - 1); // 각 이미지를 삭제하는 함수 호출
+            });
+        }else{
+            profileEdit();
+        }
+    };
+
+
+    //프로필 이미지 삭제하기
+    const profileImgDelt = (imageName, isLast) => {
+        axios.delete(m_img_delt.replace(':filename',imageName), {
+            headers: {
+                Authorization: `Bearer ${user.tokenValue}`,
+            },
+        })
+        .then((res)=>{
+            if(res.status === 200){
+                //마지막 이미지 삭제후
+                if (isLast) {
+                    // deltImgList 값 초기화
+                    setDeltImgList([]);
+                    // 프로필 수정 함수 호출
+                    profileEdit();
+                }
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+    //프로필 수정하기
+    const profileEdit = () => {
         //프로필사진 배열정렬
         const compareFunction = (a, b) => {
             if (a === "") return 1;
@@ -280,7 +333,7 @@ const ManagerProfilePop = (props) => {
                                         }}/>
                                         <label htmlFor={`pic${i}`}>이미지등록</label>
                                     </div>
-                                    <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i)}}>삭제버튼</button>
+                                    <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i, imgSrcList[i])}}>삭제버튼</button>
                                 </li>
                             );
                         })}

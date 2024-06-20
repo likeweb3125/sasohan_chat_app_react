@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { NumericFormat, PatternFormat } from "react-number-format";
+import { PatternFormat } from "react-number-format";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import * as CF from "../config/function";
 import { enum_api_uri } from "../config/enum";
-import { memInfoPop, confirmPop } from "../store/popupSlice";
-import SelectBox from "../components/component/SelectBox";
-import InputDatepicker from "../components//component/InputDatePicker";
+import { confirmPop } from "../store/popupSlice";
 import ConfirmPop from "../components/popup/ConfirmPop";
 
-const MemberProfile = (props) => {
+
+const MemberProfile = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
@@ -22,6 +21,7 @@ const MemberProfile = (props) => {
     const u_address2 = enum_api_uri.u_address2;
     const u_select_list = enum_api_uri.u_select_list;
     const u_img_add = enum_api_uri.u_img_add;
+    const u_img_delt = enum_api_uri.u_img_delt;
     const u_nick_check = enum_api_uri.u_nick_check;
     const u_pro_modify = enum_api_uri.u_pro_modify;
     const [imgList, setImgList] = useState([1,2,3,4,5,6,7,8]);
@@ -54,6 +54,7 @@ const MemberProfile = (props) => {
     const [formValues, setFormValues] = useState({});
     const [hasRunOnce, setHasRunOnce] = useState(false);
     const { m_id } = useParams();
+    const [deltImgList, setDeltImgList] = useState([]);
 
 
     //현재창 닫기
@@ -334,10 +335,15 @@ const MemberProfile = (props) => {
 
 
     //이미지 삭제
-    const imgDeltHandler = (idx) => {
+    const imgDeltHandler = (idx, img) => {
         let newList = [...imgSrcList];
             newList[idx] = "";
         setImgSrcList(newList);
+
+        const imgName = img.split('/').pop() || '';
+        const newDeltImgList = [...deltImgList];
+        newDeltImgList.push(imgName);
+        setDeltImgList(newDeltImgList);
     };
 
 
@@ -803,8 +809,52 @@ const MemberProfile = (props) => {
     };
 
 
-    //프로필 수정하기
+    //프로필 수정진행 -> 삭제할이미지 있으면 삭제후 프로필수정
     const modifyHandler = () => {
+        if(deltImgList.length > 0){
+            // 삭제할 이미지가 있는 경우 각 이미지를 순회하며 삭제
+            deltImgList.forEach((imageName, index) => {
+                profileImgDelt(imageName, index === deltImgList.length - 1); // 각 이미지를 삭제하는 함수 호출
+            });
+        }else{
+            profileEdit();
+        }
+    };
+
+
+    //프로필 이미지 삭제하기
+    const profileImgDelt = (imageName, isLast) => {
+        axios.delete(u_img_delt.replace(':filename',imageName), {
+            headers: {
+                Authorization: `Bearer ${user.tokenValue}`,
+            },
+        })
+        .then((res)=>{
+            if(res.status === 200){
+                //마지막 이미지 삭제후
+                if (isLast) {
+                    // deltImgList 값 초기화
+                    setDeltImgList([]);
+                    // 프로필 수정 함수 호출
+                    profileEdit();
+                }
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //프로필 수정하기
+    const profileEdit = () => {
         let values = formValues;
 
         //프로필사진 배열정렬
@@ -964,7 +1014,7 @@ const MemberProfile = (props) => {
                                                                     }}/>
                                                                     <label htmlFor={`pic${i}`}>이미지등록</label>
                                                                 </div>
-                                                                <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i)}}>삭제버튼</button>
+                                                                <button type="button" className="btn_delt" onClick={()=>{imgDeltHandler(i, imgSrcList[i])}}>삭제버튼</button>
                                                             </li>
                                                         );
                                                     })}

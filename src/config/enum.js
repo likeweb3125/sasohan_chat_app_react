@@ -8,6 +8,7 @@ exports.enum_api_uri = {
     m_info: `${api_uri}v1/manager/manager-info`,
     m_profile: `${api_uri}v1/manager/manager-profile`,
     m_img_add: `${api_uri}v1/manager/manager-image-add`,
+    m_img_delt: `${api_uri}v1/manager/manager-image-remove/:filename`,
     m_pro_modify: `${api_uri}v1/manager/manager-modify`,
     m_setting: `${api_uri}v1/message-setting/setting`,
     m_limit: `${api_uri}v1/message-setting/limit`,
@@ -19,6 +20,7 @@ exports.enum_api_uri = {
     u_info: `${api_uri}v1/user-list/user-info/:m_id`,
     u_profile: `${api_uri}v1/user-list/user-profile/:m_id`,
     u_img_add: `${api_uri}v1/user-list/user-image-add`,
+    u_img_delt: `${api_uri}v1/user-list/user-image-remove/:filename`,
     u_nick_check: `${api_uri}v1/user-list/check-nic`,
     //u_email_check: `${api_uri}v1/user-list/check-email`, //앱 회원가입시 이메일입력 삭제
     u_pro_modify: `${api_uri}v1/user-list/user-profile-modify`,
