@@ -12,6 +12,7 @@ import MemberCheckPop from "./MemberCheckPop";
 import FilterPop from "./FilterPop";
 import ManagerProfilePop from "./ManagerProfilePop";
 import ChatPasswordCheckPop from "./ChatPasswordCheckPop";
+import NotiLogPop from "./NotiLogPop";
 import LoadingPop from "./LoadingPop";
 
 const Popup = () => {
@@ -52,6 +53,9 @@ const Popup = () => {
 
             {/* 연결한대화방 채팅내역 비밀번호입력 팝업 */}
             {popup.chatPasswordCheckPop && <ChatPasswordCheckPop />}
+
+            {/* 결정의날알림로그 팝업 */}
+            {popup.notiLogPop && <NotiLogPop />}
 
             {/* 로딩 팝업 */}
             {popup.loadingPop && <LoadingPop />}

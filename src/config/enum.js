@@ -55,6 +55,9 @@ exports.enum_api_uri = {
     //연결한 대화방
     chat_list: `${api_uri}v1/chat-connect/chat-list`,
     msg_cont_list_admin: `${api_uri}v1/chat-connect/chat-content-admin/:room_id/:last_idx`,
+
+    //결정의날알림 로그
+    fcm_log: `${api_uri}v1/message/fcm-log`,
     
 
 

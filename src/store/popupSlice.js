@@ -62,6 +62,9 @@ const popup = createSlice({
         chatPasswordCheckPopSelectUser: {},
         chatPasswordCheckPopClose: false,
 
+        //결정의날알림로그 팝업
+        notiLogPop: false,
+
         //로딩팝업
         loadingPop: false,
     },
@@ -147,6 +150,9 @@ const popup = createSlice({
         chatPasswordCheckPopClose: (state, action) => {
             state.chatPasswordCheckPopClose = action.payload;
         },
+        notiLogPop: (state, action) => {
+            state.notiLogPop = action.payload;
+        },
         loadingPop: (state, action) => {
             state.loadingPop = action.payload;
         },
@@ -177,6 +183,7 @@ export const {
     chatPasswordCheckPop,
     chatPasswordCheckPopSelectUser,
     chatPasswordCheckPopClose,
+    notiLogPop,
     loadingPop
 } = popup.actions;
 export default popup;

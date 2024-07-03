@@ -145,6 +145,21 @@ html,.body{height: auto;}
 	bottom: 15%;
 }
 
+/* 페이징 */
+.paging {text-align: center; position: relative; padding-top: 30px; display: flex; justify-content: center;}
+.paging button {width: 32px; height: 32px; line-height: 30px; border: 1px solid transparent; display: inline-block; vertical-align: top; margin: 0 6px; font-size: 18px; font-weight: 500; color: #222;}
+.paging button.on {border-radius: 5px; background: #192030;color: #fff;}
+.paging .btn_paging {text-indent: -9999px; text-align: left; position: relative;}
+.paging .btn_paging:after {content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: url('../images/ic_paging_arrow.svg') no-repeat 50% 50%/8px;}
+.paging .btn_paging.btn_prev {margin: 0 10px 0 0;}
+.paging .btn_paging.btn_next {margin: 0 0 0 10px;}
+.paging .btn_paging.btn_next:after {transform: rotateZ(180deg);}
+.paging .btn_paging.btn_prev_paging {margin: 0 10px 0 0;}
+.paging .btn_paging.btn_next_paging {margin: 0 0 0 10px;}
+.paging .btn_paging.btn_next_paging:after {transform: rotateZ(180deg);}
+
+
+
 
 /************************* header *****************************/
 #header{width: 280px;height: 100vh;background: #fff;border-right: 1px solid #EAEAEA;position: relative;}
@@ -152,13 +167,15 @@ html,.body{height: auto;}
 #header .top_box .logo span{display: block;font-size: 18px;color: #1B171E;padding-top: 10px;}
 #header .menu_box{padding: 20px 12px 20px 16px;max-height: calc(100% - 290px);}
 #header .menu_box>ul>li{margin-bottom: 12px;}
-#header .menu_box>ul>li .menu{display: block; font-size: 18px;padding: 16px 10px 16px 64px;width: 100%;text-align: left;font-weight: 500;background: url(../images/ic_menu01.svg) no-repeat center left 20px;border-radius: 12px;color: #1B171E;position: relative;}
+#header .menu_box>ul>li .menu{display: block; font-size: 18px;padding: 16px 10px 16px 64px;width: 100%;text-align: left;font-weight: 500;border-radius: 12px;color: #1B171E;position: relative;}
 #header .menu_box>ul>li .menu .num{position: absolute;font-size: 12px;width: 20px;height: 20px;right: 10px;top: 50%;transform: translateY(-50%);border: 1px solid;text-align: center;padding-top: 3px;border-radius: 50%;background: #1B1718;color: #fff;}
+#header .menu_box>ul>li:nth-child(1) .menu{background: url(../images/ic_menu01.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(2) .menu{background: url(../images/ic_menu02.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(3) .menu{background: url(../images/ic_menu03.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(4) .menu{background: url(../images/ic_menu04.svg) no-repeat center left 20px;}
-#header .menu_box>ul>li .menu.on{background:#6840FD url(../images/ic_menu01_on.svg) no-repeat center left 20px;box-shadow: 0px 4px 16px rgba(104, 64, 253, 0.2);color: #fff;}
+#header .menu_box>ul>li .menu.on{box-shadow: 0px 4px 16px rgba(104, 64, 253, 0.2);color: #fff;}
 #header .menu_box>ul>li .menu.on .num{background: #fff;color: #6840FD;}
+#header .menu_box>ul>li:nth-child(1) .menu.on{background:#6840FD url(../images/ic_menu01_on.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(2) .menu.on{background:#6840FD url(../images/ic_menu02_on.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(3) .menu.on{background:#6840FD url(../images/ic_menu03_on.svg) no-repeat center left 20px;}
 #header .menu_box>ul>li:nth-child(4) .menu.on{background:#6840FD url(../images/ic_menu04_on.svg) no-repeat center left 20px;}
@@ -300,3 +317,9 @@ html,.body{height: auto;}
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
+
+/* 결정의날 알림로그 팝업 */
+.noti_log_pop .pop_cont{width: calc(100% - 30px);}
+.noti_log_pop .scroll_wrap{height: 70vh;}
+.noti_log_pop .top_search_box{margin-bottom: 10px;}
+.noti_log_pop .custom_table table tbody tr td{border-bottom: 1px solid #EAEAEA;}

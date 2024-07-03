@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useSocket } from '../etc/SocketProvider';
 import * as CF from "../../config/function";
 import { enum_api_uri } from '../../config/enum';
-import { managerProfilePop, managerProfilePopPosition, confirmPop } from '../../store/popupSlice';
+import { managerProfilePop, managerProfilePopPosition, confirmPop, notiLogPop } from '../../store/popupSlice';
 import { selectUser, newMsgData } from '../../store/commonSlice';
 import ConfirmPop from '../popup/ConfirmPop';
 import logo from "../../images/logo.svg";
@@ -260,6 +260,9 @@ const Header = () => {
                     </li>
                     <li>
                         <Link to="/setting" className={`menu ${menuOn == 4 ? " on" : ""}`} data-id={4} onClick={navClickHandler}>설정</Link>
+                    </li>
+                    <li>
+                        <button type='button' className='menu' onClick={()=>dispatch(notiLogPop(true))}>결정의 날 알림 로그</button>
                     </li>
                 </ul>
             </div>
