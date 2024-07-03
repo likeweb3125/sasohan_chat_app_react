@@ -320,6 +320,6 @@ html,.body{height: auto;}
 
 /* 결정의날 알림로그 팝업 */
 .noti_log_pop .pop_cont{width: calc(100% - 30px);}
-.noti_log_pop .scroll_wrap{height: 70vh;}
+.noti_log_pop .scroll_wrap{height: 86vh;}
 .noti_log_pop .top_search_box{margin-bottom: 10px;}
 .noti_log_pop .custom_table table tbody tr td{border-bottom: 1px solid #EAEAEA;}

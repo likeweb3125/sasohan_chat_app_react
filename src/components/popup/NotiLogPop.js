@@ -122,7 +122,7 @@ const NotiLogPop = () => {
                                 const val = e.currentTarget.value;
                                 setSearchValue(val);
                             }}
-                            onSearchHandler={()=>{}}
+                            onSearchHandler={()=>{getList()}}
                         />
                     </div>
                     <div className="custom_table">
@@ -146,18 +146,21 @@ const NotiLogPop = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {list && list.length > 0 && list.map((cont,i)=>{
-                                    return(
-                                        <tr key={`log_${i}`}>
-                                            <td>{cont.idx}</td>
-                                            <td>{`${cont.from_user.m_name}(${cont.from_user.m_address})&${cont.to_user.m_name}(${cont.to_user.m_address})`}</td> 
-                                            <td>{cont.msg}</td>
-                                            <td>{cont.success ? 'O' : 'X'}</td>
-                                            <td>{cont.err_msg ? cont.err_msg : '-'}</td>
-                                            <td>{cont.w_date}</td>
-                                        </tr>
-                                    );
-                                })}
+                                {list && list.length > 0 ?
+                                    list.map((cont,i)=>{
+                                        return(
+                                            <tr key={`log_${i}`}>
+                                                <td>{cont.idx}</td>
+                                                <td>{`${cont.from_user.m_name}(${cont.from_user.m_address})&${cont.to_user.m_name}(${cont.to_user.m_address})`}</td> 
+                                                <td>{cont.msg}</td>
+                                                <td>{cont.success ? 'O' : 'X'}</td>
+                                                <td>{cont.err_msg ? cont.err_msg : '-'}</td>
+                                                <td>{cont.w_date}</td>
+                                            </tr>
+                                        );
+                                    })
+                                    : <tr><td colSpan={6}><div className="none_data">데이터가 없습니다.</div></td></tr>
+                                }
                             </tbody>
                         </table>
                     </div>
