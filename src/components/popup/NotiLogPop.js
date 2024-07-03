@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import moment from "moment";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
 import { notiLogPop, confirmPop, loadingPop } from "../../store/popupSlice";
@@ -116,7 +117,7 @@ const NotiLogPop = () => {
                 <div className="scroll_wrap line_round_box" ref={listRef}>
                     <div className="top_search_box">
                         <SearchBox 
-                            placeholder="회원아이디를 입력해주세요."
+                            placeholder="회원명을 입력해주세요."
                             searchValue={searchValue}
                             onChangeHandler={(e)=>{
                                 const val = e.currentTarget.value;
@@ -132,7 +133,7 @@ const NotiLogPop = () => {
                                 <col width={`28%`} />
                                 <col width={`auto`} />
                                 <col width={`auto`} />
-                                <col width={`180px`} />
+                                <col width={`150px`} />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -146,13 +147,14 @@ const NotiLogPop = () => {
                             <tbody>
                                 {list && list.length > 0 ?
                                     list.map((cont,i)=>{
+                                        const date = moment(cont.w_date).format('YYYY-MM-DD HH:mm');
                                         return(
                                             <tr key={`log_${i}`}>
                                                 <td>{cont.idx}</td>
                                                 <td>{`${cont.from_user.m_name}(${cont.from_user.m_address})&${cont.to_user.m_name}(${cont.to_user.m_address})`}</td> 
                                                 <td>{cont.msg}</td>
                                                 <td>{cont.success ? '성공' : cont.err_msg}</td>
-                                                <td>{cont.w_date}</td>
+                                                <td>{date}</td>
                                             </tr>
                                         );
                                     })
