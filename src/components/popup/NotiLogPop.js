@@ -116,7 +116,7 @@ const NotiLogPop = () => {
                 <div className="scroll_wrap line_round_box" ref={listRef}>
                     <div className="top_search_box">
                         <SearchBox 
-                            placeholder="회원명 검색"
+                            placeholder="회원아이디를 입력해주세요."
                             searchValue={searchValue}
                             onChangeHandler={(e)=>{
                                 const val = e.currentTarget.value;
@@ -131,7 +131,6 @@ const NotiLogPop = () => {
                                 <col width={`90px`} />
                                 <col width={`28%`} />
                                 <col width={`auto`} />
-                                <col width={`70px`} />
                                 <col width={`auto`} />
                                 <col width={`180px`} />
                             </colgroup>
@@ -140,8 +139,7 @@ const NotiLogPop = () => {
                                     <th>로그번호</th>
                                     <th>남자(지역) & 여자(지역)</th>
                                     <th>fcm 발송 메시지</th>
-                                    <th>성공 여부</th>
-                                    <th>비고(실패 메시지)</th>
+                                    <th>결과</th>
                                     <th>전송일시</th>
                                 </tr>
                             </thead>
@@ -153,13 +151,12 @@ const NotiLogPop = () => {
                                                 <td>{cont.idx}</td>
                                                 <td>{`${cont.from_user.m_name}(${cont.from_user.m_address})&${cont.to_user.m_name}(${cont.to_user.m_address})`}</td> 
                                                 <td>{cont.msg}</td>
-                                                <td>{cont.success ? 'O' : 'X'}</td>
-                                                <td>{cont.err_msg ? cont.err_msg : '-'}</td>
+                                                <td>{cont.success ? '성공' : cont.err_msg}</td>
                                                 <td>{cont.w_date}</td>
                                             </tr>
                                         );
                                     })
-                                    : <tr><td colSpan={6}><div className="none_data">데이터가 없습니다.</div></td></tr>
+                                    : <tr><td colSpan={5}><div className="none_data">데이터가 없습니다.</div></td></tr>
                                 }
                             </tbody>
                         </table>
