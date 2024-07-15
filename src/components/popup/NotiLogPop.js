@@ -147,11 +147,21 @@ const NotiLogPop = () => {
                             <tbody>
                                 {list && list.length > 0 ?
                                     list.map((cont,i)=>{
+                                        let from_user = "-";
+                                        if(Object.keys(cont.from_user).length > 0){
+                                            from_user = `${cont.from_user.m_name}(${cont.from_user.m_address})`;
+                                        }
+
+                                        let to_user = "-";
+                                        if(Object.keys(cont.to_user).length > 0){
+                                            to_user = `${cont.to_user.m_name}(${cont.to_user.m_address})`;
+                                        }
+
                                         const date = moment(cont.w_date).format('YYYY-MM-DD HH:mm');
                                         return(
                                             <tr key={`log_${i}`}>
                                                 <td>{cont.idx}</td>
-                                                <td>{`${cont.from_user.m_name}(${cont.from_user.m_address})&${cont.to_user.m_name}(${cont.to_user.m_address})`}</td> 
+                                                <td>{`${from_user} & ${to_user}`}</td> 
                                                 <td>{cont.msg}</td>
                                                 <td>{cont.success ? '성공' : cont.err_msg}</td>
                                                 <td>{date}</td>
