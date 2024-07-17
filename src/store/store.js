@@ -1,5 +1,5 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import storage from 'redux-persist/lib/storage';
+// import storage from 'redux-persist/lib/storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import sessionStorage from 'redux-persist/es/storage/session';
@@ -16,7 +16,8 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  whitelist: ['user']
+  whitelist: ['user'],
+  blacklist: ['common', 'popup'] // common과 popup을 블랙리스트에 추가
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

@@ -225,6 +225,9 @@ const Header = () => {
     //선택한회원 변경시 안읽은 채팅메시지 가져오기
     useEffect(()=>{
         getChatCount();
+
+        sessionStorage.setItem("selectUser",JSON.stringify(common.selectUser));
+
     },[common.selectUser]);
 
 

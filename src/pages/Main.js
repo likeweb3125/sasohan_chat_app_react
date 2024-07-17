@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import QueryString from "qs";
@@ -18,7 +18,6 @@ const Main = () => {
     const user = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const { gender_num } = useParams();
-    const location = useLocation();
     const u_all_count = enum_api_uri.u_all_count;
     const u_list = enum_api_uri.u_list;
     const [confirm, setConfirm] = useState(false);
