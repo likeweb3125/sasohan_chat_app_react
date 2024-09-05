@@ -163,7 +163,7 @@ html,.body{height: auto;}
 
 /************************* header *****************************/
 #header{width: 280px;height: 100vh;background: #fff;border-right: 1px solid #EAEAEA;position: relative;}
-#header .top_box{padding: 37px 40px;border-bottom: 1px solid #EAEAEA;}
+#header .top_box{padding: 28px 40px;border-bottom: 1px solid #EAEAEA;height: 140px;}
 #header .top_box .logo span{display: block;font-size: 18px;color: #1B171E;padding-top: 10px;}
 #header .menu_box{padding: 20px 12px 20px 16px;max-height: calc(100% - 290px);}
 #header .menu_box>ul>li{margin-bottom: 12px;}
