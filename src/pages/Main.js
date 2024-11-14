@@ -413,9 +413,6 @@ const Main = () => {
             }
 
             setUserList(updatedUserList);
-
-            //store messagePopList 값 지우기 (체크리스트)
-            dispatch(messagePopList([]));
         }
     },[common.newMsgData]);
 
