@@ -1,7 +1,8 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { io } from "socket.io-client";
 import { enum_api_uri } from '../../config/enum';
+
 
 // Socket Context 생성
 const SocketContext = createContext();
@@ -26,6 +27,18 @@ export const SocketProvider = ({ children }) => {
         setToken(user.tokenValue);
     },[user.tokenValue]);
 
+    const initializeSocketEvents = useCallback((socketInstance) => {
+        socketInstance.on("connect", () => {
+            console.log("Socket connected");
+            //socketInit(); // Rejoin room on connect
+        });
+
+        socketInstance.on("reconnect", () => {
+            console.log("Socket reconnected");
+            //socketInit(); // Rejoin room on reconnect
+        });
+    }, []);
+
     useEffect(() => {
         // 소켓 객체 생성
         if(token){
@@ -43,7 +56,8 @@ export const SocketProvider = ({ children }) => {
             });
         
             setSocket(socketIo);
-            
+            initializeSocketEvents(socketIo);
+
             return () => {
                 // 컴포넌트 언마운트 시 소켓 연결 종료
                 socketIo.disconnect();

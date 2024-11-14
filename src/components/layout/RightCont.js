@@ -209,7 +209,14 @@ const RightCont = () => {
         }
     };
 
-    
+
+    // 소켓 채팅방 있을때 채팅방 연결
+    const onChatConnection = () => {
+        if(Object.keys(common.selectUser).length > 0 && common.selectUser.hasOwnProperty("m_id") && common.selectUser.m_id.length > 0){
+            console.log('onChatConnection');
+            socketInit();
+        }
+    };
 
 
     useEffect(()=>{
@@ -459,8 +466,20 @@ const RightCont = () => {
             setConfirm(true);
         };
 
+        //연결 || 재연결
+        const handleConnect = () => {
+            // console.log("소켓 연결시 채팅방연결");
+            onChatConnection();
+        };
+
 
         if(socket){
+            //연결
+            socket.on("connect", handleConnect);
+
+            //재연결
+            socket.on("reconnect", handleConnect);
+
             //채팅방 개설
             socket.on("join room", handleJoinRoom);
 
@@ -491,6 +510,8 @@ const RightCont = () => {
 
             // 컴포넌트가 언마운트될 때 모든 이벤트 핸들러를 제거
             return () => {
+                socket.off("connect",handleConnect);
+                socket.off("reconnect",handleConnect);
                 socket.off("join room",handleJoinRoom);
                 socket.off("active room",handleActiveRoom);
                 socket.off("chat msg",handleChatMsg);
