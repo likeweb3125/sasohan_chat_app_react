@@ -263,9 +263,6 @@ const Message = () => {
             else if(!selectedItem && common.newMsgData.m_id != user.managerInfo.m_id){
                 getList(1,"",true);
             }
-
-            //store messagePopList 값 지우기 (체크리스트)
-            dispatch(messagePopList([]));
         }
     },[common.newMsgData]);
 
