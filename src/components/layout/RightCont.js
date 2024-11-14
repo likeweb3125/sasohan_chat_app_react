@@ -470,6 +470,8 @@ const RightCont = () => {
         const handleConnect = () => {
             // console.log("소켓 연결시 채팅방연결");
             onChatConnection();
+            const data = { room_id: user.managerInfo.m_id};
+            socket.emit("join room", data);
         };
 
 
