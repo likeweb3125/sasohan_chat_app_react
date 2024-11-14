@@ -250,7 +250,7 @@ const RightCont = () => {
             if(userRoomId === result.room_id){
                 //회원이 보낸 메시지일때 
                 if(selectUser.m_id === result.from_id){
-                    let data = { room_id: userRoomId };
+                    let data = { room_id: userRoomId, to_id: selectUser.m_id };
                     setTimeout(()=>{
                         socket.emit("read msg", data); //현재채팅방에 있으니 read msg 보냄
                     },300);
