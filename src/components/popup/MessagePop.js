@@ -6,17 +6,22 @@ import moment from "moment";
 import QueryString from "qs";
 import * as CF from "../../config/function";
 import { enum_api_uri } from "../../config/enum";
-import { messagePop, memCheckPop, confirmPop, loadingPop, messagePopList } from "../../store/popupSlice";
+import {
+    messagePop,
+    memCheckPop,
+    confirmPop,
+    loadingPop,
+    messagePopList,
+} from "../../store/popupSlice";
 import { groupMsg } from "../../store/commonSlice";
 import ConfirmPop from "./ConfirmPop";
 import MemberListCont from "../component/MemberListCont";
 import MessageInputWrap from "../component/MessageInputWrap";
 
-
 const MessagePop = () => {
-    const popup = useSelector((state)=>state.popup);
-    const common = useSelector((state)=>state.common);
-    const user = useSelector((state)=>state.user);
+    const popup = useSelector((state) => state.popup);
+    const common = useSelector((state) => state.common);
+    const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const api_uri = enum_api_uri.api_uri;
     const g_msg_list = enum_api_uri.g_msg_list;
@@ -35,16 +40,18 @@ const MessagePop = () => {
     const [photoPath, setPhotoPath] = useState("upload/chat/");
     const [noneList, setNoneList] = useState(false);
 
-
-    useEffect(()=>{
+    useEffect(() => {
         //최고매니저계정이고, 단체메시지설정값 최대전체선택 인원수가 제한없음이고, 회원을 선택한게아니라 전체회원에게 단체메시지 전송일때는 회원리스트 미노출
-        if(user.superManager && user.managerSetting.set_num == 0 && popup.messagePopList.length === 0){
+        if (
+            user.superManager &&
+            user.managerSetting.set_num == 0 &&
+            popup.messagePopList.length === 0
+        ) {
             setNoneList(true);
-        }else{
+        } else {
             setNoneList(false);
         }
-    },[]);
-
+    }, []);
 
     //팝업닫기
     const closePopHandler = () => {
@@ -53,318 +60,377 @@ const MessagePop = () => {
     };
 
     // Confirm팝업 닫힐때
-    useEffect(()=>{
-        if(popup.confirmPop === false){
+    useEffect(() => {
+        if (popup.confirmPop === false) {
             setConfirm(false);
             setSendConfirm(false);
             setSendOkConfirm(false);
         }
-    },[popup.confirmPop]);
-
+    }, [popup.confirmPop]);
 
     //회원리스트 값 변경될때마다 회원아이디값만 배열로
-    useEffect(()=>{
+    useEffect(() => {
         let newIdList = [];
-        if(list.length > 0){
-            newIdList = list.map(item => item.m_id).filter(Boolean);
+        if (list.length > 0) {
+            newIdList = list.map((item) => item.m_id).filter(Boolean);
         }
         setIdList(newIdList);
-    },[list]);
-
+    }, [list]);
 
     //단체메시지 보낼회원정보 리스트 가져오기 - 회원검색 페이지
     const getList = () => {
         dispatch(loadingPop(true));
 
         let body = {
-            to_id: popup.messagePopList
+            to_id: popup.messagePopList,
         };
 
         let search;
-        if(popup.messagePopSearch && popup.messagePopSearch.length > 0){
+        if (popup.messagePopSearch && popup.messagePopSearch.length > 0) {
             search = true;
-        }else{
+        } else {
             search = false;
         }
 
         let params;
-        if(common.filter){
-            let data = {...common.filterData};
-            if(data.j_M_log && data.j_M_log != null){
+        if (common.filter) {
+            let data = { ...common.filterData };
+            if (data.j_M_log && data.j_M_log != null) {
                 data.j_M_log = moment(data.j_M_log).format("YYYY-MM-DD");
-            }else if(data.j_M_log == null){
+            } else if (data.j_M_log == null) {
                 data.j_M_log = "";
             }
-            if(data.j_last_in1 && data.j_last_in1 != null){
+            if (data.j_last_in1 && data.j_last_in1 != null) {
                 data.j_last_in1 = moment(data.j_last_in1).format("YYYY-MM-DD");
-            }else if(data.j_last_in1 == null){
+            } else if (data.j_last_in1 == null) {
                 data.j_last_in1 = "";
             }
-            if(data.j_last_in2 && data.j_last_in2 != null){
+            if (data.j_last_in2 && data.j_last_in2 != null) {
                 data.j_last_in2 = moment(data.j_last_in2).format("YYYY-MM-DD");
-            }else if(data.j_last_in2 == null){
+            } else if (data.j_last_in2 == null) {
                 data.j_last_in2 = "";
             }
-            if(data.j_reg_date1 && data.j_reg_date1 != null){
-                data.j_reg_date1 = moment(data.j_reg_date1).format("YYYY-MM-DD");
-            }else if(data.j_reg_date1 == null){
+            if (data.j_reg_date1 && data.j_reg_date1 != null) {
+                data.j_reg_date1 = moment(data.j_reg_date1).format(
+                    "YYYY-MM-DD"
+                );
+            } else if (data.j_reg_date1 == null) {
                 data.j_reg_date1 = "";
             }
-            if(data.j_reg_date2 && data.j_reg_date2 != null){
-                data.j_reg_date2 = moment(data.j_reg_date2).format("YYYY-MM-DD");
-            }else if(data.j_reg_date2 == null){
+            if (data.j_reg_date2 && data.j_reg_date2 != null) {
+                data.j_reg_date2 = moment(data.j_reg_date2).format(
+                    "YYYY-MM-DD"
+                );
+            } else if (data.j_reg_date2 == null) {
                 data.j_reg_date2 = "";
             }
             params = QueryString.stringify(data);
         }
 
-        axios.post(`${g_msg_list}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}${params ? "&"+params : ""}`,body,
-            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
+        axios
+            .post(
+                `${g_msg_list}?sort=${popup.messagePopSort}${
+                    search ? "&search=" + popup.messagePopSearch : ""
+                }${params ? "&" + params : ""}`,
+                body,
+                { headers: { Authorization: `Bearer ${user.tokenValue}` } }
+            )
+            .then((res) => {
+                if (res.status === 200) {
+                    dispatch(loadingPop(false));
+
+                    let data = res.data;
+                    setList([...data]);
+                }
+            })
+            .catch((error) => {
                 dispatch(loadingPop(false));
 
-                let data = res.data;
-                setList([...data]);
-            }
-        })
-        .catch((error) => {
-            dispatch(loadingPop(false));
-            
-            const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 에러팝업
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                }));
-                setConfirm(true);
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
-        });
+                const err_msg = CF.errorMsgHandler(error);
+                if (error.response.status === 401) {
+                    //토큰에러시 에러팝업
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt:
+                                "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                        })
+                    );
+                    setConfirm(true);
+                } else {
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt: err_msg,
+                            confirmPopBtn: 1,
+                        })
+                    );
+                    setConfirm(true);
+                }
+            });
     };
-
 
     //단체메시지 보낼회원정보 리스트 가져오기 - 메시지 페이지
     const getList2 = () => {
         dispatch(loadingPop(true));
 
         let body = {
-            to_id: popup.messagePopList
+            to_id: popup.messagePopList,
         };
 
         let search;
-        if(popup.messagePopSearch && popup.messagePopSearch.length > 0){
+        if (popup.messagePopSearch && popup.messagePopSearch.length > 0) {
             search = true;
-        }else{
+        } else {
             search = false;
         }
 
-        axios.post(`${g_msg_list2}?sort=${popup.messagePopSort}${search ? "&search="+popup.messagePopSearch : ""}`,body,
-            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
+        axios
+            .post(
+                `${g_msg_list2}?sort=${popup.messagePopSort}${
+                    search ? "&search=" + popup.messagePopSearch : ""
+                }`,
+                body,
+                { headers: { Authorization: `Bearer ${user.tokenValue}` } }
+            )
+            .then((res) => {
+                if (res.status === 200) {
+                    dispatch(loadingPop(false));
+
+                    let data = res.data;
+                    setList([...data]);
+                }
+            })
+            .catch((error) => {
                 dispatch(loadingPop(false));
 
-                let data = res.data;
-                setList([...data]);
-            }
-        })
-        .catch((error) => {
-            dispatch(loadingPop(false));
-            
-            const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 에러팝업
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                }));
-                setConfirm(true);
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
-        });
+                const err_msg = CF.errorMsgHandler(error);
+                if (error.response.status === 401) {
+                    //토큰에러시 에러팝업
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt:
+                                "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                        })
+                    );
+                    setConfirm(true);
+                } else {
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt: err_msg,
+                            confirmPopBtn: 1,
+                        })
+                    );
+                    setConfirm(true);
+                }
+            });
     };
 
-
-    useEffect(()=>{
+    useEffect(() => {
         const path = location.pathname;
-        if(path == "/message"){
+        if (path == "/message") {
             getList2();
-        }else{
+        } else {
             // 최고매니저계정으로 단체메시지설정값 최대전체선택 인원수가 제한없음이고 회원선택을 안했을때만 리스트 안가져옴
-            if(user.superManager && user.managerSetting.set_num == 0){
-                if(popup.messagePopList.length > 0){
+            if (user.superManager && user.managerSetting.set_num == 0) {
+                if (popup.messagePopList.length > 0) {
                     getList();
-                }else{
+                } else {
                     const checkList = popup.messagePopList;
-                    const newList = checkList.map(item => ({ m_id: item }));
+                    const newList = checkList.map((item) => ({ m_id: item }));
                     setList([...newList]);
                 }
-            }else{
+            } else {
                 getList();
             }
         }
-    },[popup.messagePopList]);
-
+    }, [popup.messagePopList]);
 
     //회원 삭제시
-    useEffect(()=>{
+    useEffect(() => {
         // 최고매니저계정 아니거나, 최고매니저계정이지만 최대전체선택 인원수가 제한없음아닐때만
-        if(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)){
+        if (
+            !user.superManager ||
+            (user.superManager && user.managerSetting.set_num > 0)
+        ) {
             let newList = [];
-            if(popup.messagePopDeltList.length > 0){
+            if (popup.messagePopDeltList.length > 0) {
                 let deltList = popup.messagePopDeltList;
-                newList = list.filter(item => !deltList.includes(item.m_id));
+                newList = list.filter((item) => !deltList.includes(item.m_id));
             }
             setList(newList);
         }
-    },[popup.messagePopDeltList]);
+    }, [popup.messagePopDeltList]);
 
-    
     //회원 추가시
-    useEffect(()=>{
+    useEffect(() => {
         // 최고매니저계정 아니거나, 최고매니저계정이지만 최대전체선택 인원수가 제한없음아닐때만
-        if(!user.superManager || (user.superManager && user.managerSetting.set_num > 0)){
+        if (
+            !user.superManager ||
+            (user.superManager && user.managerSetting.set_num > 0)
+        ) {
             let newList = [];
-            if(popup.messagePopAddList.length > 0){
+            if (popup.messagePopAddList.length > 0) {
                 newList = popup.messagePopAddList;
-                setList([...newList,...list]);
-            }else{
+                setList([...newList, ...list]);
+            } else {
                 setList(newList);
             }
         }
-    },[popup.messagePopAddList]);
-
+    }, [popup.messagePopAddList]);
 
     //회원 삭제버튼 클릭시
     const deltHandler = () => {
-        if(list.length > 0){
-            dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"삭제",memCheckPopList:list}));
-        }else{
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'삭제할 회원이 없습니다.',
-                confirmPopBtn:1,
-            }));
+        if (list.length > 0) {
+            dispatch(
+                memCheckPop({
+                    memCheckPop: true,
+                    memCheckPopTit: "삭제",
+                    memCheckPopList: list,
+                })
+            );
+        } else {
+            dispatch(
+                confirmPop({
+                    confirmPop: true,
+                    confirmPopTit: "알림",
+                    confirmPopTxt: "삭제할 회원이 없습니다.",
+                    confirmPopBtn: 1,
+                })
+            );
             setConfirm(true);
         }
     };
- 
 
     //회원 추가버튼 클릭시
     const addHandler = () => {
         const path = location.pathname;
 
-        if(list.length == popup.messagePopAllCount){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'추가할 회원이 없습니다.',
-                confirmPopBtn:1,
-            }));
+        if (list.length == popup.messagePopAllCount) {
+            dispatch(
+                confirmPop({
+                    confirmPop: true,
+                    confirmPopTit: "알림",
+                    confirmPopTxt: "추가할 회원이 없습니다.",
+                    confirmPopBtn: 1,
+                })
+            );
             setConfirm(true);
-        }else{
-            if(path == "/message"){ //메시지 페이지일때 단체회원가져오기
+        } else {
+            if (path == "/message") {
+                //메시지 페이지일때 단체회원가져오기
                 dispatch(loadingPop(true));
 
                 let body = {
-                    to_id: idList
+                    to_id: idList,
                 };
 
-                axios.post(`${g_msg_list_add2}`,body,
-                    {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-                )
-                .then((res)=>{
-                    if(res.status === 200){
+                axios
+                    .post(`${g_msg_list_add2}`, body, {
+                        headers: { Authorization: `Bearer ${user.tokenValue}` },
+                    })
+                    .then((res) => {
+                        if (res.status === 200) {
+                            dispatch(loadingPop(false));
+
+                            let data = res.data;
+                            dispatch(
+                                memCheckPop({
+                                    memCheckPop: true,
+                                    memCheckPopTit: "추가",
+                                    memCheckPopList: data,
+                                })
+                            );
+                        }
+                    })
+                    .catch((error) => {
                         dispatch(loadingPop(false));
 
-                        let data = res.data;
-                        dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
-                    }
-                })
-                .catch((error) => {
-                    dispatch(loadingPop(false));
-                    
-                    const err_msg = CF.errorMsgHandler(error);
-                    if(error.response.status === 401){//토큰에러시 에러팝업
-                        dispatch(confirmPop({
-                            confirmPop:true,
-                            confirmPopTit:'알림',
-                            confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                        }));
-                        setConfirm(true);
-                    }else{
-                        dispatch(confirmPop({
-                            confirmPop:true,
-                            confirmPopTit:'알림',
-                            confirmPopTxt: err_msg,
-                            confirmPopBtn:1,
-                        }));
-                        setConfirm(true);
-                    }
-                });
-
-            }else{
+                        const err_msg = CF.errorMsgHandler(error);
+                        if (error.response.status === 401) {
+                            //토큰에러시 에러팝업
+                            dispatch(
+                                confirmPop({
+                                    confirmPop: true,
+                                    confirmPopTit: "알림",
+                                    confirmPopTxt:
+                                        "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                                })
+                            );
+                            setConfirm(true);
+                        } else {
+                            dispatch(
+                                confirmPop({
+                                    confirmPop: true,
+                                    confirmPopTit: "알림",
+                                    confirmPopTxt: err_msg,
+                                    confirmPopBtn: 1,
+                                })
+                            );
+                            setConfirm(true);
+                        }
+                    });
+            } else {
                 dispatch(loadingPop(true));
 
                 let body = {
-                    to_id: idList
+                    to_id: idList,
                 };
 
-                axios.post(`${g_msg_list_add}`,body,
-                    {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-                )
-                .then((res)=>{
-                    if(res.status === 200){
+                axios
+                    .post(`${g_msg_list_add}`, body, {
+                        headers: { Authorization: `Bearer ${user.tokenValue}` },
+                    })
+                    .then((res) => {
+                        if (res.status === 200) {
+                            dispatch(loadingPop(false));
+
+                            let data = res.data;
+                            dispatch(
+                                memCheckPop({
+                                    memCheckPop: true,
+                                    memCheckPopTit: "추가",
+                                    memCheckPopList: data,
+                                })
+                            );
+                        }
+                    })
+                    .catch((error) => {
                         dispatch(loadingPop(false));
 
-                        let data = res.data;
-                        dispatch(memCheckPop({memCheckPop:true,memCheckPopTit:"추가",memCheckPopList:data}));
-                    }
-                })
-                .catch((error) => {
-                    dispatch(loadingPop(false));
-                    
-                    const err_msg = CF.errorMsgHandler(error);
-                    if(error.response.status === 401){//토큰에러시 에러팝업
-                        dispatch(confirmPop({
-                            confirmPop:true,
-                            confirmPopTit:'알림',
-                            confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                        }));
-                        setConfirm(true);
-                    }else{
-                        dispatch(confirmPop({
-                            confirmPop:true,
-                            confirmPopTit:'알림',
-                            confirmPopTxt: err_msg,
-                            confirmPopBtn:1,
-                        }));
-                        setConfirm(true);
-                    }
-                });
+                        const err_msg = CF.errorMsgHandler(error);
+                        if (error.response.status === 401) {
+                            //토큰에러시 에러팝업
+                            dispatch(
+                                confirmPop({
+                                    confirmPop: true,
+                                    confirmPopTit: "알림",
+                                    confirmPopTxt:
+                                        "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                                })
+                            );
+                            setConfirm(true);
+                        } else {
+                            dispatch(
+                                confirmPop({
+                                    confirmPop: true,
+                                    confirmPopTit: "알림",
+                                    confirmPopTxt: err_msg,
+                                    confirmPopBtn: 1,
+                                })
+                            );
+                            setConfirm(true);
+                        }
+                    });
             }
         }
     };
-
 
     //이미지 첨부하기
     const imgAttach = () => {
@@ -372,7 +438,7 @@ const MessagePop = () => {
 
         //이미지 이름만 전송하기
         let imgList = common.msgImgs;
-        imgList = imgList.map(url => {
+        imgList = imgList.map((url) => {
             let updatedUrl = url.replace(api_uri, "");
             updatedUrl = updatedUrl.replace(photoPath, "");
             return updatedUrl;
@@ -380,190 +446,253 @@ const MessagePop = () => {
 
         let body = {
             to_id: idList,
-            image_array: imgList
+            image_array: imgList,
         };
 
-        axios.post(`${g_msg_img_send}`,body,
-            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-        )
-        .then((res) => {
-            if (res.status === 200) {
+        axios
+            .post(`${g_msg_img_send}`, body, {
+                headers: { Authorization: `Bearer ${user.tokenValue}` },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    dispatch(loadingPop(false));
+
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt:
+                                "단체메시지를 선택된 회원들에게 전송했습니다!",
+                            confirmPopBtn: 1,
+                        })
+                    );
+                    setSendOkConfirm(true);
+
+                    dispatch(groupMsg(true));
+                }
+            })
+            .catch((error) => {
                 dispatch(loadingPop(false));
 
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: "단체메시지를 선택된 회원들에게 전송했습니다!",
-                    confirmPopBtn:1,
-                }));
-                setSendOkConfirm(true);
-
-                dispatch(groupMsg(true));
-            }
-        })
-        .catch((error) => {
-            dispatch(loadingPop(false));
-            
-            const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 에러팝업
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                }));
-                setConfirm(true);
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
-        });
+                const err_msg = CF.errorMsgHandler(error);
+                if (error.response.status === 401) {
+                    //토큰에러시 에러팝업
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt:
+                                "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                        })
+                    );
+                    setConfirm(true);
+                } else {
+                    dispatch(
+                        confirmPop({
+                            confirmPop: true,
+                            confirmPopTit: "알림",
+                            confirmPopTxt: err_msg,
+                            confirmPopBtn: 1,
+                        })
+                    );
+                    setConfirm(true);
+                }
+            });
     };
-
 
     //메시지 보내기
-    const textSend = () => {
-        dispatch(loadingPop(true));
+    const textSend = async () => {
+        try {
+            dispatch(loadingPop(true));
 
-        let body = {
-            to_id: idList,
-            msg: textareaValue
-        };
+            const body = {
+                to_id: idList,
+                msg: textareaValue,
+            };
 
-        axios.post(`${g_msg_send}`,body,
-            {headers: {Authorization: `Bearer ${user.tokenValue}`}}
-        )
-        .then((res) => {
+            const res = await axios.post(`${g_msg_send}`, body, {
+                headers: { Authorization: `Bearer ${user.tokenValue}` },
+            });
+
             if (res.status === 200) {
                 dispatch(loadingPop(false));
 
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: "단체메시지를 선택된 회원들에게 전송했습니다!",
-                    confirmPopBtn:1,
-                }));
+                dispatch(
+                    confirmPop({
+                        confirmPop: true,
+                        confirmPopTit: "알림",
+                        confirmPopTxt:
+                            "단체메시지를 선택된 회원들에게 전송했습니다!",
+                        confirmPopBtn: 1,
+                    })
+                );
                 setSendOkConfirm(true);
 
                 dispatch(groupMsg(true));
             }
-        })
-        .catch((error) => {
+        } catch (error) {
             dispatch(loadingPop(false));
-
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 에러팝업
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.',
-                }));
+            if (error.response.status === 401) {
+                //토큰에러시 에러팝업
+                dispatch(
+                    confirmPop({
+                        confirmPop: true,
+                        confirmPopTit: "알림",
+                        confirmPopTxt:
+                            "세션이 종료되었습니다.<br/> 현재창을 닫고 다시 로그인해주세요.",
+                    })
+                );
                 setConfirm(true);
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
+            } else {
+                dispatch(
+                    confirmPop({
+                        confirmPop: true,
+                        confirmPopTit: "알림",
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn: 1,
+                    })
+                );
                 setConfirm(true);
             }
-        });
+        }
     };
 
-   
     //단체메시지전송 버튼 클릭시
     const msgSendHandler = () => {
         //최고매니저계정일때
-        if(user.superManager){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: "단체메시지를 선택한 회원에게 전송하시겠습니까?",
-                confirmPopBtn:2,
-            }));
+        if (user.superManager) {
+            dispatch(
+                confirmPop({
+                    confirmPop: true,
+                    confirmPopTit: "알림",
+                    confirmPopTxt:
+                        "단체메시지를 선택한 회원에게 전송하시겠습니까?",
+                    confirmPopBtn: 2,
+                })
+            );
             setSendConfirm(true);
-        }else{
-            if(list.length > 0){
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: "단체메시지를 선택한 회원에게 전송하시겠습니까?",
-                    confirmPopBtn:2,
-                }));
+        } else {
+            if (list.length > 0) {
+                dispatch(
+                    confirmPop({
+                        confirmPop: true,
+                        confirmPopTit: "알림",
+                        confirmPopTxt:
+                            "단체메시지를 선택한 회원에게 전송하시겠습니까?",
+                        confirmPopBtn: 2,
+                    })
+                );
                 setSendConfirm(true);
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'선택된 회원이 없습니다.',
-                    confirmPopBtn:1,
-                }));
+            } else {
+                dispatch(
+                    confirmPop({
+                        confirmPop: true,
+                        confirmPopTit: "알림",
+                        confirmPopTxt: "선택된 회원이 없습니다.",
+                        confirmPopBtn: 1,
+                    })
+                );
                 setConfirm(true);
             }
         }
     };
 
-    //단체메시지전송 
+    //단체메시지전송
     const sendHandler = () => {
-        if(textareaValue){
+        if (textareaValue) {
             textSend();
         }
-        if(common.msgImgs.length > 0){
+        if (common.msgImgs.length > 0) {
             imgAttach();
         }
     };
 
-
-    return(<>
-        <div className="pop_wrap message_pop">
-            <div className="dim"></div>
-            <div className="pop_cont pop_cont3">
-                <div className="pop_tit flex_between">
-                    <p className="f_24"><strong>단체 메시지</strong></p>
-                    <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
-                </div>
-                {!noneList && 
-                    <div className="list_cont">
-                        <div className="top_box flex_between">
-                            <div className="tit flex"><strong>선택한 회원</strong><span><strong>{CF.MakeIntComma(list.length)}</strong> 명</span></div>
-                            {!user.superManager &&
-                                <div className="flex">
-                                    <button type="button" className="btn_round3 rm4" onClick={deltHandler}>삭제</button>
-                                    <button type="button" className="btn_round2" onClick={addHandler}>추가</button>
+    return (
+        <>
+            <div className="pop_wrap message_pop">
+                <div className="dim"></div>
+                <div className="pop_cont pop_cont3">
+                    <div className="pop_tit flex_between">
+                        <p className="f_24">
+                            <strong>단체 메시지</strong>
+                        </p>
+                        <button
+                            type="button"
+                            className="btn_close"
+                            onClick={closePopHandler}
+                        >
+                            닫기버튼
+                        </button>
+                    </div>
+                    {!noneList && (
+                        <div className="list_cont">
+                            <div className="top_box flex_between">
+                                <div className="tit flex">
+                                    <strong>선택한 회원</strong>
+                                    <span>
+                                        <strong>
+                                            {CF.MakeIntComma(list.length)}
+                                        </strong>{" "}
+                                        명
+                                    </span>
                                 </div>
-                            }
+                                {!user.superManager && (
+                                    <div className="flex">
+                                        <button
+                                            type="button"
+                                            className="btn_round3 rm4"
+                                            onClick={deltHandler}
+                                        >
+                                            삭제
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn_round2"
+                                            onClick={addHandler}
+                                        >
+                                            추가
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <MemberListCont list={list} listType="member" />
                         </div>
-                        <MemberListCont
-                            list={list}
-                            listType="member"
+                    )}
+                    <div
+                        style={
+                            user.superManager
+                                ? { borderTop: "1px solid #EAEAEA" }
+                                : {}
+                        }
+                    >
+                        <MessageInputWrap
+                            textareaValue={textareaValue}
+                            onTextareaChange={(e) => {
+                                setTextareaValue(e.currentTarget.value);
+                            }}
+                            onMsgSendHandler={msgSendHandler}
+                            group={true}
                         />
                     </div>
-                }
-                <div style={user.superManager ? {"borderTop": "1px solid #EAEAEA"} : {}}>
-                    <MessageInputWrap 
-                        textareaValue={textareaValue}
-                        onTextareaChange={(e)=>{setTextareaValue(e.currentTarget.value)}}
-                        onMsgSendHandler={msgSendHandler}
-                        group={true}
-                    />
                 </div>
             </div>
-        </div>
 
-        {/* 단체메시지 보내기 confirm팝업 */}
-        {sendConfirm && <ConfirmPop onClickHandler={sendHandler} />}
+            {/* 단체메시지 보내기 confirm팝업 */}
+            {sendConfirm && <ConfirmPop onClickHandler={sendHandler} />}
 
-        {/* 단체메시지 보내기 완료 confirm팝업 */}
-        {sendOkConfirm && <ConfirmPop closePop="custom" onCloseHandler={closePopHandler} />}
+            {/* 단체메시지 보내기 완료 confirm팝업 */}
+            {sendOkConfirm && (
+                <ConfirmPop
+                    closePop="custom"
+                    onCloseHandler={closePopHandler}
+                />
+            )}
 
-        {/* confirm팝업 */}
-        {confirm && <ConfirmPop />}
-    </>);
+            {/* confirm팝업 */}
+            {confirm && <ConfirmPop />}
+        </>
+    );
 };
 
 export default MessagePop;
