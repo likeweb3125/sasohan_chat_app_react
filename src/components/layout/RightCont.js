@@ -170,7 +170,11 @@ const RightCont = () => {
 
     // 시간을 제외한 날짜만 반환하는 함수
     function getDateWithoutTime(dateString) {
-        return (dateString || "").split(" ")[0]; // 공백을 기준으로 문자열을 나누고 날짜 부분만 반환
+        if (typeof dateString !== "string" || !dateString) {
+            console.error("Invalid or undefined dateString:", dateString);
+            return ""; // 빈 문자열 반환
+        }
+        return dateString.split(" ")[0]; // 공백을 기준으로 문자열을 나누고 날짜 부분만 반환
     }
 
     // 날짜 포맷을 변경하는 함수 (예: "2024-02-19 16:30" -> "2024년 2월 19일")
